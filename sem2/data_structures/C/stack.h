@@ -1,0 +1,26 @@
+#ifndef STACK_H
+#define STACK_H
+
+#include <stdlib.h>
+
+typedef struct _ItemStack
+{
+	int _data;
+	struct _ItemStack *_prev;
+} ItemStack;
+
+typedef struct _Stack
+{
+	int _size;
+	struct _ItemStack *_top;
+} Stack;
+
+void stackCreate(Stack *s);
+int stackEmpty(const Stack *s);
+int stackSize(const Stack *s);
+int stackPush(Stack *s, const int value);
+int stackPop(Stack *s);
+int stackTop(const Stack *s);
+void stackDestroy(Stack *s);
+
+#endif

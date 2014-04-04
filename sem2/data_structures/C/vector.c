@@ -11,6 +11,11 @@ int vectorEmpty(const Vector *v)
 	return v->_size == 0;
 }
 
+int vectorSize(const Vector *v)
+{
+	return v->_size;
+}
+
 int vectorLoad(const Vector *v, const int index)
 {
 	return v->_data[index];

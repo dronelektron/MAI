@@ -11,6 +11,7 @@ typedef struct _Vector
 
 void vectorCreate(Vector *v, const int size);
 int vectorEmpty(const Vector *v);
+int vectorSize(const Vector *v);
 int vectorLoad(const Vector *v, const int index);
 void vectorSave(Vector *v, const int index, const int value);
 void vectorResize(Vector *v, const int size);

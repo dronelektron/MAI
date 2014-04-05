@@ -4,7 +4,6 @@
 */
 
 #include <stdio.h>
-#include <string.h>
 #include "vector.h"
 #include "tree.h"
 
@@ -15,8 +14,8 @@ TreeNode *getNodeByPath(TreeNode **node, const char *path);
 
 int main(void)
 {
-	int arg, i, isFailPath, maxBFS, levelOfMaxBFS;
-	char cmd[81];
+	int i, maxBFS, levelOfMaxBFS;
+	char cmd[81], arg;
 	TreeNode *root = NULL, *tmpNode = NULL;
 	Vector v;
 
@@ -27,15 +26,15 @@ int main(void)
 
 		if (cmd[0] == '+')
 		{
-			scanf("%d", &arg);
+			scanf(" %c", &arg);
 
 			if (cmd[1] == 'r')
 			{
 				if (root == NULL)
 				{
-					treeAddNode(&root, arg);
+					treeAddNode(&root, arg - 'A');
 
-					printf("Корень %d создан\n", arg);
+					printf("Корень %c создан\n", arg);
 				}
 				else
 					printf("Корень уже существует\n");
@@ -51,18 +50,18 @@ int main(void)
 
 				if (tmpNode == NULL)
 					printf("Ошибка. Такого пути не существует\n");
-				else if (treeAddNode(&tmpNode, arg) != NULL)
-					printf("Узел %d добавлен к узлу %d\n", arg, tmpNode->_data);
+				else if (treeAddNode(&tmpNode, arg - 'A') != NULL)
+					printf("Узел %c добавлен к узлу %c\n", arg, tmpNode->_data + 'A');
 			}
 		}
 		else if (cmd[0] == '-')
 		{
-			scanf("%d", &arg);
+			scanf(" %c", &arg);
 
-			if (treeRemoveNode(&root, arg))
-				printf("Узел %d удален\n", arg);
+			if (treeRemoveNode(&root, arg - 'A'))
+				printf("Узел %c удален\n", arg);
 			else
-				printf("Узел %d не найден\n", arg);
+				printf("Узел %c не найден\n", arg);
 		}
 		else if (cmd[0] == 'p')
 		{
@@ -100,10 +99,10 @@ int main(void)
 		{
 			printf("================================\n");
 			printf("Список команд:\n");
-			printf("+r N - создать корень с номером N\n");
-			printf("+ N - добавить сына N к корню\n");
-			printf("+PATH N - добавить узел по заданому пути (s - сын, b - брат)\n");
-			printf("- N - удалить первый найденный узел N и его поддерево\n");
+			printf("+r CHAR - создать корень CHAR (A, B, ..., Z)\n");
+			printf("+ CHAR - добавить сына CHAR к корню\n");
+			printf("+PATH CHAR - добавить CHAR узел по заданому пути (s - сын, b - брат)\n");
+			printf("- CHAR - удалить первый найденный узел CHAR и его поддерево\n");
 			printf("p - распечатать дерево\n");
 			printf("t - выполнить задание над деревом\n");
 			printf("q - завершить программу\n");
@@ -141,7 +140,7 @@ void KLP(TreeNode **node, const int level)
 	);
 	*/
 
-	printf("%*s%d\n", level * 2, "", (*node)->_data);
+	printf("%*s%c\n", level * 2, "", (*node)->_data + 'A');
 
 	if ((*node)->_son != NULL)
 		KLP(&(*node)->_son, level + 1);

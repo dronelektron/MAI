@@ -1,0 +1,68 @@
+\documentclass[a4paper,12pt]{book}
+
+\usepackage[T1]{fontenc}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{geometry}
+
+\geometry{left=1.5cm}
+\geometry{right=2.5cm}
+\geometry{top=0.7cm}
+\geometry{bottom=2cm}
+
+\begin{document}
+\fontsize{14pt}{14pt}\selectfont
+\parindent=0.0cm
+{\small 20.6. \textit{Производная по направлению}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 307
+}\par
+\vspace{1.5em}
+\parindent=0.0cm
+но из (20.44) следует, что\par
+$$
+\frac{dx}{ds} = \cos \alpha,\quad \frac{dy}{ds} = \cos \beta,\quad \frac{dz}{ds} = \cos \gamma, \eqno{(20.45)}
+$$\par
+поэтому окончательно\par
+$$
+\frac{\partial f(M_0)}{\partial l} = \frac{\partial f(M_0)}{ds} = \frac{\partial f(M_0)}{\partial x} \cos \alpha + \frac{df(M_0)}{\partial y} \cos \beta + \frac{\partial f(M_0)}{\partial z} \cos \gamma. \eqno{(20.46)}
+$$\par
+Это и есть искомая формула.\par
+\parindent=0.7cm
+Таким образом, доказана следующая теорема.\par
+\textbf{Теорема 7.} \textit{Пусть функция $f$ дифференцируема в точке $(x_0, y_0, z_0)$.}\par
+\parindent=0.0cm
+\textit{Тогда в этой точке функция $f$ имеет производные по любому направлению и эти производные находятся по формуле} (20.46).\par
+\parindent=0.7cm
+Очевидно, что по самому определению производной по направлению (от точки $M_0$ к точке $M_1$) функции точки она не зависит от выбора прямоугольной декартовой системы координат, а определяется только точками $M_0$ и $M_1$, или, что то же, точкой $M_0$ и вектором $\overrightarrow{M_0M_1}$ (кстати, этот факт сразу не виден из формулы (20.46)).\par
+Вектор с координатами\par
+$$
+\frac{\partial f(M_0)}{\partial x},\quad \frac{\partial f(M_0)}{\partial y},\quad \frac{\partial f(M_0)}{\partial z}
+$$\par
+\parindent=0.0cm
+называется \textit{градиентом} функции $f(M)$ в точке $M_0$ и обозначается $grad\ f$. Таким образом, если $\textbf{i}$, $\textbf{j}$ и $\textbf{k}$ - координатные орты, то\par
+$$
+grad\ f = \frac{\partial f}{\partial x} \textbf{i} + \frac{\partial f}{\partial y} \textbf{j} + \frac{\partial f}{\partial z} \textbf{k}. \eqno{(20.47)}
+$$\par
+\parindent=0.7cm
+Часто оказывается удобным использование \textit{символ-вектора}\par
+\parindent=0.0cm
+\textit{Гамильтона$^{*)}$}.\par
+$$
+\bigtriangledown = \textbf{i} \frac{\partial}{\partial x} + \textbf{j} \frac{\partial}{\partial y} + \textbf{k} \frac{\partial}{\partial z},
+$$\par
+\parindent=0.0cm
+называется \textit{наблой}. Набла является обозначением определенной операции, которую следует произвести над тем или иным объектом.\par
+\parindent=0.7cm
+Для функции $f$ по определению полагаем\par
+$$
+\bigtriangledown f = \textbf{i} \frac{\partial f}{\partial x} + \textbf{j} \frac{\partial f}{\partial y} + \textbf{k} \frac{\partial f}{\partial z}.
+$$\par
+Формально это равенство можно рассматривать как "произведение"\par
+\parindent=0.0cm
+вектора $\bigtriangledown$ на число $f$.\par
+\parindent=0.7cm
+Итак, $grad\ f$ и $\bigtriangledown f$ являются обозначениями одного и того же выражения.\par
+\line(1,0){64}\par
+\small *) У. Гамильтон (1805-1865) - английский математик.\par
+\qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad 11*
+\end{document}

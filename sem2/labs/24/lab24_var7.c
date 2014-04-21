@@ -20,6 +20,7 @@ void treeBuild(Node **node, Stack *st);
 void treeDestroy(Node **node);
 void treeMulReduce(Node **node);
 void PKL(Node **node, const int level);
+void LKP(Node **node);
 
 int isLetter(const char ch);
 int isNumber(const char ch);
@@ -30,8 +31,8 @@ void postOrder(const char *str, Stack *st);
 int main(void)
 {
 	int i, action;
-	char expr[81];
-	Node *root = NULL;
+	char expr[255];
+	Node *root = NULL, *root2 = NULL;
 	Stack stPost;
 	Token tkPost;
 
@@ -39,9 +40,11 @@ int main(void)
 	{
 		printf("Меню:\n");
 		printf("1) Ввести выражение\n");
-		printf("2) Печать выражения\n");
-		printf("3) Печать дерева\n");
-		printf("4) Выход\n");
+		printf("2) Печать исходного выражения\n");
+		printf("3) Печать преобразованного выражения\n");
+		printf("4) Печать исходного дерева\n");
+		printf("5) Печать преобразованного дерева\n");
+		printf("6) Выход\n");
 		printf("Выберите действие: ");
 		scanf("%d", &action);
 
@@ -53,36 +56,61 @@ int main(void)
 				scanf("%s", expr);
 
 				treeDestroy(&root);
+				treeDestroy(&root2);
 				stackCreate(&stPost);
 				postOrder(expr, &stPost);
 				treeBuild(&root, &stPost);
 				stackDestroy(&stPost);
-				treeMulReduce(&root);
+				
+				root2 = treeCopy(&root);
+				
+				treeMulReduce(&root2);
 
 				break;
 			}
 
 			case 2:
 			{
-				printf("Выражение: %s\n", expr);
+				printf("Исходное выражение: %s\n", expr);
 
 				break;
 			}
 
 			case 3:
 			{
-				if (root != NULL)
-				{
-					printf("Дерево выражения\n");
-					PKL(&root, 0);
-				}
-				else
-					printf("Дерево выражения пусто\n");
+				LKP(&root2);
+				printf("\n");
 
 				break;
 			}
 
-			case 4: break;
+			case 4:
+			{
+				if (root != NULL)
+				{
+					printf("Дерево исходного выражения\n");
+					PKL(&root, 0);
+				}
+				else
+					printf("Дерево исходного выражения пусто\n");
+
+				break;
+			}
+
+			case 5:
+			{
+				if (root2 != NULL)
+				{
+					printf("Дерево преобразованного выражения\n");
+					PKL(&root2, 0);
+				}
+				else
+					printf("Дерево преобразованного выражения пусто\n");
+
+				break;
+			}
+
+			case 6: break;
 
 			default:
 			{
@@ -92,11 +120,12 @@ int main(void)
 			}
 		}
 
-		if (action == 4)
+		if (action == 6)
 			break;
 	}
 
 	treeDestroy(&root);
+	treeDestroy(&root2);
 
 	return 0;	
 }
@@ -304,6 +333,39 @@ void PKL(Node **node, const int level)
 
 	if ((*node)->_left != NULL)
 		PKL(&(*node)->_left, level + 1);
+}
+
+void LKP(Node **node)
+{
+	if (*node == NULL)
+		return;
+
+	if ((*node)->_left != NULL)
+	{
+		if ((*node)->_left->_left != NULL)
+			printf("(");
+		
+		LKP(&(*node)->_left);
+		
+		if ((*node)->_left->_left != NULL)
+			printf(")");
+	}
+
+	if ((*node)->_varOp != '\0')
+		printf("%c", (*node)->_varOp);
+	else
+		printf("%f", (*node)->_num);
+
+	if ((*node)->_right != NULL)
+	{
+		if ((*node)->_right->_left != NULL)
+			printf("(");
+
+		LKP(&(*node)->_right);
+		
+		if ((*node)->_right->_left != NULL)
+			printf(")");
+	}
 }
 
 int isLetter(const char ch)

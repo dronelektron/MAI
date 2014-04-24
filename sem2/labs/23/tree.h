@@ -17,9 +17,9 @@ typedef struct _TreeNode
 	struct _TreeNode *_son;
 } TreeNode;
 
-TreeNode *treeAddNode(TreeNode **node, const int value);
-TreeNode *treeFindNode(TreeNode **node, const int value);
-int treeRemoveNode(TreeNode **node, const int value);
+TreeNode *treeAddNode(TreeNode **node, const kLetters value);
+TreeNode *treeFindNode(TreeNode **node, const kLetters value);
+int treeRemoveNode(TreeNode **node, const kLetters value);
 void treeDestroy(TreeNode **node);
 
 #endif

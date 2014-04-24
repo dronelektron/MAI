@@ -1,23 +1,20 @@
 /*
-34. Определить уровень дерева, на котором
-находится максимальное число вершин.
+24. Определить глубину дерева
 */
 
 #include <stdio.h>
-#include "vector.h"
 #include "tree.h"
 
-int treeNodesCount(TreeNode **node);
 void KLP(TreeNode **node, const int level);
-void countNodesOnLevels(TreeNode **node, Vector *levels, const int level);
+int max(int a, int b);
+int treeDFS(TreeNode **node);
 TreeNode *getNodeByPath(TreeNode **node, const char *path);
 
 int main(void)
 {
-	int i, maxBFS, levelOfMaxBFS;
-	char cmd[81], arg;
+	int i;
+	char cmd[255], arg;
 	TreeNode *root = NULL, *tmpNode = NULL;
-	Vector v;
 
 	do
 	{
@@ -85,28 +82,7 @@ int main(void)
 		else if (cmd[0] == 't')
 		{
 			if (root != NULL)
-			{
-				vectorCreate(&v, treeNodesCount(&root));
-
-				for (i = 0; i < vectorSize(&v); i++)
-					vectorSave(&v, i, 0);
-
-				countNodesOnLevels(&root, &v, 0);
-
-				maxBFS = 1;
-				levelOfMaxBFS = 1;
-
-				for (i = 1; i < vectorSize(&v); i++)
-					if (vectorLoad(&v, i) > maxBFS)
-					{
-						maxBFS = vectorLoad(&v, i);
-						levelOfMaxBFS = i + 1;
-					}
-
-				printf("Уровень дерева, на котором число вершин максимально: %d\n", levelOfMaxBFS);
-
-				vectorDestroy(&v);
-			}
+				printf("Глубина дерева: %d\n", treeDFS(&root));
 			else
 				printf("Дерево пусто\n");
 		}
@@ -144,17 +120,6 @@ void KLP(TreeNode **node, const int level)
 		return;
 	}
 
-	// DEBUG
-	/*
-	printf("%*s%d (parent: %d, olderBro: %d, son: %d, bro: %d)\n", level * 2, "",
-		(*node)->_data,
-		(*node)->_parent != NULL ? (*node)->_parent->_data : -1,
-		(*node)->_olderBro != NULL ? (*node)->_olderBro->_data : -1,
-		(*node)->_son != NULL ? (*node)->_son->_data : -1,
-		(*node)->_bro != NULL ? (*node)->_bro->_data : -1
-	);
-	*/
-
 	printf("%*s%c\n", level * 2, "", (*node)->_data + 'A');
 
 	if ((*node)->_son != NULL)
@@ -164,34 +129,17 @@ void KLP(TreeNode **node, const int level)
 		KLP(&(*node)->_bro, level);
 }
 
-int treeNodesCount(TreeNode **node)
+int max(int a, int b)
 {
-	int cnt = 0;
+	return (a > b ? a : b);
+}
 
+int treeDFS(TreeNode **node)
+{
 	if (*node == NULL)
 		return 0;
 
-	if ((*node)->_bro != NULL)
-		cnt += treeNodesCount(&(*node)->_bro);
-
-	if ((*node)->_son != NULL)
-		cnt += treeNodesCount(&(*node)->_son);
-
-	return cnt + 1;
-}
-
-void countNodesOnLevels(TreeNode **node, Vector *levels, const int level)
-{
-	if (*node == NULL)
-		return;
-
-	vectorSave(levels, level, vectorLoad(levels, level) + 1);
-
-	if ((*node)->_bro)
-		countNodesOnLevels(&(*node)->_bro, levels, level);
-
-	if ((*node)->_son)
-		countNodesOnLevels(&(*node)->_son, levels, level + 1);
+	return max(1 + treeDFS(&(*node)->_son), treeDFS(&(*node)->_bro));
 }
 
 TreeNode *getNodeByPath(TreeNode **node, const char *path)

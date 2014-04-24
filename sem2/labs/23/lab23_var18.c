@@ -1,21 +1,21 @@
 /*
-34. Определить уровень дерева, на котором
-находится максимальное число вершин.
+18. Определить ширину дерева
 */
 
 #include <stdio.h>
 #include "vector.h"
 #include "tree.h"
 
-int treeNodesCount(TreeNode **node);
 void KLP(TreeNode **node, const int level);
-void countNodesOnLevels(TreeNode **node, Vector *levels, const int level);
+void countNodesOnLevels(TreeNode **node, Vector *v, const int h);
+int max(int a, int b);
+int treeDFS(TreeNode **node);
 TreeNode *getNodeByPath(TreeNode **node, const char *path);
 
 int main(void)
 {
-	int i, maxBFS, levelOfMaxBFS;
-	char cmd[81], arg;
+	int i, maxBFS;
+	char cmd[255], arg;
 	TreeNode *root = NULL, *tmpNode = NULL;
 	Vector v;
 
@@ -86,24 +86,20 @@ int main(void)
 		{
 			if (root != NULL)
 			{
-				vectorCreate(&v, treeNodesCount(&root));
+				vectorCreate(&v, treeDFS(&root));
 
 				for (i = 0; i < vectorSize(&v); i++)
 					vectorSave(&v, i, 0);
 
 				countNodesOnLevels(&root, &v, 0);
 
-				maxBFS = 1;
-				levelOfMaxBFS = 1;
+				maxBFS = 0;
 
-				for (i = 1; i < vectorSize(&v); i++)
+				for (i = 0; i < vectorSize(&v); i++)
 					if (vectorLoad(&v, i) > maxBFS)
-					{
 						maxBFS = vectorLoad(&v, i);
-						levelOfMaxBFS = i + 1;
-					}
 
-				printf("Уровень дерева, на котором число вершин максимально: %d\n", levelOfMaxBFS);
+				printf("Ширина дерева: %d\n", maxBFS);
 
 				vectorDestroy(&v);
 			}
@@ -144,17 +140,6 @@ void KLP(TreeNode **node, const int level)
 		return;
 	}
 
-	// DEBUG
-	/*
-	printf("%*s%d (parent: %d, olderBro: %d, son: %d, bro: %d)\n", level * 2, "",
-		(*node)->_data,
-		(*node)->_parent != NULL ? (*node)->_parent->_data : -1,
-		(*node)->_olderBro != NULL ? (*node)->_olderBro->_data : -1,
-		(*node)->_son != NULL ? (*node)->_son->_data : -1,
-		(*node)->_bro != NULL ? (*node)->_bro->_data : -1
-	);
-	*/
-
 	printf("%*s%c\n", level * 2, "", (*node)->_data + 'A');
 
 	if ((*node)->_son != NULL)
@@ -180,18 +165,35 @@ int treeNodesCount(TreeNode **node)
 	return cnt + 1;
 }
 
-void countNodesOnLevels(TreeNode **node, Vector *levels, const int level)
+void countNodesOnLevels(TreeNode **node, Vector *v, const int h)
 {
+	int curH = 0;
+
 	if (*node == NULL)
 		return;
 
-	vectorSave(levels, level, vectorLoad(levels, level) + 1);
+	curH = vectorLoad(v, h);
+
+	vectorSave(v, h, curH + 1);
 
 	if ((*node)->_bro)
-		countNodesOnLevels(&(*node)->_bro, levels, level);
+		countNodesOnLevels(&(*node)->_bro, v, h);
 
 	if ((*node)->_son)
-		countNodesOnLevels(&(*node)->_son, levels, level + 1);
+		countNodesOnLevels(&(*node)->_son, v, h + 1);
+}
+
+int max(int a, int b)
+{
+	return (a > b ? a : b);
+}
+
+int treeDFS(TreeNode **node)
+{
+	if (*node == NULL)
+		return 0;
+
+	return max(1 + treeDFS(&(*node)->_son), treeDFS(&(*node)->_bro));
 }
 
 TreeNode *getNodeByPath(TreeNode **node, const char *path)

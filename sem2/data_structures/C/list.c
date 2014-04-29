@@ -38,7 +38,7 @@ int listSize(const List *list)
 	return list->_size;
 }
 
-ItemListIterator listInsert(List *list, ItemListIterator *it, const int value)
+ItemListIterator listInsert(List *list, ItemListIterator *it, const LIST_TYPE value)
 {
 	ItemListIterator res;
 
@@ -124,7 +124,7 @@ int listIteratorFetch(const ItemListIterator *it)
 	return it->_node->_data;
 }
 
-void listIteratorStore(const ItemListIterator *it, const int value)
+void listIteratorStore(const ItemListIterator *it, const LIST_TYPE value)
 {
 	it->_node->_data = value;
 }

@@ -1,6 +1,6 @@
 #include "bst.h"
 
-BstNode *bstInsert(BstNode **node, const int key)
+BstNode *bstInsert(BstNode **node, const BST_TYPE key)
 {
 	if (*node == NULL)
 	{
@@ -20,7 +20,7 @@ BstNode *bstInsert(BstNode **node, const int key)
 		return bstInsert(&(*node)->_right, key);
 }
 
-BstNode *bstFind(BstNode **node, const int key)
+BstNode *bstFind(BstNode **node, const BST_TYPE key)
 {
 	if (*node == NULL)
 		return NULL;
@@ -34,7 +34,7 @@ BstNode *bstFind(BstNode **node, const int key)
 		return bstFind(&(*node)->_right, key);
 }
 
-void bstRemove(BstNode **node, const int key)
+void bstRemove(BstNode **node, const BST_TYPE key)
 {
 	BstNode *repl = NULL, *parent = NULL, *tmp = *node;
 

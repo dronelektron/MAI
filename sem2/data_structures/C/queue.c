@@ -16,7 +16,7 @@ int queueSize(const Queue *q)
 	return q->_size;
 }
 
-int queuePush(Queue *q, const int value)
+int queuePush(Queue *q, const QUEUE_TYPE value)
 {
 	if (!(q->_last->_next = (ItemQueue *)malloc(sizeof(ItemQueue))))
 		return 0;
@@ -44,7 +44,7 @@ int queuePop(Queue *q)
 	return 1;
 }
 
-int queueTop(const Queue *q)
+QUEUE_TYPE queueTop(const Queue *q)
 {
 	return q->_first->_data;
 }

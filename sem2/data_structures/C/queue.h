@@ -3,9 +3,11 @@
 
 #include <stdlib.h>
 
+typedef int QUEUE_TYPE;
+
 typedef struct _ItemQueue
 {
-	int _data;
+	QUEUE_TYPE _data;
 	struct _ItemQueue *_next;
 } ItemQueue;
 
@@ -19,9 +21,9 @@ typedef struct _Queue
 void queueCreate(Queue *q);
 int queueEmpty(const Queue *q);
 int queueSize(const Queue *q);
-int queuePush(Queue *q, const int value);
+int queuePush(Queue *q, const QUEUE_TYPE value);
 int queuePop(Queue *q);
-int queueTop(const Queue *q);
+QUEUE_TYPE queueTop(const Queue *q);
 void queueDestroy(Queue *q);
 
 #endif

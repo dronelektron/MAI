@@ -3,9 +3,11 @@
 
 #include <stdlib.h>
 
+typedef int LIST_TYPE;
+
 typedef struct _ItemList
 {
-	int _data;
+	LIST_TYPE _data;
 	struct _ItemList *_prev;
 	struct _ItemList *_next;
 } ItemList;
@@ -26,7 +28,7 @@ ItemListIterator listFirst(const List *list);
 ItemListIterator listLast(const List *list);
 int listEmpty(const List *list);
 int listSize(const List *list);
-ItemListIterator listInsert(List *list, ItemListIterator *it, const int value);
+ItemListIterator listInsert(List *list, ItemListIterator *it, const LIST_TYPE value);
 ItemListIterator listDelete(List *list, ItemListIterator *it);
 void listDestroy(List *list);
 
@@ -35,6 +37,6 @@ int listIteratorNotEqual(const ItemListIterator *it1, const ItemListIterator *it
 ItemListIterator *listIteratorNext(ItemListIterator *it);
 ItemListIterator *listIteratorPrev(ItemListIterator *it);
 int listIteratorFetch(const ItemListIterator *it);
-void listIteratorStore(const ItemListIterator *it, const int value);
+void listIteratorStore(const ItemListIterator *it, const LIST_TYPE value);
 
 #endif

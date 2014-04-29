@@ -16,12 +16,12 @@ int vectorSize(const Vector *v)
 	return v->_size;
 }
 
-int vectorLoad(const Vector *v, const int index)
+VECTOR_TYPE vectorLoad(const Vector *v, const int index)
 {
 	return v->_data[index];
 }
 
-void vectorSave(Vector *v, const int index, const int value)
+void vectorSave(Vector *v, const int index, const VECTOR_TYPE value)
 {
 	v->_data[index] = value;
 }

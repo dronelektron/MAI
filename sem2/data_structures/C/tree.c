@@ -1,6 +1,6 @@
 #include "tree.h"
 
-TreeNode *treeAddNode(TreeNode **node, const int value)
+TreeNode *treeAddNode(TreeNode **node, const TREE_TYPE value)
 {
 	TreeNode *tmpBro = NULL, *tmpNode = (TreeNode *)malloc(sizeof(TreeNode));
 
@@ -32,7 +32,7 @@ TreeNode *treeAddNode(TreeNode **node, const int value)
 	return tmpNode;
 }
 
-TreeNode *treeFindNode(TreeNode **node, const int value)
+TreeNode *treeFindNode(TreeNode **node, const TREE_TYPE value)
 {
 	TreeNode *tmpNode = NULL;
 
@@ -47,7 +47,7 @@ TreeNode *treeFindNode(TreeNode **node, const int value)
 	return tmpNode;
 }
 
-int treeRemoveNode(TreeNode **node, const int value)
+int treeRemoveNode(TreeNode **node, const TREE_TYPE value)
 {
 	TreeNode *tmpNode = treeFindNode(node, value);
 

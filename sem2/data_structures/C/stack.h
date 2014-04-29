@@ -3,9 +3,11 @@
 
 #include <stdlib.h>
 
+typedef int STACK_TYPE;
+
 typedef struct _ItemStack
 {
-	int _data;
+	STACK_TYPE _data;
 	struct _ItemStack *_prev;
 } ItemStack;
 
@@ -18,9 +20,9 @@ typedef struct _Stack
 void stackCreate(Stack *s);
 int stackEmpty(const Stack *s);
 int stackSize(const Stack *s);
-int stackPush(Stack *s, const int value);
+int stackPush(Stack *s, const STACK_TYPE value);
 int stackPop(Stack *s);
-int stackTop(const Stack *s);
+STACK_TYPE stackTop(const Stack *s);
 void stackDestroy(Stack *s);
 
 #endif

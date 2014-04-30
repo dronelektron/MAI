@@ -2,8 +2,11 @@
 
 void vectorCreate(Vector *v, const int size)
 {
+	if (size <= 0)
+		return;
+	
 	v->_size = size;
-	v->_data = (int *)malloc(sizeof(int) * v->_size);
+	v->_data = (VECTOR_TYPE *)malloc(sizeof(VECTOR_TYPE) * v->_size);
 }
 
 int vectorEmpty(const Vector *v)
@@ -29,7 +32,7 @@ void vectorSave(Vector *v, const int index, const VECTOR_TYPE value)
 void vectorResize(Vector *v, const int size)
 {
 	v->_size = size;
-	v->_data = (int *)realloc(v->_data, sizeof(int) * v->_size);
+	v->_data = (VECTOR_TYPE *)realloc(v->_data, sizeof(VECTOR_TYPE) * v->_size);
 }
 
 int vectorEqual(const Vector *v1, const Vector *v2)
@@ -48,7 +51,12 @@ int vectorEqual(const Vector *v1, const Vector *v2)
 
 void vectorDestroy(Vector *v)
 {
-	v->_size = 0;
+	if (v->_data != NULL)
+	{
+		free(v->_data);
 
-	free(v->_data);
+		v->_data = NULL;
+	}
+
+	v->_size = 0;
 }

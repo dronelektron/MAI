@@ -2,9 +2,11 @@
 #include <time.h>
 #include "sort.h"
 
+int randomAB(int a, int b);
+
 int main(void)
 {
-	const int N = 10;
+	const int N = 20;
 	int i, rnd;
 	Udt udt;
 	
@@ -16,7 +18,7 @@ int main(void)
 
 	for (i = 0; i < N; i++)
 	{
-		rnd = -10 + rand() % (10 - (-10) + 1);
+		rnd = randomAB(-10, 10);
 		
 		udtPushBack(&udt, rnd);
 
@@ -36,4 +38,9 @@ int main(void)
 	udtDestroy(&udt);
 
 	return 0;
+}
+
+int randomAB(int a, int b)
+{
+	return a + rand() % (b - a + 1);
 }

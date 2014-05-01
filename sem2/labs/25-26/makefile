@@ -4,7 +4,7 @@ OBJ = lab26.o udt.o sort.o
 PROG = program
 
 build: lab26.o sort.o udt.o
-	$(CC) $(CFLAGS) -o $(PROG) lab26.o sort.o udt.o
+	$(CC) $(CFLAGS) -o $(PROG) $(OBJ)
 
 lab26.o: lab26.c
 	$(CC) $(CFLAGS) -c lab26.c

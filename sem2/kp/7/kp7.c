@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include "vector.h"
 
 typedef enum _kInd
 {
@@ -8,51 +9,39 @@ typedef enum _kInd
 	EMPTY
 } kInd;
 
-typedef struct _Comp
-{
-	double a;
-	double b;
-} Comp;
-
-typedef struct _Item
-{
-	int ind;
-	Comp c;
-} Item;
-
 double complexModule(const Comp c);
 Comp complexDivide(const Comp c1, const Comp c2);
-void printSourceMatrix(const int *rows, const Item *cols, const int m, const int n);
-void printInnerMatrix(const int *rows, const Item *cols, const int m);
+void printSourceMatrix(const int *rows, const Vector *cols, const int m, const int n);
+void printInnerMatrix(const int *rows, const Vector *cols, const int m);
 
 int main(void)
 {
-	const int maxM = 100, maxN = 100;
-	int m, n, i, j, isEmptyRow, isMaxInRow, colCnt = 0, row[maxM];
-	Item col[3 * maxN];
+	const int N = 100;
+	int m, n, i, j, isEmptyRow, isMaxInRow, row[N];
 	Comp maxComp, tmpComp;
+	Vector col;
+	Item tmpItem;
 
-	for (i = 0; i < maxM; i++)
+	vectorCreate(&col, 0);
+
+	for (i = 0; i < N; i++)
 		row[i] = END;
-
-	for (i = 0; i < 3 * maxN; i++)
-		col[i].ind = END;
 
 	printf("Введите количество строк: ");
 	scanf("%d", &m);
 	printf("Введите количество столбцов: ");
 	scanf("%d", &n);
 
-	if (m < 1 || m > maxM)
+	if (m < 1 || m > N)
 	{
-		printf("Количество строк должно быть в диапозоне от 1 до %d\n", maxM);
+		printf("Количество строк должно быть в диапозоне от 1 до %d\n", N);
 
 		return 0;
 	}
 
-	if (n < 1 || n > maxN)
+	if (n < 1 || n > N)
 	{
-		printf("Количество столбцов должно быть в диапозоне от 1 до %d\n", maxN);
+		printf("Количество столбцов должно быть в диапозоне от 1 до %d\n", N);
 
 		return 0;
 	}
@@ -72,36 +61,52 @@ int main(void)
 			isEmptyRow = 0;
 
 			if (row[i] == END)
-				row[i] = colCnt;
+				row[i] = vectorSize(&col);
 
-			col[colCnt++].ind = j;
-			col[colCnt].ind = COMP;
-			col[colCnt++].c = tmpComp;
+			tmpItem.ind = j;
+
+			vectorPushBack(&col, tmpItem);
+
+			tmpItem.ind = COMP;
+			tmpItem.c = tmpComp;
+
+			vectorPushBack(&col, tmpItem);
 		}
 
 		if (isEmptyRow)
 			row[i] = EMPTY;
 		else
-			col[colCnt++].ind = EMPTY;
+		{
+			tmpItem.ind = EMPTY;
+
+			vectorPushBack(&col, tmpItem);
+		}
 	}
 
+	tmpItem.ind = END;
+
+	vectorPushBack(&col, tmpItem);
+
 	printf("Обычное представление:\n");
-	printSourceMatrix(row, col, m, n);
+	printSourceMatrix(row, &col, m, n);
 	printf("Внутреннее представление\n");
-	printInnerMatrix(row, col, m);
+	printInnerMatrix(row, &col, m);
 
 	maxComp.a = 0.0;
 	maxComp.b = 0.0;
 
 	for (i = 0; i < m; i++)
 	{
-		for (j = row[i]; j < col[j].ind != END && col[j].ind != EMPTY; j++)
+		if (row[i] == EMPTY)
+			continue;
+
+		for (j = row[i]; j < vectorLoad(&col, j).ind != END && vectorLoad(&col, j).ind != EMPTY; j++)
 		{
-			if (col[j].ind != COMP)
+			if (vectorLoad(&col, j).ind != COMP)
 				continue;
 
-			if (complexModule(col[j].c) > complexModule(maxComp))
-				maxComp = col[j].c;
+			if (complexModule(vectorLoad(&col, j).c) > complexModule(maxComp))
+				maxComp = vectorLoad(&col, j).c;
 		}
 	}
 
@@ -121,12 +126,12 @@ int main(void)
 		if (row[i] == EMPTY)
 			continue;
 
-		for (j = row[i]; j < col[j].ind != END && col[j].ind != EMPTY; j++)
+		for (j = row[i]; j < vectorLoad(&col, j).ind != END && vectorLoad(&col, j).ind != EMPTY; j++)
 		{
-			if (col[j].ind != COMP)
+			if (vectorLoad(&col, j).ind != COMP)
 				continue;
 
-			if (complexModule(col[j].c) == complexModule(maxComp))
+			if (complexModule(vectorLoad(&col, j).c) == complexModule(maxComp))
 			{
 				isMaxInRow = 1;
 
@@ -137,19 +142,26 @@ int main(void)
 		if (!isMaxInRow)
 			continue;
 
-		for (j = row[i]; j < col[j].ind != END && col[j].ind != EMPTY; j++)
+		for (j = row[i]; j < vectorLoad(&col, j).ind != END && vectorLoad(&col, j).ind != EMPTY; j++)
 		{
-			if (col[j].ind == COMP)
-				col[j].c = complexDivide(col[j].c, maxComp);
-			else if (col[j].ind != EMPTY)
+			if (vectorLoad(&col, j).ind == COMP)
+			{
+				tmpItem = vectorLoad(&col, j);
+				tmpItem.c = complexDivide(vectorLoad(&col, j).c, maxComp);
+
+				vectorSave(&col, j, tmpItem);
+			}
+			else if (vectorLoad(&col, j).ind != EMPTY)
 				continue;
 		}
 	}
 
 	printf("Обычное представление после модификации:\n");
-	printSourceMatrix(row, col, m, n);
+	printSourceMatrix(row, &col, m, n);
 	printf("Внутреннее представление после модификации:\n");
-	printInnerMatrix(row, col, m);
+	printInnerMatrix(row, &col, m);
+
+	vectorDestroy(&col);
 
 	return 0;
 }
@@ -170,9 +182,9 @@ Comp complexDivide(const Comp c1, const Comp c2)
 	return res;
 }
 
-void printSourceMatrix(const int *rows, const Item *cols, const int m, const int n)
+void printSourceMatrix(const int *rows, const Vector *cols, const int m, const int n)
 {
-	int i, j, z, k;
+	int i, j, k;
 
 	for (i = 0; i < m; i++)
 	{
@@ -191,7 +203,7 @@ void printSourceMatrix(const int *rows, const Item *cols, const int m, const int
 
 		while (k < n)
 		{
-			if (cols[j].ind == EMPTY)
+			if (vectorLoad(cols, j).ind == EMPTY)
 			{
 				printf("(%.2lf, %.2lf) ", 0.0, 0.0);
 
@@ -200,14 +212,14 @@ void printSourceMatrix(const int *rows, const Item *cols, const int m, const int
 				continue;
 			}
 
-			while (k < cols[j].ind)
+			while (k < vectorLoad(cols, j).ind)
 			{
 				printf("(%.2lf, %.2lf) ", 0.0, 0.0);
 
 				k++;
 			}
 
-			printf("(%.2lf, %.2lf) ", cols[j + 1].c.a, cols[j + 1].c.b);
+			printf("(%.2lf, %.2lf) ", vectorLoad(cols, j + 1).c.a, vectorLoad(cols, j + 1).c.b);
 			
 			j += 2;
 			k++;
@@ -217,34 +229,29 @@ void printSourceMatrix(const int *rows, const Item *cols, const int m, const int
 	}
 }
 
-void printInnerMatrix(const int *rows, const Item *cols, const int m)
+void printInnerMatrix(const int *rows, const Vector *cols, const int m)
 {
-	int i, j, k = 0;
+	int i, j;
 
 	printf("Массив M:\n");
 
 	for (i = 0; i < m; i++)
-	{
 		printf("%d ", rows[i]);
-
-		if (rows[i] != -1)
-			k++;
-	}
 
 	printf("\nМассив A:\n");
 
-	if (k == 0)
+	if (vectorLoad(cols, 0).ind == END)
 	{
 		printf("Пуст\n");
 
 		return;
 	}
 
-	for (i = 0; cols[i].ind != END; i++)
-		if (cols[i].ind == COMP)
-			printf("(%.2lf, %.2lf) ", cols[i].c.a, cols[i].c.b);
+	for (i = 0; vectorLoad(cols, i).ind != END; i++)
+		if (vectorLoad(cols, i).ind == COMP)
+			printf("(%.2lf, %.2lf) ", vectorLoad(cols, i).c.a, vectorLoad(cols, i).c.b);
 		else
-			printf("%d ", cols[i].ind);
+			printf("%d ", vectorLoad(cols, i).ind);
 
 	printf("\n");
 }

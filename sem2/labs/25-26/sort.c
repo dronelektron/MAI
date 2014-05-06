@@ -39,7 +39,7 @@ void udtQuickSort(Udt *udt)
 
 		udtPopFront(udt);
 
-		if (top < pivot)
+		if (top._key < pivot._key)
 			udtPushBack(&left, top);
 		else
 			udtPushBack(&right, top);

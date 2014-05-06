@@ -4,7 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef int UDT_TYPE;
+typedef struct _Item
+{
+	float _key;
+	char _str[31];
+} Item;
+
+typedef Item UDT_TYPE;
 
 typedef struct _Udt
 {

@@ -28,10 +28,13 @@ int main(void)
 			{
 				printf("Введите позицию элемента: ");
 				scanf("%d", &pos);
-				printf("Введите значение элемента: ");
+				printf("Введите значение элемента (1 - true, 0 - false): ");
 				scanf("%d", &arg);
 
-				listInsert(&list, pos - 1, arg);
+				if (arg != 0 && arg != 1)
+					printf("Ошибка. Введено недопустимое значение\n");
+				else
+					listInsert(&list, pos - 1, arg);
 			}
 			break;
 
@@ -64,29 +67,34 @@ int main(void)
 				printf("Введите значение: ");
 				scanf("%d", &arg);
 				
-				it = itFirst(&list);
-
-				isFound = 0;
-
-				for (i = 0; i < listSize(&list); i++)
+				if (arg != 0 && arg != 1)
+					printf("Ошибка. Введено недопустимое значение\n");
+				else
 				{
-					if (itFetch(&it) == arg)
+					it = itFirst(&list);
+
+					isFound = 0;
+
+					for (i = 0; i < listSize(&list); i++)
 					{
-						while (!listEmpty(&list))
-							listRemove(&list, 0);
+						if (itFetch(&it) == arg)
+						{
+							while (!listEmpty(&list))
+								listRemove(&list, 0);
 
-						isFound = 1;
+							isFound = 1;
 
-						break;
+							break;
+						}
+
+						itNext(&it);
 					}
 
-					itNext(&it);
+					if (isFound)
+						printf("Список был очищен, так как в нем было найдено введенное значение\n");
+					else
+						printf("Список не был очищен, так как в нем не найдено введенное значение\n");
 				}
-
-				if (isFound)
-					printf("Список был очищен, так как в нем было найдено введенное значение\n");
-				else
-					printf("Список не был очищен, так как в нем не найдено введенное значение\n");
 			}
 			break;
 

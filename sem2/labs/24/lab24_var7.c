@@ -16,6 +16,7 @@ Node *treeCopy(Node **node);
 Node *treeMakeMinus(Node **node);
 Node *treeMakeSumOfNodes(Node **node, int cnt);
 int treeIsMinusNode(Node **node);
+int treeIsMinusNodeNum(Node **node);
 void treeBuild(Node **node, Stack *st);
 void treeDestroy(Node **node);
 void treeMulReduce(Node **node);
@@ -206,7 +207,18 @@ int treeIsMinusNode(Node **node)
 	if ((*node)->_left == NULL || (*node)->_right == NULL)
 		return 0;
 
-	if ((*node)->_left->_varOp == '\0' && (*node)->_left->_num == 0.0 && (*node)->_right->_varOp == '\0' && fmod((*node)->_right->_num, 1.0) == 0.0)
+	return ((*node)->_varOp == '-' && (*node)->_left->_varOp == '\0' && (*node)->_left->_num == 0.0);
+}
+
+int treeIsMinusNodeNum(Node **node)
+{
+	if (*node == NULL)
+		return 0;
+
+	if ((*node)->_left == NULL || (*node)->_right == NULL)
+		return 0;
+
+	if (treeIsMinusNode(node) && (*node)->_right->_varOp == '\0' && fmod((*node)->_right->_num, 1.0) == 0.0)
 		return 1;
 
 	return 0;
@@ -280,21 +292,21 @@ void treeMulReduce(Node **node)
 			cnt = (int)cntNode->_num;
 		}
 		
-		if (treeIsMinusNode(&(*node)->_left))
+		if (treeIsMinusNodeNum(&(*node)->_left))
 		{
 			cntNode = (*node)->_left;
 			redNode = (*node)->_right;
 			cnt = (int)abs(cntNode->_right->_num);
 		}
 		
-		if (treeIsMinusNode(&(*node)->_right))
+		if (treeIsMinusNodeNum(&(*node)->_right))
 		{
 			cntNode = (*node)->_right;
 			redNode = (*node)->_left;
 			cnt = (int)abs(cntNode->_right->_num);
 		}
 
-		if (treeIsMinusNode(&cntNode))
+		if (treeIsMinusNodeNum(&cntNode))
 			redNode = treeMakeMinus(&redNode);
 	}
 	
@@ -340,7 +352,7 @@ void LKP(Node **node)
 	if (*node == NULL)
 		return;
 
-	if ((*node)->_left != NULL)
+	if ((*node)->_left != NULL && !treeIsMinusNode(node))
 	{
 		if ((*node)->_left->_left != NULL)
 			printf("(");

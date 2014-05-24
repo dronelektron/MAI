@@ -202,10 +202,10 @@ void scramble(Row *arr, const int size)
 
 void reverse(Row *arr, const int size)
 {
-	int i;
+	int i, j;
 
-	for (i = 0; i < (size - 1) / 2; i++)
-		swapRows(&arr[i], &arr[size - i - 1]);
+	for (i = 0, j = size - 1; i < j; i++, j--)
+		swapRows(&arr[i], &arr[j]);
 }
 
 void getRow(FILE *stream, char *str, const int size)

@@ -17,6 +17,9 @@ void udtSort(Udt *udt)
 	Udt third;
 	Udt tmp;
 
+	if (size <= 1)
+		return;
+
 	udtCreate(&second, size);
 	udtCreate(&third, size);
 	udtCreate(&tmp, size);
@@ -32,6 +35,7 @@ void udtSort(Udt *udt)
 		{
 			max = udtFront(udt);
 
+			udtPop(udt);
 			udtPush(&second, max);
 		}
 		else

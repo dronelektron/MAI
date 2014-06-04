@@ -3,38 +3,30 @@
 #include <string.h>
 #include <time.h>
 
-typedef struct _Key
-{
-	char _first[5];
-	int _second;
-} Key;
-
 typedef struct _Row
 {
-	Key _key;
+	double _key;
 	char _str[81];
 } Row;
 
 void printTable(const Row *arr, const int size);
-int binSearch(const Row *arr, const int size, const Key *key);
+int binSearch(const Row *arr, const int size, const double key);
 void sort(Row *arr, const int size);
 void scramble(Row *arr, const int size);
 void reverse(Row *arr, const int size);
 
-void getRow(FILE *stream, char *str, const int size);
 void swapRows(Row *r1, Row *r2);
-int comparator(const Key *k1, const Key *k2);
-int isEqualKeys(const Key *k1, const Key *k2);
 int randomAB(const int a, const int b);
 int isSorted(const Row *a, const int size);
+void getRow(FILE *stream, char *str, const int size);
 
 int main(void)
 {
 	const int N = 50;
 	int i, cnt, action;
+	double key;
 	char ch;
 	Row arr[N];
-	Key key;
 	FILE *file = fopen("input.txt", "r");
 
 	if (file == NULL)
@@ -46,7 +38,7 @@ int main(void)
 
 	i = 0;
 
-	while (i < N && fscanf(file, "%s %d", arr[i]._key._first, &arr[i]._key._second) == 2)
+	while (i < N && fscanf(file, "%lf", &arr[i]._key) == 1)
 	{
 		fscanf(file, "%c", &ch);
 		getRow(file, arr[i]._str, sizeof(arr[i]._str));
@@ -75,8 +67,9 @@ int main(void)
 			case 1:
 			{
 				printTable(arr, cnt);
+
+				break;
 			}
-			break;
 
 			case 2:
 			{
@@ -85,43 +78,48 @@ int main(void)
 				else
 				{
 					printf("Введите ключ: ");
-					scanf("%s %d", key._first, &key._second);
+					scanf("%lf", &key);
 
-					i = binSearch(arr, cnt, &key);
+					i = binSearch(arr, cnt, key);
 
 					if (i > -1)
 						printf("Найдена строка: %s\n", arr[i]._str);
 					else
 						printf("Строка с таким ключом не найдена\n");
 				}
+
+				break;
 			}
-			break;
 
 			case 3:
 			{
 				sort(arr, cnt);
+
+				break;
 			}
-			break;
 
 			case 4:
 			{
 				scramble(arr, cnt);
+
+				break;
 			}
-			break;
 
 			case 5:
 			{
 				reverse(arr, cnt);
+
+				break;
 			}
-			break;
 
 			case 6: break;
 
 			default:
 			{
 				printf("Ошибка. Такого пункта меню не существует\n");
+
+				break;
 			}
-			break;
 		}
 	}
 	while (action != 6);
@@ -138,12 +136,12 @@ void printTable(const Row *a, const int size)
 	printf("+---------+------------------------------------------------+\n");
 
 	for (i = 0; i < size; i++)
-		printf("|%4s %4d|%48s|\n", a[i]._key._first, a[i]._key._second, a[i]._str);
+		printf("|%9.2lf|%48s|\n", a[i]._key, a[i]._str);
 
 	printf("+---------+------------------------------------------------+\n");
 }
 
-int binSearch(const Row *arr, const int size, const Key *key)
+int binSearch(const Row *arr, const int size, const double key)
 {
 	int start = 0, end = size - 1, mid;
 
@@ -154,15 +152,15 @@ int binSearch(const Row *arr, const int size, const Key *key)
 	{
 		mid = start + (end - start) / 2;
 
-		if (isEqualKeys(&arr[mid]._key, key))
+		if (arr[mid]._key == key)
 			return mid;
-		else if (comparator(&arr[mid]._key, key))
+		else if (arr[mid]._key < key)
 			start = mid + 1;
 		else
 			end = mid;
 	}
 
-	if (isEqualKeys(&arr[end]._key, key))
+	if (arr[end]._key == key)
 		return end;
 
 	return -1;
@@ -170,18 +168,18 @@ int binSearch(const Row *arr, const int size, const Key *key)
 
 void sort(Row *arr, const int size)
 {
-	int i, j, min;
-	Row tmp;
-
-	for (i = 0; i < size - 1; i++)
+	int i, j;
+	
+	for (i = 1; i < size; i++)
 	{
-		min = i;
+		j = i;
 
-		for (j = i + 1; j < size; j++)
-			if (!comparator(&arr[min]._key, &arr[j]._key))
-				min = j;
+		while (j > 0 && arr[j]._key < arr[j - 1]._key)
+		{
+			swapRows(&arr[j], &arr[j - 1]);
 
-		swapRows(&arr[i], &arr[min]);
+			j--;
+		}
 	}
 }
 
@@ -208,16 +206,6 @@ void reverse(Row *arr, const int size)
 		swapRows(&arr[i], &arr[j]);
 }
 
-void getRow(FILE *stream, char *str, const int size)
-{
-	int cnt = 0, ch;
-
-	while ((ch = getc(stream)) != '\n' && cnt < size - 1)
-		str[cnt++] = ch;
-
-	str[cnt] = '\0';
-}
-
 void swapRows(Row *r1, Row *r2)
 {
 	Row tmp;
@@ -225,19 +213,6 @@ void swapRows(Row *r1, Row *r2)
 	tmp = *r1;
 	*r1 = *r2;
 	*r2 = tmp;
-}
-
-int comparator(const Key *k1, const Key *k2)
-{
-	if (strcmp(k1->_first, k2->_first) == 0)
-		return k1->_second <= k2->_second;
-
-	return strcmp(k1->_first, k2->_first) <= 0;
-}
-
-int isEqualKeys(const Key *k1, const Key *k2)
-{
-	return strcmp(k1->_first, k2->_first) == 0 && k1->_second == k2->_second;
 }
 
 int randomAB(const int a, const int b)
@@ -250,8 +225,18 @@ int isSorted(const Row *a, const int size)
 	int i;
 
 	for (i = 0; i < size - 1; i++)
-		if (!comparator(&a[i]._key, &a[i + 1]._key))
+		if (a[i]._key > a[i + 1]._key)
 			return 0;
 
 	return 1;
+}
+
+void getRow(FILE *stream, char *str, const int size)
+{
+	int cnt = 0, ch;
+
+	while ((ch = getc(stream)) != '\n' && cnt < size - 1)
+		str[cnt++] = ch;
+
+	str[cnt] = '\0';
 }

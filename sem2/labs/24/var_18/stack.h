@@ -6,12 +6,14 @@
 typedef struct _Token
 {
 	char _varOp;
-	double _num;
+	int _num;
 } Token;
+
+typedef Token STACK_TYPE;
 
 typedef struct _ItemStack
 {
-	Token _data;
+	STACK_TYPE _data;
 	struct _ItemStack *_prev;
 } ItemStack;
 
@@ -24,9 +26,9 @@ typedef struct _Stack
 void stackCreate(Stack *s);
 int stackEmpty(const Stack *s);
 int stackSize(const Stack *s);
-int stackPush(Stack *s, const Token token);
+int stackPush(Stack *s, const STACK_TYPE value);
 int stackPop(Stack *s);
-Token stackTop(const Stack *s);
+STACK_TYPE stackTop(const Stack *s);
 void stackDestroy(Stack *s);
 
 #endif

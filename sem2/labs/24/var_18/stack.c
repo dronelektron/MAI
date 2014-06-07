@@ -16,14 +16,14 @@ int stackSize(const Stack *s)
 	return s->_size;
 }
 
-int stackPush(Stack *s, const Token token)
+int stackPush(Stack *s, const STACK_TYPE value)
 {
 	ItemStack *item = (ItemStack *)malloc(sizeof(ItemStack));
 
 	if (!item)
 		return 0;
 
-	item->_data = token;
+	item->_data = value;
 	item->_prev = s->_top;
 	s->_top = item;
 	s->_size++;
@@ -47,7 +47,7 @@ int stackPop(Stack *s)
 	return 1;
 }
 
-Token stackTop(const Stack *s)
+STACK_TYPE stackTop(const Stack *s)
 {
 	return s->_top->_data;
 }

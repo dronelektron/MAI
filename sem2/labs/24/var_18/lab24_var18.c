@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
 #include "stack.h"
 
 typedef struct _Node
 {
 	char _varOp;
-	double _num;
+	int _num;
 	struct _Node *_left;
 	struct _Node *_right;
 } Node;
@@ -14,12 +13,12 @@ typedef struct _Node
 Node *treeNodeCreate(void);
 Node *treeCopy(Node **node);
 Node *treeMakeMinus(Node **node);
-Node *treeMakeSumOfNodes(Node **node, int cnt);
+Node *treeMakeNotMinus(Node **node);
 int treeIsMinusNode(Node **node);
-int treeIsMinusNodeNum(Node **node);
 void treeBuild(Node **node, Stack *st);
 void treeDestroy(Node **node);
-void treeMulReduce(Node **node);
+void treeMoveMinus(Node **node);
+void treeCountMinus(Node **node, int *cnt);
 void PKL(Node **node, const int level);
 void LKP(Node **node);
 
@@ -31,11 +30,10 @@ void postOrder(const char *str, Stack *st);
 
 int main(void)
 {
-	int i, action;
+	int action;
 	char expr[255];
 	Node *root = NULL, *root2 = NULL;
 	Stack stPost;
-	Token tkPost;
 
 	while (1)
 	{
@@ -65,7 +63,7 @@ int main(void)
 				
 				root2 = treeCopy(&root);
 				
-				treeMulReduce(&root2);
+				treeMoveMinus(&root2);
 
 				break;
 			}
@@ -136,7 +134,7 @@ Node *treeNodeCreate(void)
 	Node *tmpNode = (Node *)malloc(sizeof(Node));
 
 	tmpNode->_varOp = '\0';
-	tmpNode->_num = 0.0;
+	tmpNode->_num = 0;
 	tmpNode->_left = NULL;
 	tmpNode->_right = NULL;
 
@@ -175,26 +173,11 @@ Node *treeMakeMinus(Node **node)
 	return tmpNode;
 }
 
-Node *treeMakeSumOfNodes(Node **node, int cnt)
+Node *treeMakeNotMinus(Node **node)
 {
-	Node *tmpNode = NULL;
+	Node *tmpNode = treeCopy(&(*node)->_right);
 
-	if (cnt <= 0)
-		return NULL;
-
-	if (cnt == 1)
-		tmpNode = treeCopy(node);
-	else
-	{
-		tmpNode = treeNodeCreate();
-		tmpNode->_varOp = '+';
-		tmpNode->_right = treeCopy(node);
-		tmpNode->_left = treeMakeSumOfNodes(node, --cnt);
-	}
-
-	free(*node);
-
-	*node = NULL;
+	treeDestroy(node);
 
 	return tmpNode;
 }
@@ -207,21 +190,7 @@ int treeIsMinusNode(Node **node)
 	if ((*node)->_left == NULL || (*node)->_right == NULL)
 		return 0;
 
-	return ((*node)->_varOp == '-' && (*node)->_left->_varOp == '\0' && (*node)->_left->_num == 0.0);
-}
-
-int treeIsMinusNodeNum(Node **node)
-{
-	if (*node == NULL)
-		return 0;
-
-	if ((*node)->_left == NULL || (*node)->_right == NULL)
-		return 0;
-
-	if (treeIsMinusNode(node) && (*node)->_right->_varOp == '\0' && fmod((*node)->_right->_num, 1.0) == 0.0)
-		return 1;
-
-	return 0;
+	return ((*node)->_varOp == '-' && (*node)->_left->_varOp == '\0' && (*node)->_left->_num == 0);
 }
 
 void treeBuild(Node **node, Stack *st)
@@ -262,71 +231,46 @@ void treeDestroy(Node **node)
 	*node = NULL;
 }
 
-void treeMulReduce(Node **node)
+void treeMoveMinus(Node **node)
 {
-	int cnt = 0;
-	Node *redNode = NULL, *cntNode = NULL;
+	int minusCnt = 0;
 
 	if (*node == NULL)
 		return;
 
-	if ((*node)->_left == NULL || (*node)->_right == NULL)
-		return;
-
-	if (!isOp((*node)->_varOp))
-		return;
-
-	if ((*node)->_varOp == '*')
+	if ((*node)->_varOp == '*' || (*node)->_varOp == '/')
 	{
-		if ((*node)->_left->_varOp == '\0' && fmod((*node)->_left->_num, 1.0) == 0.0)
-		{
-			cntNode = (*node)->_left;
-			redNode = (*node)->_right;
-			cnt = (int)cntNode->_num;
-		}
-		
-		if ((*node)->_right->_varOp == '\0' && fmod((*node)->_right->_num, 1.0) == 0.0)
-		{
-			cntNode = (*node)->_right;
-			redNode = (*node)->_left;
-			cnt = (int)cntNode->_num;
-		}
-		
-		if (treeIsMinusNodeNum(&(*node)->_left))
-		{
-			cntNode = (*node)->_left;
-			redNode = (*node)->_right;
-			cnt = (int)abs(cntNode->_right->_num);
-		}
-		
-		if (treeIsMinusNodeNum(&(*node)->_right))
-		{
-			cntNode = (*node)->_right;
-			redNode = (*node)->_left;
-			cnt = (int)abs(cntNode->_right->_num);
-		}
+		treeCountMinus(node, &minusCnt);
 
-		if (treeIsMinusNodeNum(&cntNode))
-			redNode = treeMakeMinus(&redNode);
+		if (minusCnt & 1)
+			*node = treeMakeMinus(node);
 	}
-	
-	if (redNode != NULL)
+	else if (isOp((*node)->_varOp))
 	{
-		free(*node);
+		treeMoveMinus(&(*node)->_left);
+		treeMoveMinus(&(*node)->_right);
+	}
+}
 
-		*node = treeMakeSumOfNodes(&redNode, cnt);
+void treeCountMinus(Node **node, int *cnt)
+{
+	if (*node == NULL)
+		return;
 
-		treeDestroy(&cntNode);
-
-		treeMulReduce(node);
+	if (treeIsMinusNode(node))
+	{
+		*node = treeMakeNotMinus(node);
+		(*cnt)++;
+	}
+	else if ((*node)->_varOp == '*' || (*node)->_varOp == '/')
+	{
+		treeCountMinus(&(*node)->_left, cnt);
+		treeCountMinus(&(*node)->_right, cnt);
 	}
 	else
 	{
-		if (isOp((*node)->_left->_varOp))
-			treeMulReduce(&(*node)->_left);
-
-		if (isOp((*node)->_right->_varOp))
-			treeMulReduce(&(*node)->_right);
+		treeMoveMinus(&(*node)->_left);
+		treeMoveMinus(&(*node)->_right);
 	}
 }
 
@@ -341,7 +285,7 @@ void PKL(Node **node, const int level)
 	if ((*node)->_varOp != '\0')
 		printf("%*s%c\n", level * 4, "", (*node)->_varOp);
 	else
-		printf("%*s%f\n", level * 4, "", (*node)->_num);
+		printf("%*s%d\n", level * 4, "", (*node)->_num);
 
 	if ((*node)->_left != NULL)
 		PKL(&(*node)->_left, level + 1);
@@ -366,7 +310,7 @@ void LKP(Node **node)
 	if ((*node)->_varOp != '\0')
 		printf("%c", (*node)->_varOp);
 	else
-		printf("%f", (*node)->_num);
+		printf("%d", (*node)->_num);
 
 	if ((*node)->_right != NULL)
 	{
@@ -422,7 +366,7 @@ int isOpHigh(const char op1, const char op2)
 
 void postOrder(const char *str, Stack *st)
 {
-	int i = 0, step = -1, isBracket = 0, isDot = 0;
+	int i = 0, isBracket = 0;
 	char tmpCh;
 	Token tk;
 	Stack stOp;
@@ -430,13 +374,11 @@ void postOrder(const char *str, Stack *st)
 	stackCreate(&stOp);
 
 	tk._varOp = '\0';
-	tk._num = 0.0;
+	tk._num = 0;
 
 	while (str[i] != '\0')
 	{
-		if (str[i] == '.')
-			isDot = 1;
-		else if (isLetter(str[i]))
+		if (isLetter(str[i]))
 		{
 			tk._varOp = str[i];
 
@@ -445,22 +387,13 @@ void postOrder(const char *str, Stack *st)
 		else if (isNumber(str[i]))
 		{
 			tk._varOp = '\0';
-
-			if (!isDot)
-				tk._num = tk._num * 10.0 + str[i] - '0';
-			else
-			{
-				tk._num = tk._num + pow(10.0, step) * (str[i] - '0');
-				step--;
-			}
+			tk._num = tk._num * 10 + str[i] - '0';
 
 			if (str[i + 1] != '.' && !isNumber(str[i + 1]))
 			{
 				stackPush(st, tk);
 
-				tk._num = 0.0;
-				step = -1;
-				isDot = 0;
+				tk._num = 0;
 			}
 		}
 		else if (isOp(str[i]))
@@ -473,7 +406,7 @@ void postOrder(const char *str, Stack *st)
 			{
 				tmpCh = tk._varOp;
 				tk._varOp = '\0';
-				tk._num = 0.0;
+				tk._num = 0;
 
 				stackPush(st, tk);
 

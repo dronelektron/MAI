@@ -1,47 +1,32 @@
-10                     `=e    +e:                    
-11                   :e+        `ee`                 
-12                 `ee            .eo                
-13                +e*               ee               
-14               =ee                `ee`             
-15              ;ee                  ;ee             
-16             ^ee+                   eee            
-17             eee                    ;ee+           
-18            :eee                     eee           
-19            eeei                     eee+          
-20           `eee;                     eeee          
-21           =eee;                     eeee          
-22           eeee=         ^.`         eeee-         
-23           eeeee     :eeeeeeee*^     eeee=         
-24           eeeee   +eeeeeeeeeeeee`  _eeeeo         
-25           eeeee_ eeeeeeeeeeeeeeee= eeeeeo         
-26           eeeeee oeeee+^   -*eeee`-eeeeei         
-27           eeeeeeo ee~         oe; eeeeee;         
-28         *eeeeeeee+             ` eeeeeeeee.       
-29       _eeeeeeeeeee=             eeeeeeeeeee*      
-30      oeeeeeeeeeeeeee`         ;eeeeeeeeeeeeee     
-31     oeeeeeeeeeeeeeeeee+.  `-oeeeeeeeeeeeeeeeee    
-32    =eeeeeeeeeeeeeeeeeeeee eeeeeeeeeeeeeeeeeeeee   
-33   ^eeeee*~    -*eeeeeeee. :eeeeeeeei.   ^=eeeee*  
-34   eeee=    ~e*:  ieeeee    `eeeee-  ;*e    .eeee^ 
-35  ~eee`     :eee   `eee.     eee*   ;eee      *eee 
-36  eee       +eee     ee      ieo    ;eee       oee`
-37  ee^       :eee     ^e      =e     +eee        eei
-38 ~eo        .eee       -    :       *eee         ee
-39 =e          eee;      ee*=eeo      eee*         oe
-40 e*          eeee      *eeeee      .eee_          e
-41 e_          ;eee-     -eeeee      eeee           e
-42 e`           eeee      eeeee     +eeei           e
-43 *            ;eeee     eeeeo    -eeee            *
-44 +             eeeee    eeeeo   ;eeee-            *
-45 ^`             eeeee=  eeeee ^eeeee=             e
-46  :              eeeee-_eeeee eeeee+              =
-47  +               *eee eeeeee ieee-                
-48                   .eo eeeeeeo eo                  
-49                      oeeeeeee                     
-50                     .eeeeeeeee                    
-51    .^              `eeeeeeeeeei               *   
-52     __            ~eeeeeeeeeeee*             e    
-53      -e`         *eeeeeeeeeeeeeee~         -e     
-54        ee=~``.+eeeeeeeee^ *eeeeeeeei~  `-oe=      
-55         -eeeeeeeeeeeee;    ^eeeeeeeeeeeeee        
-56           `ieeeeeeeo~        `=eeeeeeee:          
+10                        #,                      
+11                       ###                      
+12                      ## ##                     
+13                     ##  ##                     
+14                      ####                      
+15                        :                       
+16                       #####                    
+17                      ######                    
+18                      ##  ##                    
+19                      ##  ##                    
+20                      ##  ##                    
+21                      ##  ##########            
+22                      ##  #############         
+23                 #######  ###############       
+24             #############################      
+25       .###################################     
+26      #####################################;    
+27      ##                                 ##.    
+28      ##                                 ##     
+29      #####################################     
+30      ##                                 ##     
+31      ##                                 ##     
+32      ##                                 ###    
+33   #####                                 #####  
+34  ### ##################################### ### 
+35 ###  ##                                 ##  ###
+36 ##   ## ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, ##   ##
+37  ##  #####################################  ## 
+38   ##                                       ##  
+39    ####                                 ####   
+40      ######                         ######     
+41         ###############################        

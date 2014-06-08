@@ -4,7 +4,7 @@
 int main(void)
 {
 	const int N = 10;
-	int i, isFound, action, pos, arg;
+	int i, isFound, action, pos, arg, cnt;
 	List list;
 	Iterator it;
 
@@ -72,17 +72,14 @@ int main(void)
 					printf("Ошибка. Введено недопустимое значение\n");
 				else
 				{
-					it = itFirst(&list);
-
 					isFound = 0;
 
-					for (i = 0; i < listSize(&list); i++)
+					it = itFirst(&list);
+
+					while (it._index != END)
 					{
 						if (itFetch(&it) == arg)
 						{
-							while (!listEmpty(&list))
-								listRemove(&list, 0);
-
 							isFound = 1;
 
 							break;
@@ -92,9 +89,32 @@ int main(void)
 					}
 
 					if (isFound)
-						printf("Список был очищен, так как в нем было найдено введенное значение\n");
+					{
+						cnt = 0;
+						it = itFirst(&list);
+
+						while (it._index != END)
+						{
+							if (itFetch(&it) != arg)
+							{
+								listRemove(&list, cnt);
+
+								it = itFirst(&list);
+								cnt = 0;
+								isFound = 1;
+							}
+							else
+							{
+								itNext(&it);
+
+								cnt++;
+							}
+						}
+
+						printf("Из списка были удалены все элементы, предшествующие и последующие заданному значению\n");
+					}
 					else
-						printf("Список не был очищен, так как в нем не найдено введенное значение\n");
+						printf("Элемент не найден\n");
 				}
 
 				break;

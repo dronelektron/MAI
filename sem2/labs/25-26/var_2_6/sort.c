@@ -11,18 +11,18 @@ void udtSwap(Udt *udt1, Udt *udt2)
 
 void udtSort(Udt *udt)
 {
-	const int size = udtSize(udt);
+	const int cap = udtCapacity(udt);
 	UDT_TYPE max;
 	Udt second;
 	Udt third;
 	Udt tmp;
 
-	if (size <= 1)
+	if (cap < 2)
 		return;
 
-	udtCreate(&second, size);
-	udtCreate(&third, size);
-	udtCreate(&tmp, size);
+	udtCreate(&second, cap);
+	udtCreate(&third, cap);
+	udtCreate(&tmp, cap);
 
 	max = udtFront(udt);
 

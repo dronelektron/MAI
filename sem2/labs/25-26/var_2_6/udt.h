@@ -22,6 +22,7 @@ typedef struct _Udt
 
 void udtCreate(Udt *udt, const int size);
 int udtSize(const Udt *udt);
+int udtCapacity(const Udt *udt);
 int udtEmpty(const Udt *udt);
 int udtPush(Udt *udt, const UDT_TYPE value);
 UDT_TYPE udtFront(const Udt *udt);

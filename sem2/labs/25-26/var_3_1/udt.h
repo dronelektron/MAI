@@ -29,6 +29,7 @@ void udtPopBack(Udt *udt);
 UDT_TYPE udtTopFront(const Udt *udt);
 UDT_TYPE udtTopBack(const Udt *udt);
 int udtSize(const Udt *udt);
+int udtCapacity(const Udt *udt);
 int udtEmpty(const Udt *udt);
 void udtPrint(Udt *udt);
 void udtDestroy(Udt *udt);

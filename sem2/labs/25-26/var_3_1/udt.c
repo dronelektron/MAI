@@ -97,6 +97,11 @@ int udtSize(const Udt *udt)
 	return udt->_size;
 }
 
+int udtCapacity(const Udt *udt)
+{
+	return udt->_capacity;
+}
+
 int udtEmpty(const Udt *udt)
 {
 	return udt->_size == 0;

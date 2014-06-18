@@ -11,15 +11,15 @@ void udtSwap(Udt *udt1, Udt *udt2)
 
 void udtSelectionSort(Udt *udt)
 {
-	const int size = udtSize(udt);
+	const int cap = udtCapacity(udt);
 	Udt sorted, tmp;
 	UDT_TYPE item;
 
-	if (size < 2)
+	if (cap < 2)
 		return;
 
-	udtCreate(&sorted, size);
-	udtCreate(&tmp, size);
+	udtCreate(&sorted, cap);
+	udtCreate(&tmp, cap);
 
 	while (!udtEmpty(udt))
 	{

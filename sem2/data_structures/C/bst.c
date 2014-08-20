@@ -32,7 +32,7 @@ BstNode *bstFind(BstNode **node, const BST_TYPE key)
 
 void bstRemove(BstNode **node, const BST_TYPE key)
 {
-	BstNode *tmpNode = NULL;
+	BstNode **tmpNode = NULL;
 
 	if (*node == NULL)
 		return;
@@ -51,28 +51,28 @@ void bstRemove(BstNode **node, const BST_TYPE key)
 		}
 		else if ((*node)->left != NULL && (*node)->right == NULL)
 		{
-			tmpNode = (*node)->left;
-			**node = *tmpNode;
+			tmpNode = &(*node)->left;
+			**node = **tmpNode;
 
-			free(tmpNode);
+			free(*tmpNode);
 		}
 		else if ((*node)->left == NULL && (*node)->right != NULL)
 		{
-			tmpNode = (*node)->right;
-			**node = *tmpNode;
+			tmpNode = &(*node)->right;
+			**node = **tmpNode;
 
-			free(tmpNode);
+			free(*tmpNode);
 		}
 		else
 		{
-			tmpNode = (*node)->left;
+			tmpNode = &(*node)->left;
 
-			while (tmpNode->right != NULL)
-				tmpNode = tmpNode->right;
+			while ((*tmpNode)->right != NULL)
+				tmpNode = &(*tmpNode)->right;
 
-			(*node)->key = tmpNode->key;
+			(*node)->key = (*tmpNode)->key;
 
-			bstRemove(&(*node)->left, tmpNode->key);
+			bstRemove(tmpNode, (*tmpNode)->key);
 		}
 	}
 }

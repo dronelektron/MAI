@@ -17,10 +17,13 @@ namespace ds
 			size_t size() const;
 
 			T& operator[](size_t i);
+			Vector& operator=(const Vector& v);
 
 		private:
 			T* _begin;
 			size_t _size;
+
+			void _copy(const Vector& v);
 	};
 }
 
@@ -34,20 +37,7 @@ ds::Vector<T>::Vector()
 template<class T>
 ds::Vector<T>::Vector(const Vector& v)
 {
-	if (this != &v)
-	{
-		const size_t n = v.size();
-
-		if (n > 0)
-		{
-			_begin = new T[n];
-
-			for (size_t i = 0; i < n; i++)
-				_begin[i] = v._begin[i];
-		}
-
-		_size = v._size;
-	}
+	_copy(v);
 }
 
 template<class T>
@@ -113,6 +103,35 @@ template<class T>
 T& ds::Vector<T>::operator[](size_t i)
 {
 	return _begin[i];
+}
+
+template<class T>
+ds::Vector<T>& ds::Vector<T>::operator=(const Vector& v)
+{
+	_copy(v);
+
+	return *this;
+}
+
+template<class T>
+void ds::Vector<T>::_copy(const Vector& v)
+{
+	if (this != &v)
+	{
+		const size_t n = v.size();
+
+		_begin = nullptr;
+
+		if (n > 0)
+		{
+			_begin = new T[n];
+
+			for (size_t i = 0; i < n; i++)
+				_begin[i] = v._begin[i];
+		}
+
+		_size = v._size;
+	}
 }
 
 #endif

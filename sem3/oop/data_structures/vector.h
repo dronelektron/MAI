@@ -6,24 +6,24 @@ namespace ds
 	template<class T>
 	class Vector
 	{
-		public:
-			explicit Vector();
-			explicit Vector(const Vector& v);
-			Vector(size_t n, T val = T());
-			~Vector();
+	public:
+		explicit Vector();
+		explicit Vector(const Vector& v);
+		Vector(size_t n, T val = T());
+		~Vector();
 
-			void push_back(T val);
-			void resize(size_t n, T val = T());
-			size_t size() const;
+		void push_back(T val);
+		void resize(size_t n, T val = T());
+		size_t size() const;
 
-			T& operator[](size_t i);
-			Vector& operator=(const Vector& v);
+		T& operator[](size_t i);
+		Vector& operator=(const Vector& v);
 
-		private:
-			T* _begin;
-			size_t _size;
+	private:
+		T* _begin;
+		size_t _size;
 
-			void _copy(const Vector& v);
+		void _copy(const Vector& v);
 	};
 }
 
@@ -119,6 +119,9 @@ void ds::Vector<T>::_copy(const Vector& v)
 	if (this != &v)
 	{
 		const size_t n = v.size();
+
+		if (_begin != nullptr)
+			delete [] _begin;
 
 		_begin = nullptr;
 

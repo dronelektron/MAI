@@ -15,6 +15,7 @@ namespace ds
 		};
 
 		Bst();
+		Bst(const Bst& bst);
 		~Bst();
 		
 		BstNode* insert(const T& key);
@@ -23,12 +24,15 @@ namespace ds
 		void clear();
 		size_t size() const;
 		bool empty() const;
-		
+
+		Bst& operator=(const Bst& bst);
+
 	private:
 		BstNode* _root;
 		size_t _size;
 
 		void _clear(BstNode** node);
+		BstNode* _copy(BstNode** node);
 	};
 }
 
@@ -37,6 +41,15 @@ ds::Bst<T>::Bst()
 {
 	_root = nullptr;
 	_size = 0;
+}
+
+template<class T>
+ds::Bst<T>::Bst(const Bst& bst)
+{
+	BstNode* tmpRoot = bst._root;
+
+	_root = _copy(&tmpRoot);
+	_size = bst.size();
 }
 
 template<class T>
@@ -190,6 +203,17 @@ bool ds::Bst<T>::empty() const
 }
 
 template<class T>
+ds::Bst<T>& ds::Bst<T>::operator=(const Bst& bst)
+{
+	BstNode* tmpRoot = bst._root;
+
+	_root = _copy(&tmpRoot);
+	_size = bst.size();
+
+	return *this;
+}
+
+template<class T>
 void ds::Bst<T>::_clear(BstNode** node)
 {
 	if (*node == nullptr)
@@ -197,10 +221,24 @@ void ds::Bst<T>::_clear(BstNode** node)
 
 	_clear(&(*node)->left);
 	_clear(&(*node)->right);
-
+	
 	delete *node;
 
 	*node = nullptr;
+}
+
+template<class T>
+typename ds::Bst<T>::BstNode* ds::Bst<T>::_copy(BstNode** node)
+{
+	if (*node == nullptr)
+		return nullptr;
+
+	BstNode* tmpNode = new BstNode;
+	tmpNode->key = (*node)->key;
+	tmpNode->left = _copy(&(*node)->left);
+	tmpNode->right = _copy(&(*node)->right);
+
+	return tmpNode;
 }
 
 #endif

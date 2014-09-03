@@ -46,10 +46,16 @@ ds::Bst<T>::Bst()
 template<class T>
 ds::Bst<T>::Bst(const Bst& bst)
 {
-	BstNode* tmpRoot = bst._root;
+	_root = nullptr;
+	_size = 0;
 
-	_root = _copy(&tmpRoot);
-	_size = bst.size();
+	if (this != &bst)
+	{
+		BstNode* tmpRoot = bst._root;
+
+		_root = _copy(&tmpRoot);
+		_size = bst._size;
+	}
 }
 
 template<class T>
@@ -205,10 +211,15 @@ bool ds::Bst<T>::empty() const
 template<class T>
 ds::Bst<T>& ds::Bst<T>::operator=(const Bst& bst)
 {
-	BstNode* tmpRoot = bst._root;
+	if (this != &bst)
+	{
+		_clear(&_root);
 
-	_root = _copy(&tmpRoot);
-	_size = bst.size();
+		BstNode* tmpRoot = bst._root;
+
+		_root = _copy(&tmpRoot);
+		_size = bst.size();
+	}
 
 	return *this;
 }
@@ -221,7 +232,7 @@ void ds::Bst<T>::_clear(BstNode** node)
 
 	_clear(&(*node)->left);
 	_clear(&(*node)->right);
-	
+
 	delete *node;
 
 	*node = nullptr;

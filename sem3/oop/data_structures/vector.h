@@ -12,8 +12,10 @@ namespace ds
 		Vector(size_t n, T val = T());
 		~Vector();
 
-		void push_back(T val);
+		void push_back(const T& val);
+		void erase(size_t index);
 		void resize(size_t n, T val = T());
+		void clear();
 		size_t size() const;
 		bool empty() const;
 
@@ -38,7 +40,11 @@ ds::Vector<T>::Vector()
 template<class T>
 ds::Vector<T>::Vector(const Vector& v)
 {
-	_copy(v);
+	_begin = nullptr;
+	_size = 0;
+
+	if (this != &v)
+		_copy(v);
 }
 
 template<class T>
@@ -60,16 +66,27 @@ ds::Vector<T>::Vector(size_t n, T val)
 template<class T>
 ds::Vector<T>::~Vector()
 {
-	if (_begin != nullptr)
-		delete [] _begin;
+	clear();
 }
 
 template<class T>
-void ds::Vector<T>::push_back(T val)
+void ds::Vector<T>::push_back(const T& val)
 {
 	resize(_size + 1);
 
 	_begin[_size - 1] = val;
+}
+
+template<class T>
+void ds::Vector<T>::erase(size_t index)
+{
+	if (index < 0 || index >= _size)
+		return;
+
+	for (size_t i = index; i < _size - 1; i++)
+		_begin[i] = _begin[i + 1];
+
+	resize(_size - 1);
 }
 
 template<class T>
@@ -95,6 +112,16 @@ void ds::Vector<T>::resize(size_t n, T val)
 }
 
 template<class T>
+void ds::Vector<T>::clear()
+{
+	if (_begin != nullptr)
+		delete [] _begin;
+
+	_begin = nullptr;
+	_size = 0;
+}
+
+template<class T>
 size_t ds::Vector<T>::size() const
 {
 	return _size;
@@ -115,7 +142,11 @@ T& ds::Vector<T>::operator[](size_t i)
 template<class T>
 ds::Vector<T>& ds::Vector<T>::operator=(const Vector& v)
 {
-	_copy(v);
+	if (this != &v)
+	{
+		clear();
+		_copy(v);
+	}
 
 	return *this;
 }
@@ -123,25 +154,17 @@ ds::Vector<T>& ds::Vector<T>::operator=(const Vector& v)
 template<class T>
 void ds::Vector<T>::_copy(const Vector& v)
 {
-	if (this != &v)
+	const size_t n = v.size();
+
+	if (n > 0)
 	{
-		const size_t n = v.size();
+		_begin = new T[n];
 
-		if (_begin != nullptr)
-			delete [] _begin;
-
-		_begin = nullptr;
-
-		if (n > 0)
-		{
-			_begin = new T[n];
-
-			for (size_t i = 0; i < n; i++)
-				_begin[i] = v._begin[i];
-		}
-
-		_size = v._size;
+		for (size_t i = 0; i < n; i++)
+			_begin[i] = v._begin[i];
 	}
+
+	_size = v._size;
 }
 
 #endif

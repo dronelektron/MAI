@@ -7,14 +7,15 @@ namespace ds
 	class Vector
 	{
 	public:
-		explicit Vector();
-		explicit Vector(const Vector& v);
+		Vector();
+		Vector(const Vector& v);
 		Vector(size_t n, T val = T());
 		~Vector();
 
 		void push_back(T val);
 		void resize(size_t n, T val = T());
 		size_t size() const;
+		bool empty() const;
 
 		T& operator[](size_t i);
 		Vector& operator=(const Vector& v);
@@ -97,6 +98,12 @@ template<class T>
 size_t ds::Vector<T>::size() const
 {
 	return _size;
+}
+
+template<class T>
+bool ds::Vector<T>::empty() const
+{
+	return _size == 0;
 }
 
 template<class T>

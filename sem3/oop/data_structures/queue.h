@@ -13,6 +13,21 @@ namespace ds
 			QueueItem* next;
 		};
 
+		class iterator
+		{
+		public:
+			iterator();
+			iterator(QueueItem* item);
+
+			iterator& operator++();
+			bool operator!=(const iterator& it);
+			T& operator*();
+			T* operator->();
+
+		private:
+			QueueItem* _cur;
+		};
+
 		Queue();
 		Queue(const Queue& q);
 		~Queue();
@@ -25,6 +40,9 @@ namespace ds
 		size_t empty() const;
 
 		Queue& operator=(const Queue& q);
+
+		iterator begin();
+		iterator end();
 
 	private:
 		QueueItem* _begin;
@@ -152,6 +170,56 @@ void ds::Queue<T>::_copy(const Queue& q)
 	}
 
 	_size = q._size;
+}
+
+template<class T>
+typename ds::Queue<T>::iterator ds::Queue<T>::begin()
+{
+	return iterator(_begin);
+}
+
+template<class T>
+typename ds::Queue<T>::iterator ds::Queue<T>::end()
+{
+	return iterator(_end);
+}
+
+template<class T>
+ds::Queue<T>::iterator::iterator()
+{
+	_cur = nullptr;
+}
+
+template<class T>
+ds::Queue<T>::iterator::iterator(QueueItem* item)
+{
+	_cur = item;
+}
+
+template<class T>
+typename ds::Queue<T>::iterator& ds::Queue<T>::iterator::operator++()
+{
+	_cur = _cur->next;
+
+	return *this;
+}
+
+template<class T>
+bool ds::Queue<T>::iterator::operator!=(const iterator& it)
+{
+	return _cur != it._cur;
+}
+
+template<class T>
+T& ds::Queue<T>::iterator::operator*()
+{
+	return _cur->data;
+}
+
+template<class T>
+T* ds::Queue<T>::iterator::operator->()
+{
+	return &_cur->data;
 }
 
 #endif

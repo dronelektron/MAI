@@ -9,12 +9,12 @@ namespace ds
 	public:
 		Vector();
 		Vector(const Vector& v);
-		Vector(size_t n, T val = T());
+		Vector(size_t n, const T& val = T());
 		~Vector();
 
 		void push_back(const T& val);
 		void erase(size_t index);
-		void resize(size_t n, T val = T());
+		void resize(size_t n, const T& val = T());
 		void clear();
 		size_t size() const;
 		bool empty() const;
@@ -48,7 +48,7 @@ ds::Vector<T>::Vector(const Vector& v)
 }
 
 template<class T>
-ds::Vector<T>::Vector(size_t n, T val)
+ds::Vector<T>::Vector(size_t n, const T& val)
 {
 	_begin = nullptr;
 
@@ -80,7 +80,7 @@ void ds::Vector<T>::push_back(const T& val)
 template<class T>
 void ds::Vector<T>::erase(size_t index)
 {
-	if (index < 0 || index >= _size)
+	if (index >= _size)
 		return;
 
 	for (size_t i = index; i < _size - 1; i++)
@@ -90,7 +90,7 @@ void ds::Vector<T>::erase(size_t index)
 }
 
 template<class T>
-void ds::Vector<T>::resize(size_t n, T val)
+void ds::Vector<T>::resize(size_t n, const T& val)
 {
 	const size_t copySize = n < _size ? n : _size;
 	T* _buffer = nullptr;

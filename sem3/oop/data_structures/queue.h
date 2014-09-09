@@ -57,6 +57,7 @@ template<class T>
 ds::Queue<T>::Queue()
 {
 	_begin = new QueueItem;
+	_begin->next = nullptr;
 	_end = _begin;
 	_size = 0;
 }

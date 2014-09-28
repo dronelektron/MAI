@@ -190,20 +190,22 @@ void addItem(Cont& cont, const Item& item)
 
 void deleteItem(Cont& cont, const Item& item)
 {
-	if (cont.empty())
-		return;
+	Cont q;
 
-	size_t n = cont.size();
-	size_t i = 0;
-
-	while (i < n && cont.front() != item)
+	while (!cont.empty() && cont.front() != item)
 	{
-		cont.push(cont.front());
+		q.push(cont.front());
 		cont.pop();
-		
-		i++;
 	}
 	
-	if (cont.front() == item)
+	if (!cont.empty())
 		cont.pop();
+
+	while (!cont.empty())
+	{
+		q.push(cont.front());
+		cont.pop();	
+	}
+
+	std::swap<Cont>(cont, q);
 }

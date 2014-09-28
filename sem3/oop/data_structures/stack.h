@@ -1,6 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include <cstdlib>
+
 namespace ds
 {
 	template<class T>
@@ -37,14 +39,14 @@ namespace ds
 template<class T>
 ds::Stack<T>::Stack()
 {
-	_top = nullptr;
+	_top = NULL;
 	_size = 0;
 }
 
 template<class T>
 ds::Stack<T>::Stack(const Stack& s)
 {
-	_top = nullptr;
+	_top = NULL;
 	_size = 0;
 
 	if (this != &s)
@@ -82,7 +84,7 @@ void ds::Stack<T>::pop()
 template<class T>
 void ds::Stack<T>::clear()
 {
-	while (_top != nullptr)
+	while (_top != NULL)
 	{
 		Item* item = _top;
 
@@ -91,7 +93,7 @@ void ds::Stack<T>::clear()
 		delete item;
 	}
 
-	_top = nullptr;
+	_top = NULL;
 	_size = 0;
 }
 
@@ -129,13 +131,13 @@ void ds::Stack<T>::_copy(const Stack& s)
 	Item* term = new Item;
 	_top = term;
 
-	term->prev = nullptr;
+	term->prev = NULL;
 
-	while (item != nullptr)
+	while (item != NULL)
 	{
 		_top->prev = new Item;
 		_top->prev->data = item->data;
-		_top->prev->prev = nullptr;
+		_top->prev->prev = NULL;
 		_top = _top->prev;
 		item = item->prev;
 	}

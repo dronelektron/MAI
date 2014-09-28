@@ -1,6 +1,8 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include <cstdlib>
+
 namespace ds
 {
 	template<class T>
@@ -57,7 +59,7 @@ template<class T>
 ds::Queue<T>::Queue()
 {
 	_begin = new QueueItem;
-	_begin->next = nullptr;
+	_begin->next = NULL;
 	_end = _begin;
 	_size = 0;
 }
@@ -66,6 +68,7 @@ template<class T>
 ds::Queue<T>::Queue(const Queue& q)
 {
 	_begin = new QueueItem;
+	_begin->next = NULL;
 	_end = _begin;
 	_size = 0;
 
@@ -86,7 +89,7 @@ void ds::Queue<T>::push(const T& val)
 {
 	QueueItem* item = new QueueItem;
 
-	item->next = nullptr;
+	item->next = NULL;
 
 	_end->data = val;
 	_end->next = item;
@@ -111,7 +114,7 @@ void ds::Queue<T>::pop()
 template<class T>
 void ds::Queue<T>::clear()
 {
-	while (_begin->next != nullptr)
+	while (_begin->next != NULL)
 	{
 		QueueItem* item = _begin;
 		_begin = _begin->next;
@@ -157,11 +160,11 @@ void ds::Queue<T>::_copy(const Queue& q)
 {
 	QueueItem* item = q._begin;
 
-	while (item->next != nullptr)
+	while (item->next != NULL)
 	{
 		QueueItem* tmpItem = new QueueItem;
 
-		tmpItem->next = nullptr;
+		tmpItem->next = NULL;
 
 		_end->data = item->data;
 		_end->next = tmpItem;
@@ -188,7 +191,7 @@ typename ds::Queue<T>::iterator ds::Queue<T>::end()
 template<class T>
 ds::Queue<T>::iterator::iterator()
 {
-	_cur = nullptr;
+	_cur = NULL;
 }
 
 template<class T>

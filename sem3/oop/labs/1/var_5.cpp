@@ -3,12 +3,12 @@
 #include "../../data_structures/vector.h"
 #include "../../data_structures/queue.h"
 
-typedef std::pair<size_t, std::string> Item;
+typedef std::pair<std::string, size_t> Item;
 typedef ds::Queue<Item> Cont;
-typedef ds::Queue<Item>::iterator ContIter;
+typedef ds::Queue<Item>::iterator ContIt;
 
-void sortMerge(ds::Queue<Item>& q);
-void deleteItem(ds::Queue<Item>& q, std::string& name);
+void addItem(Cont& cont, const Item& item);
+void deleteItem(Cont& cont, const Item& item);
 
 int main()
 {
@@ -42,21 +42,18 @@ int main()
 		{
 			case 1:
 			{
-				size_t id;
-				std::string name;
+				Item item;
 
-				std::cout << "Id: ";
-				std::cin >> id;
-				std::cin.ignore();
 				std::cout << "Name: ";
-				std::getline(std::cin, name);
+				std::getline(std::cin, item.first);
+				std::cout << "Id: ";
+				std::cin >> item.second;
+				std::cin.ignore();
 				
-				if (arr.empty() || arr[arr.size() - 1].size() % 5 == 0)
+				if (arr.empty() || arr[arr.size() - 1].size() == 5)
 					arr.push_back(Cont());
 
-				arr[arr.size() - 1].push(Item(id, name));
-
-				sortMerge(arr[arr.size() - 1]);
+				addItem(arr[arr.size() - 1], item);
 
 				break;
 			}
@@ -64,21 +61,24 @@ int main()
 			case 2:
 			{
 				bool isFound = false;
-				std::string name;
+				Item item;
 
 				std::cout << "Name: ";
-				std::getline(std::cin, name);
+				std::getline(std::cin, item.first);
+				std::cout << "Id: ";
+				std::cin >> item.second;
+				std::cin.ignore();
 
 				for (size_t i = 0; i < arr.size(); ++i)
 				{
-					for (ContIter it = arr[i].begin(); it != arr[i].end(); ++it)
+					for (ContIt it = arr[i].begin(); it != arr[i].end(); ++it)
 					{
-						if (it->second == name)
+						if (*it == item)
 						{
 							std::cout << "================================" << std::endl;
 							std::cout << "Container #" << (i + 1) << ":" << std::endl;
-							std::cout << "Id: " << it->first << std::endl;
-							std::cout << "Name: " << it->second << std::endl;
+							std::cout << "Name: " << it->first << std::endl;
+							std::cout << "Id: " << it->second << std::endl;
 							std::cout << "================================" << std::endl;
 
 							isFound = true;
@@ -99,25 +99,28 @@ int main()
 			case 3:
 			{
 				bool isRemoved = false;
-				std::string name;
+				Item item;
 
 				std::cout << "Name: ";
-				std::getline(std::cin, name);
+				std::getline(std::cin, item.first);
+				std::cout << "Id: ";
+				std::cin >> item.second;
+				std::cin.ignore();
 
 				for (size_t i = 0; i < arr.size(); ++i)
 				{
-					for (ContIter it = arr[i].begin(); it != arr[i].end(); ++it)
+					for (ContIt it = arr[i].begin(); it != arr[i].end(); ++it)
 					{
-						if (it->second == name)
+						if (*it == item)
 						{
 							std::cout << "================================" << std::endl;
 							std::cout << "Object was deleted" << std::endl << std::endl;
 							std::cout << "Container #" << (i + 1) << ":" << std::endl;
-							std::cout << "Id: " << it->first << std::endl;
-							std::cout << "Name: " << it->second << std::endl;
+							std::cout << "Name: " << it->first << std::endl;
+							std::cout << "Id: " << it->second << std::endl;
 							std::cout << "================================" << std::endl;
 
-							deleteItem(arr[i], name);
+							deleteItem(arr[i], item);
 
 							if (arr[i].empty())
 								arr.erase(i);
@@ -143,11 +146,11 @@ int main()
 				{
 					std::cout << "----Container #" << (i + 1) << ":" << std::endl;
 
-					for (ContIter it = arr[i].begin(); it != arr[i].end(); ++it)
+					for (ContIt it = arr[i].begin(); it != arr[i].end(); ++it)
 					{
 						std::cout << std::endl;
-						std::cout << "Id: " << it->first << std::endl;
-						std::cout << "Name: " << it->second << std::endl;
+						std::cout << "Name: " << it->first << std::endl;
+						std::cout << "Id: " << it->second << std::endl;
 					}
 
 					if (i + 1 < arr.size())
@@ -164,73 +167,43 @@ int main()
 	return 0;
 }
 
-void sortMerge(ds::Queue<Item>& q)
+void addItem(Cont& cont, const Item& item)
 {
-	if (q.size() < 2)
-		return;
+	Cont q;
 
-	size_t n = q.size();
-	ds::Queue<Item> left;
-	ds::Queue<Item> right;
-
-	for (size_t i = 0; i < n / 2; ++i)
+	while (!cont.empty() && cont.front().first <= item.first)
 	{
-		left.push(q.front());
-		q.pop();
+		q.push(cont.front());
+		cont.pop();
 	}
 
-	for (size_t i = n / 2; i < n; ++i)
-	{
-		right.push(q.front());
-		q.pop();
-	}
+	q.push(item);
 
-	sortMerge(left);
-	sortMerge(right);
-
-	while (!left.empty() && !right.empty())
+	while (!cont.empty())
 	{
-		if (left.front().second <= right.front().second)
-		{
-			q.push(left.front());
-			left.pop();
-		}
-		else
-		{
-			q.push(right.front());
-			right.pop();
-		}
+		q.push(cont.front());
+		cont.pop();
 	}
-
-	while (!left.empty())
-	{
-		q.push(left.front());
-		left.pop();
-	}
-
-	while (!right.empty())
-	{
-		q.push(right.front());
-		right.pop();
-	}
+	
+	std::swap<Cont>(cont, q);
 }
 
-void deleteItem(ds::Queue<Item>& q, std::string& name)
+void deleteItem(Cont& cont, const Item& item)
 {
-	if (q.empty())
+	if (cont.empty())
 		return;
 
-	size_t n = q.size();
+	size_t n = cont.size();
 	size_t i = 0;
 
-	while (i < n && q.front().second != name)
+	while (i < n && cont.front() != item)
 	{
-		q.push(q.front());
-		q.pop();
+		cont.push(cont.front());
+		cont.pop();
 		
 		i++;
 	}
 	
-	if (q.front().second == name)
-		q.pop();
+	if (cont.front() == item)
+		cont.pop();
 }

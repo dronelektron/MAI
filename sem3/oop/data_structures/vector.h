@@ -1,6 +1,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <cstdlib>
+
 namespace ds
 {
 	template<class T>
@@ -25,6 +27,7 @@ namespace ds
 	private:
 		T* _begin;
 		size_t _size;
+		size_t _cap;
 
 		void _copy(const Vector& v);
 	};
@@ -33,15 +36,17 @@ namespace ds
 template<class T>
 ds::Vector<T>::Vector()
 {
-	_begin = nullptr;
+	_begin = NULL;
 	_size = 0;
+	_cap = 0;
 }
 
 template<class T>
 ds::Vector<T>::Vector(const Vector& v)
 {
-	_begin = nullptr;
+	_begin = NULL;
 	_size = 0;
+	_cap = 0;
 
 	if (this != &v)
 		_copy(v);
@@ -50,7 +55,7 @@ ds::Vector<T>::Vector(const Vector& v)
 template<class T>
 ds::Vector<T>::Vector(size_t n, const T& val)
 {
-	_begin = nullptr;
+	_begin = NULL;
 
 	if (n > 0)
 	{	
@@ -61,6 +66,7 @@ ds::Vector<T>::Vector(size_t n, const T& val)
 	}
 
 	_size = n;
+	_cap = n;
 }
 
 template<class T>
@@ -72,7 +78,21 @@ ds::Vector<T>::~Vector()
 template<class T>
 void ds::Vector<T>::push_back(const T& val)
 {
-	resize(_size + 1);
+	if (_size == _cap)
+	{
+		if (_size == 0)
+			resize(1);
+		else
+		{
+			size_t oldSize = _size;
+
+			resize(_size * 2);
+
+			_size = oldSize + 1;
+		}
+	}
+	else
+		_size++;
 
 	_begin[_size - 1] = val;
 }
@@ -86,14 +106,14 @@ void ds::Vector<T>::erase(size_t index)
 	for (size_t i = index; i < _size - 1; i++)
 		_begin[i] = _begin[i + 1];
 
-	resize(_size - 1);
+	_size--;
 }
 
 template<class T>
 void ds::Vector<T>::resize(size_t n, const T& val)
 {
 	const size_t copySize = n < _size ? n : _size;
-	T* _buffer = nullptr;
+	T* _buffer = NULL;
 	
 	if (n > 0)
 		_buffer = new T[n];
@@ -104,21 +124,23 @@ void ds::Vector<T>::resize(size_t n, const T& val)
 	for (size_t i = copySize; i < n; i++)
 		_buffer[i] = val;
 
-	if (_begin != nullptr)
+	if (_begin != NULL)
 		delete [] _begin;
 
 	_begin = _buffer;
 	_size = n;
+	_cap = n;
 }
 
 template<class T>
 void ds::Vector<T>::clear()
 {
-	if (_begin != nullptr)
+	if (_begin != NULL)
 		delete [] _begin;
 
-	_begin = nullptr;
+	_begin = NULL;
 	_size = 0;
+	_cap = 0;
 }
 
 template<class T>
@@ -165,6 +187,7 @@ void ds::Vector<T>::_copy(const Vector& v)
 	}
 
 	_size = v._size;
+	_cap = v._cap;
 }
 
 #endif

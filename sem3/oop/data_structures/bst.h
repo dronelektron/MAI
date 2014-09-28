@@ -1,6 +1,8 @@
 #ifndef BST_H
 #define BST_H
 
+#include <cstdlib>
+
 namespace ds
 {
 	template<class T>
@@ -12,6 +14,22 @@ namespace ds
 			T key;
 			BstNode* left;
 			BstNode* right;
+		};
+
+		class iterator
+		{
+		public:
+			iterator();
+			iterator(BstNode* node);
+
+			iterator& operator++();
+			bool operator!=(const iterator& it);
+			T& operator*();
+			T* operator->();
+
+		private:
+			BstNode* _root;
+			BstNode* _cur;
 		};
 
 		Bst();
@@ -27,6 +45,9 @@ namespace ds
 
 		Bst& operator=(const Bst& bst);
 
+		iterator begin();
+		iterator end();
+
 	private:
 		BstNode* _root;
 		size_t _size;
@@ -39,14 +60,14 @@ namespace ds
 template<class T>
 ds::Bst<T>::Bst()
 {
-	_root = nullptr;
+	_root = NULL;
 	_size = 0;
 }
 
 template<class T>
 ds::Bst<T>::Bst(const Bst& bst)
 {
-	_root = nullptr;
+	_root = NULL;
 	_size = 0;
 
 	if (this != &bst)
@@ -68,9 +89,9 @@ template<class T>
 typename ds::Bst<T>::BstNode* ds::Bst<T>::insert(const T& key)
 {
 	BstNode* node = _root;
-	BstNode* parent = nullptr;
+	BstNode* parent = NULL;
 
-	while (node != nullptr)
+	while (node != NULL)
 	{
 		parent = node;
 
@@ -84,10 +105,10 @@ typename ds::Bst<T>::BstNode* ds::Bst<T>::insert(const T& key)
 
 	node = new BstNode;
 	node->key = key;
-	node->left = nullptr;
-	node->right = nullptr;
+	node->left = NULL;
+	node->right = NULL;
 
-	if (parent == nullptr)
+	if (parent == NULL)
 		_root = node;
 	else if (parent->key < key)
 		parent->right = node;
@@ -104,7 +125,7 @@ typename ds::Bst<T>::BstNode* ds::Bst<T>::find(const T& key)
 {
 	BstNode* node = _root;
 
-	while (node != nullptr)
+	while (node != NULL)
 	{
 		if (node->key < key)
 			node = node->right;
@@ -121,10 +142,10 @@ template<class T>
 void ds::Bst<T>::erase(const T& key)
 {
 	BstNode* node = _root;
-	BstNode* parent = nullptr;
-	BstNode* tmpNode = nullptr;
+	BstNode* parent = NULL;
+	BstNode* tmpNode = NULL;
 
-	while (node != nullptr && node->key != key)
+	while (node != NULL && node->key != key)
 	{
 		parent = node;
 
@@ -134,26 +155,26 @@ void ds::Bst<T>::erase(const T& key)
 			node = node->left;
 	}
 
-	if (node == nullptr)
+	if (node == NULL)
 		return;
 
-	if (node->left == nullptr && node->right == nullptr)
+	if (node->left == NULL && node->right == NULL)
 	{
-		if (parent == nullptr)
-			_root = nullptr;
+		if (parent == NULL)
+			_root = NULL;
 		else if (parent->key < key)
-			parent->right = nullptr;
+			parent->right = NULL;
 		else
-			parent->left = nullptr;
+			parent->left = NULL;
 
 		tmpNode = node;
 	}
-	else if (node->left != nullptr && node->right != nullptr)
+	else if (node->left != NULL && node->right != NULL)
 	{
 		tmpNode = node->left;
 		parent = node;
 
-		while (tmpNode->right != nullptr)
+		while (tmpNode->right != NULL)
 		{
 			parent = tmpNode;
 			tmpNode = tmpNode->right;
@@ -168,12 +189,12 @@ void ds::Bst<T>::erase(const T& key)
 	}
 	else
 	{
-		if (node->left != nullptr)
+		if (node->left != NULL)
 			tmpNode = node->left;
 		else
 			tmpNode = node->right;
 
-		if (parent == nullptr)
+		if (parent == NULL)
 			_root = tmpNode;
 		else if (node == parent->left)
 			parent->left = tmpNode;
@@ -227,7 +248,7 @@ ds::Bst<T>& ds::Bst<T>::operator=(const Bst& bst)
 template<class T>
 void ds::Bst<T>::_clear(BstNode** node)
 {
-	if (*node == nullptr)
+	if (*node == NULL)
 		return;
 
 	_clear(&(*node)->left);
@@ -235,14 +256,14 @@ void ds::Bst<T>::_clear(BstNode** node)
 
 	delete *node;
 
-	*node = nullptr;
+	*node = NULL;
 }
 
 template<class T>
 typename ds::Bst<T>::BstNode* ds::Bst<T>::_copy(BstNode** node)
 {
-	if (*node == nullptr)
-		return nullptr;
+	if (*node == NULL)
+		return NULL;
 
 	BstNode* tmpNode = new BstNode;
 	tmpNode->key = (*node)->key;
@@ -250,6 +271,88 @@ typename ds::Bst<T>::BstNode* ds::Bst<T>::_copy(BstNode** node)
 	tmpNode->right = _copy(&(*node)->right);
 
 	return tmpNode;
+}
+
+template<class T>
+typename ds::Bst<T>::iterator ds::Bst<T>::begin()
+{
+	return iterator(_root);
+}
+
+template<class T>
+typename ds::Bst<T>::iterator ds::Bst<T>::end()
+{
+	return iterator();
+}
+
+template<class T>
+ds::Bst<T>::iterator::iterator()
+{
+	_cur = NULL;
+}
+
+template<class T>
+ds::Bst<T>::iterator::iterator(BstNode* node)
+{
+	_root = node;
+
+	if (node != NULL)
+		while (node->left != NULL)
+			node = node->left;
+
+	_cur = node;
+}
+
+template<class T>
+typename ds::Bst<T>::iterator& ds::Bst<T>::iterator::operator++()
+{
+	if (_cur->right != NULL)
+	{
+		_cur = _cur->right;
+
+		while (_cur->left != NULL)
+			_cur = _cur->left;
+	}
+	else
+	{
+		BstNode* succ = NULL;
+		BstNode* root = _root;
+
+		while (root != NULL)
+		{
+			if (_cur->key < root->key)
+			{
+				succ = root;
+				root = root->left;
+			}
+			else if (_cur->key > root->key)
+				root = root->right;
+			else
+				break;
+		}
+
+		_cur = succ;
+	}
+
+	return *this;
+}
+
+template<class T>
+bool ds::Bst<T>::iterator::operator!=(const iterator& it)
+{
+	return _cur != it._cur;
+}
+
+template<class T>
+T& ds::Bst<T>::iterator::operator*()
+{
+	return _cur->key;
+}
+
+template<class T>
+T* ds::Bst<T>::iterator::operator->()
+{
+	return &_cur->key;
 }
 
 #endif

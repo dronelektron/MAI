@@ -1,4 +1,4 @@
-#include <iostream>
+#include <cstdio>
 #include <cstdlib>
 #include "vector.h"
 
@@ -15,7 +15,7 @@ int main()
 	NAndy::TVector<TData> arr;
 	TData item;
 
-	while (std::cin >> item.key >> item.val)
+	while (scanf("%hu\t%llu", &item.key, &item.val) == 2)
 	{
 		arr.push_back(item);
 	}
@@ -24,7 +24,7 @@ int main()
 
 	for (size_t i = 0; i < arr.size(); ++i)
 	{
-		std::cout << arr[i].key << " " << arr[i].val << std::endl;
+		printf("%hu\t%llu\n", arr[i].key, arr[i].val);
 	}
 
 	return 0;
@@ -47,13 +47,8 @@ void countingSort(NAndy::TVector<TData>& v)
 		}
 	}
 
-	NAndy::TVector<TData> v2(v.size());
+	NAndy::TVector<TData> v2(v);
 	NAndy::TVector<size_t> cnt(k + 1, 0);
-	
-	for (size_t i = 0; i < v.size(); ++i)
-	{
-		v2[i] = v[i];
-	}
 
 	for (size_t i = 0; i < v2.size(); ++i)
 	{

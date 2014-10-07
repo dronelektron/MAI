@@ -217,7 +217,7 @@ void sortFile(const char* filename, int* tube)
 
 		lines[i][j] = '\0';
 	}
-
+	
 	for (i = 0; i < linesCount; ++i)
 		for (j = 0; j < linesCount - i - 1; ++j)
 			if (strcmp(lines[j], lines[j + 1]) > 0)

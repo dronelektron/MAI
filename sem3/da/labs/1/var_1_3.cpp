@@ -1,68 +1,144 @@
 #include <cstdio>
 #include <cstdlib>
-#include "vector.h"
+
+typedef unsigned short TKeyType;
+typedef unsigned long long TValType;
 
 struct TData
 {
-	unsigned short key;
-	unsigned long long val;
+	TKeyType key;
+	TValType val;
 };
 
-void countingSort(NAndy::TVector<TData>& v);
-
-int main()
+template<class T>
+struct TVector
 {
-	NAndy::TVector<TData> arr;
-	TData item;
+	T* begin;
+	size_t size;
+	size_t cap;
+};
 
-	while (scanf("%hu\t%llu", &item.key, &item.val) == 2)
+template<class T>
+void VectorCreate(TVector<T>* v, size_t size);
+
+template<class T>
+void VectorPushBack(TVector<T>* v, TData val);
+
+template<class T>
+void VectorDestroy(TVector<T>* v);
+
+template<class T>
+void MySwap(T* a, T* b);
+
+void countingSort(TVector<TData>* v);
+
+int main(void)
+{
+	TVector<TData> v;
+	TData data;
+
+	VectorCreate<TData>(&v, 0);
+
+	while (scanf("%hu\t%llu", &data.key, &data.val) == 2)
 	{
-		arr.push_back(item);
+		VectorPushBack<TData>(&v, data);
 	}
 
-	countingSort(arr);
-
-	for (size_t i = 0; i < arr.size(); ++i)
+	countingSort(&v);
+	
+	for (size_t i = 0; i < v.size; ++i)
 	{
-		printf("%hu\t%llu\n", arr[i].key, arr[i].val);
+		printf("%hu\t%llu\n", v.begin[i].key, v.begin[i].val);
 	}
+	
+	VectorDestroy<TData>(&v);
 
 	return 0;
 }
 
-void countingSort(NAndy::TVector<TData>& v)
+template<class T>
+void VectorCreate(TVector<T>* v, size_t size)
 {
-	if (v.size() < 2)
+	v->begin = (T*)malloc(sizeof(T) * (size + 1));
+	v->cap = size + 1;
+	v->size = size;
+}
+
+template<class T>
+void VectorPushBack(TVector<T>* v, TData val)
+{
+	if (v->size == v->cap)
+	{
+		v->cap *= 2;
+		v->begin = (T*)realloc(v->begin, sizeof(T) * v->cap);
+	}
+
+	v->begin[v->size++] = val;
+}
+
+template<class T>
+void VectorDestroy(TVector<T>* v)
+{
+	free(v->begin);
+
+	v->begin = NULL;
+	v->size = 0;
+	v->cap = 0;
+}
+
+template<class T>
+void MySwap(T* a, T* b)
+{
+	T c = *a;
+	*a = *b;
+	*b = c;
+}
+
+void countingSort(TVector<TData>* v)
+{
+	if (v->size < 2)
 	{
 		return;
 	}
 
-	unsigned short k = v[0].key;
+	TKeyType k = v->begin[0].key;
 
-	for (size_t i = 0; i < v.size(); ++i)
+	for (size_t i = 0; i < v->size; ++i)
 	{
-		if (v[i].key > k)
+		if (v->begin[i].key > k)
 		{
-			k = v[i].key;
+			k = v->begin[i].key;
 		}
 	}
 
-	NAndy::TVector<TData> v2(v);
-	NAndy::TVector<size_t> cnt(k + 1, 0);
+	TVector<TData> v2;
+	TVector<size_t> cnt;
 
-	for (size_t i = 0; i < v2.size(); ++i)
+	VectorCreate<TData>(&v2, v->size);
+	VectorCreate<size_t>(&cnt, k + 1);
+
+	for (size_t i = 0; i <= k; ++i)
 	{
-		++cnt[v2[i].key];
+		cnt.begin[i] = 0;
+	}
+
+	for (size_t i = 0; i < v->size; ++i)
+	{
+		++cnt.begin[v->begin[i].key];
 	}
 
 	for (size_t i = 1; i <= k; ++i)
 	{
-		cnt[i] += cnt[i - 1];
+		cnt.begin[i] += cnt.begin[i - 1];
 	}
 
-	for (size_t i = v2.size(); i > 0; --i)
+	for (size_t i = v->size; i > 0; --i)
 	{
-		v[cnt[v2[i - 1].key] - 1] = v2[i - 1];
-		--cnt[v2[i - 1].key];
+		v2.begin[--cnt.begin[v->begin[i - 1].key]] = v->begin[i - 1];
 	}
+
+	MySwap<TVector<TData> >(v, &v2);
+
+	VectorDestroy(&v2);
+	VectorDestroy(&cnt);
 }

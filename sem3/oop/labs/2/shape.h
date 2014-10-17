@@ -11,6 +11,7 @@ public:
 
 	virtual double accept(Visitor* vis) = 0;
 	virtual void printInfo() = 0;
+	virtual void input() = 0;
 };
 
 class Romb : public Shape
@@ -19,13 +20,13 @@ public:
 	Romb();
 
 	virtual double accept(Visitor* vis);
+	virtual void printInfo();
+	virtual void input();
 
 	void setDiagHor(double val);
 	void setDiagVer(double val);
 	double getDiagHor() const;
 	double getDiagVer() const;
-
-	virtual void printInfo();
 
 private:
 	double _diagHor;
@@ -38,11 +39,11 @@ public:
 	Side5();
 
 	virtual double accept(Visitor* vis);
+	virtual void printInfo();
+	virtual void input();
 
 	void setSide(double side);
 	double getSide() const;
-
-	virtual void printInfo();
 
 protected:
 	double _side;

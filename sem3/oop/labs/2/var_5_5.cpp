@@ -40,7 +40,7 @@ int main()
 		if (action == 6)
 			break;
 
-		if (action > 5)
+		if (action == 0 || action > 5)
 		{
 			std::cout << "Error. No such action in menu" << std::endl;
 
@@ -52,7 +52,6 @@ int main()
 			case 1:
 			{
 				size_t var;
-				double val;
 				Figure figure;
 				Factory factory;
 
@@ -68,63 +67,16 @@ int main()
 				std::cin >> var;
 				std::cin.ignore();
 
-				if (var > 3)
+				if (var == 0 || var > 3)
 				{
 					std::cout << "Error. No such type of shape in menu" << std::endl;
 
 					continue;
 				}
-				
-				switch (var)
-				{
-					case 1:
-					{
-						figure.shape = factory.makeShape("Romb");
-						Romb* romb = dynamic_cast<Romb*>(figure.shape);
 
-						std::cout << "Len of hor diagonal: ";
-						std::cin >> val;
+				figure.shape = factory.makeShape(var);
+				figure.shape->input();
 
-						romb->setDiagHor(val);
-
-						std::cout << "Len of ver diagonal: ";
-						std::cin >> val;
-						std::cin.ignore();
-
-						romb->setDiagVer(val);
-
-						break;
-					}
-					
-					case 2:
-					{
-						figure.shape = factory.makeShape("Side5");
-						Side5* side5 = dynamic_cast<Side5*>(figure.shape);
-
-						std::cout << "Len of side: ";
-						std::cin >> val;
-						std::cin.ignore();
-
-						side5->setSide(val);
-
-						break;
-					}
-
-					case 3:
-					{
-						figure.shape = factory.makeShape("Side6");
-						Side6* side6 = dynamic_cast<Side6*>(figure.shape);
-
-						std::cout << "Len of side: ";
-						std::cin >> val;
-						std::cin.ignore();
-
-						side6->setSide(val);
-
-						break;
-					}
-				}
-				
 				if (arr.empty() || arr[arr.size() - 1].size() == 5)
 					arr.push_back(Cont());
 

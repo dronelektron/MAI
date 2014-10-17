@@ -1,15 +1,15 @@
 #include "factory.h"
 
-Shape* Factory::makeShape(const std::string& shapeName)
+Shape* Factory::makeShape(size_t index)
 {
-	if (shapeName == "Romb")
-		return new Romb;
+	Shape* sh = NULL;
 
-	if (shapeName == "Side5")
-		return new Side5;
+	switch (index)
+	{
+		case 1: sh = new Romb; break;
+		case 2: sh = new Side5; break;
+		case 3: sh = new Side6; break;
+	}
 
-	if (shapeName == "Side6")
-		return new Side6;
-
-	return NULL;
+	return sh;
 }

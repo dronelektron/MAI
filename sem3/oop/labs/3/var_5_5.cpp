@@ -162,7 +162,7 @@ void pushFigure(std::mutex& mtx, ContType1& cont, Factory& factory, kFigure figT
 	size_t maxLen = distr1(rndEng);
 
 	for (size_t i = 0; i < maxLen; ++i)
-		fig.key.first += distr2(rndEng);
+		fig.key.first += static_cast<char>(distr2(rndEng));
 
 	fig.key.second = distr3(rndEng);
 	fig.shape = factory.makeShape(figType);

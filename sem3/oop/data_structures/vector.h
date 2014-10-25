@@ -13,7 +13,7 @@ namespace ds
 		Vector(const Vector& v);
 		Vector(size_t n, const T& val = T());
 		~Vector();
-
+		
 		void push_back(const T& val);
 		void erase(size_t index);
 		void resize(size_t n, const T& val = T());
@@ -36,17 +36,17 @@ namespace ds
 template<class T>
 ds::Vector<T>::Vector()
 {
-	_begin = NULL;
+	_begin = new T[1];
 	_size = 0;
-	_cap = 0;
+	_cap = 1;
 }
 
 template<class T>
 ds::Vector<T>::Vector(const Vector& v)
 {
-	_begin = NULL;
+	_begin = new T[1];
 	_size = 0;
-	_cap = 0;
+	_cap = 1;
 
 	if (this != &v)
 		_copy(v);
@@ -55,18 +55,13 @@ ds::Vector<T>::Vector(const Vector& v)
 template<class T>
 ds::Vector<T>::Vector(size_t n, const T& val)
 {
-	_begin = NULL;
-
-	if (n > 0)
-	{	
-		_begin = new T[n];
-		
-		for (size_t i = 0; i < n; i++)
-			_begin[i] = val;
-	}
+	_begin = new T[n + 1];
+	
+	for (size_t i = 0; i < n; i++)
+		_begin[i] = val;
 
 	_size = n;
-	_cap = n;
+	_cap = n + 1;
 }
 
 template<class T>
@@ -80,29 +75,19 @@ void ds::Vector<T>::push_back(const T& val)
 {
 	if (_size == _cap)
 	{
-		if (_size == 0)
-			resize(1);
-		else
-		{
-			size_t oldSize = _size;
+		size_t oldSize = _size;
 
-			resize(_size * 2);
+		resize(_size * 2);
 
-			_size = oldSize + 1;
-		}
+		_size = oldSize;
 	}
-	else
-		_size++;
 
-	_begin[_size - 1] = val;
+	_begin[_size++] = val;
 }
 
 template<class T>
 void ds::Vector<T>::erase(size_t index)
 {
-	if (index >= _size)
-		return;
-
 	for (size_t i = index; i < _size - 1; i++)
 		_begin[i] = _begin[i + 1];
 
@@ -178,16 +163,13 @@ void ds::Vector<T>::_copy(const Vector& v)
 {
 	const size_t n = v.size();
 
-	if (n > 0)
-	{
-		_begin = new T[n];
+	_begin = new T[n + 1];
 
-		for (size_t i = 0; i < n; i++)
-			_begin[i] = v._begin[i];
-	}
-
-	_size = v._size;
-	_cap = v._cap;
+	for (size_t i = 0; i < n; i++)
+		_begin[i] = v._begin[i];
+	
+	_size = n;
+	_cap = n + 1;
 }
 
 #endif

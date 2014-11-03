@@ -325,7 +325,7 @@ typename ds::Bst<T>::iterator& ds::Bst<T>::iterator::operator++()
 				succ = root;
 				root = root->left;
 			}
-			else if (_cur->key > root->key)
+			else if (root->key < _cur->key)
 				root = root->right;
 			else
 				break;

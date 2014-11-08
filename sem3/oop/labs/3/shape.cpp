@@ -1,7 +1,5 @@
 #include "shape.h"
 
-Shape::~Shape() {}
-
 Romb::Romb()
 {
 	_diagHor = 0.0;
@@ -20,14 +18,10 @@ void Romb::printInfo()
 	std::cout << "Len of ver diagonal: " << _diagVer << std::endl;
 }
 
-void Romb::setDiagHor(double val)
+void Romb::randomize(std::default_random_engine& rnd, std::uniform_real_distribution<double>& urd)
 {
-	_diagHor = val;
-}
-
-void Romb::setDiagVer(double val)
-{
-	_diagVer = val;
+	_diagHor = urd(rnd);
+	_diagVer = urd(rnd);
 }
 
 double Romb::getDiagHor() const
@@ -56,9 +50,9 @@ void Side5::printInfo()
 	std::cout << "Len of side: " << _side << std::endl;
 }
 
-void Side5::setSide(double side)
+void Side5::randomize(std::default_random_engine& rnd, std::uniform_real_distribution<double>& urd)
 {
-	_side = side;
+	_side = urd(rnd);
 }
 
 double Side5::getSide() const

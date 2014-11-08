@@ -155,7 +155,7 @@ void pushFigure(std::mutex& mtx, ContType1& cont, Factory& factory, kFigure figT
 	std::uniform_int_distribution<int> distr1(1, 32);
 	std::uniform_int_distribution<int> distr2(32, 126);
 	std::uniform_int_distribution<int> distr3(0, 2000000000);
-	std::uniform_real_distribution<double> distr4(0.0, 50.0);
+	std::uniform_real_distribution<double> distr4(1.0, 50.0);
 
 	Figure fig;
 
@@ -166,26 +166,8 @@ void pushFigure(std::mutex& mtx, ContType1& cont, Factory& factory, kFigure figT
 
 	fig.key.second = distr3(rndEng);
 	fig.shape = factory.makeShape(figType);
-
-	if (figType == ROMB)
-	{
-		double hor = distr4(rndEng);
-		double ver = distr4(rndEng);
-
-		Romb* romb = dynamic_cast<Romb*>(fig.shape);
-
-		romb->setDiagHor(hor);
-		romb->setDiagVer(ver);
-	}
-	else
-	{
-		double len = distr4(rndEng);
-
-		Side5* sider = dynamic_cast<Side5*>(fig.shape);
-
-		sider->setSide(len);
-	}
-
+	fig.shape->randomize(rndEng, distr4);
+	
 	if (cont.empty() || cont[cont.size() - 1].size() == 5)
 		cont.push_back(ContType2());
 
@@ -292,7 +274,7 @@ void tRemover(std::mutex& mtx, ContType1& cont, TimeArg timeData, double square,
 	ul.lock();
 
 	printDelimiter('=', 64);
-	std::cout << "Thread 4 (Remover) finished" << std::endl;
+	std::cout << tName << " finished" << std::endl;
 }
 
 void tPrinter(std::mutex& mtx, ContType1& cont, TimeArg timeData, const std::string& tName)
@@ -343,5 +325,5 @@ void tPrinter(std::mutex& mtx, ContType1& cont, TimeArg timeData, const std::str
 	ul.lock();
 
 	printDelimiter('=', 64);
-	std::cout << "Thread 5 (Printer) finished" << std::endl;
+	std::cout << tName << " finished" << std::endl;
 }

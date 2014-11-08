@@ -2,15 +2,15 @@
 #define SHAPE_H
 
 #include <iostream>
+#include <random>
 #include "visitor.h"
 
 class Shape
 {
 public:
-	virtual ~Shape();
-
 	virtual double accept(Visitor* vis) = 0;
 	virtual void printInfo() = 0;
+	virtual void randomize(std::default_random_engine& rnd, std::uniform_real_distribution<double>& urd) = 0;
 };
 
 class Romb : public Shape
@@ -20,9 +20,8 @@ public:
 
 	virtual double accept(Visitor* vis);
 	virtual void printInfo();
+	virtual void randomize(std::default_random_engine& rnd, std::uniform_real_distribution<double>& urd);
 
-	void setDiagHor(double val);
-	void setDiagVer(double val);
 	double getDiagHor() const;
 	double getDiagVer() const;
 
@@ -38,8 +37,8 @@ public:
 
 	virtual double accept(Visitor* vis);
 	virtual void printInfo();
+	virtual void randomize(std::default_random_engine& rnd, std::uniform_real_distribution<double>& urd);
 
-	void setSide(double side);
 	double getSide() const;
 
 protected:

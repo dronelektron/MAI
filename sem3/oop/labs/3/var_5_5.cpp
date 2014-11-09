@@ -73,7 +73,7 @@ int main()
 
 	std::cout << "Thread 5 (Printer) work time (sec): ";
 	std::cin >> timeData5.first;
-	std::cout << "Thread 5 (Printer) interval (sec): ";
+	std::cout << "Thread 5 (Printer) interval (msec): ";
 	std::cin >> timeData5.second;
 	std::cin.ignore();
 	

@@ -7,7 +7,7 @@ void ReadLine(char* cmd, char* textArg, TULL* numArg);
 
 int main()
 {
-	TBTree btree(3);
+	TBTree btree(5);
 	
 	while (true)
 	{
@@ -30,18 +30,16 @@ int main()
 
 				data.key = buffer;
 				data.val = num;
-
-				if (btree.Find(data.key))
+				
+				if (btree.Insert(data))
 				{
-					printf("Exist\n");
+					printf("OK\n");
 				}
 				else
 				{
-					btree.Insert(data);
-
-					printf("OK\n");
+					printf("Exist\n");
 				}
-
+				
 				break;
 			}
 

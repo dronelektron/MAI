@@ -32,7 +32,7 @@ public:
 	explicit TBTree(size_t t);
 	~TBTree();
 
-	void Insert(const TData& data);
+	bool Insert(const TData& data);
 	TData* Find(const TKey& key);
 	void Erase(const TKey& key);
 
@@ -53,7 +53,7 @@ private:
 	void mFlowRight(TNode* parent, size_t index);
 	void mSplitNode(TNode* parent, TNode* node, size_t index);
 	void mMergeNode(TNode* parent, size_t index);
-	void mInsertNonFull(TNode* node, const TData& data);
+	bool mInsertNonFull(TNode* node, const TData& data);
 	void mErase(TNode* node, const TKey& key);
 	void mFixChild(TNode* node, size_t index);
 	bool mSerialize(FILE* f, TNode* node);

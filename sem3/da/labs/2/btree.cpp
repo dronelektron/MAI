@@ -11,7 +11,7 @@ TBTree::~TBTree()
 	mDeleteTree(mRoot);
 }
 
-bool TBTree::Insert(const TData& data)
+void TBTree::Insert(const TData& data)
 {
 	TNode* root = mRoot;
 
@@ -25,12 +25,11 @@ bool TBTree::Insert(const TData& data)
 		rootNew->childs[0] = root;
 
 		mSplitNode(rootNew, root, 0);
-		
-		return mInsertNonFull(rootNew, data);
+		mInsertNonFull(rootNew, data);
 	}
 	else
 	{
-		return mInsertNonFull(root, data);
+		mInsertNonFull(root, data);
 	}
 }
 
@@ -267,20 +266,12 @@ void TBTree::mMergeNode(TNode* parent, size_t index)
 	mDeleteNode(right);
 }
 
-bool TBTree::mInsertNonFull(TNode* node, const TData& data)
+void TBTree::mInsertNonFull(TNode* node, const TData& data)
 {
 	int i = static_cast<int>(node->n) - 1;
 
 	if (node->leaf)
 	{
-		for (size_t j = 0; j < node->n; ++j)
-		{
-			if (data.key == node->data[j].key)
-			{
-				return false;
-			}
-		}
-		
 		while (i >= 0 && data.key < node->data[i].key)
 		{
 			node->data[i + 1].val = node->data[i].val;
@@ -312,8 +303,6 @@ bool TBTree::mInsertNonFull(TNode* node, const TData& data)
 
 		mInsertNonFull(node->childs[i], data);
 	}
-
-	return true;
 }
 
 void TBTree::mErase(TNode* node, const TKey& key)

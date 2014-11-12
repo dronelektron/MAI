@@ -31,8 +31,10 @@ int main()
 				data.key = buffer;
 				data.val = num;
 				
-				if (btree.Insert(data))
+				if (btree.Find(buffer) == NULL)
 				{
+					btree.Insert(data);
+
 					printf("OK\n");
 				}
 				else

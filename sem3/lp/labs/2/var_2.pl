@@ -31,7 +31,7 @@ solve(Ans, VladelecSkvorca):-
 	not(tezka(A, golubev)), not(tezka(A, kanareikin)), % Тёзка A женат, а Голубев и Канарейкин - холостяки
 	B \= grach, C \= grach, % Хозяин грача - женат
 	VladelecGracha \= chaikin, % Не может быть женат на сестре своей жены
-	(B = voron; C = voron), % Раз у хозяина ворона есть невеста, то это кто-то из холостяков
+	(B == voron; C == voron), % Раз у хозяина ворона есть невеста, то это кто-то из холостяков
 	tezka(D, VladelecKanareiki), member(VladelecKanareiki/kanareika, Ans), % Тёзка птицы Грачёва - хозяин канарейки
 	member(VladelecPopugaya/popugai, Ans), tezka(TezkaVP, VladelecPopugaya),
 	member(VladelecTezkiVP/TezkaVP, Ans), tezka(TezkaVTVP, VladelecTezkiVP),

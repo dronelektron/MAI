@@ -206,7 +206,9 @@ void *tFind(void* arg)
 
 	while (node != NULL)
 	{
-		++threadsCnt;
+		if (node->son != NULL)
+			++threadsCnt;
+		
 		node = node->bro;
 	}
 

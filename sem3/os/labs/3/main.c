@@ -193,7 +193,11 @@ void treeFindHelper(Data* data, Node* root)
 
 	if (root->value == data->value)
 	{
+		pthread_mutex_lock(&data->mtx);
+
 		data->found = 1;
+
+		pthread_mutex_unlock(&data->mtx);
 
 		return;
 	}
@@ -228,9 +232,12 @@ void *tFind(void* arg)
 	{
 		if (node->value == value)
 		{
+			pthread_mutex_lock(&data->mtx);
+			
 			data->found = 1;
 
-			return NULL;
+			pthread_mutex_unlock(&data->mtx);
+			pthread_exit(NULL);
 		}
 
 		if (node->son != NULL && data->found != 1)

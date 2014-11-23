@@ -16,8 +16,6 @@ public:
 class Romb : public Shape
 {
 public:
-	Romb();
-
 	virtual double accept(Visitor* vis);
 	virtual void printInfo();
 	virtual void randomize(std::default_random_engine& rnd, std::uniform_real_distribution<double>& urd);

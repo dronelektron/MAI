@@ -1,11 +1,5 @@
 #include "shape.h"
 
-Romb::Romb()
-{
-	_diagHor = 0.0;
-	_diagVer = 0.0;
-}
-
 double Romb::accept(Visitor* vis)
 {
 	return vis->visit(this);

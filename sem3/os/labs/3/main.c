@@ -17,12 +17,12 @@ typedef struct _Data
 	int found;
 } Data;
 
-Node* treeCreateNode(int value);
 void treeInsert(Node** root);
 int treeFind(Node* root, int value);
 void treeDestroy(Node** root);
 void treePrint(Node* root, int level);
 
+void treeFindHelper(Data* data, Node* root);
 void *tFind(void* arg);
 void createThread(pthread_t* t, Data* data, Node* root);
 
@@ -103,16 +103,6 @@ int main(void)
 	return 0;
 }
 
-Node* treeCreateNode(int value)
-{
-	Node* node = (Node*)malloc(sizeof(Node));
-	node->value = value;
-	node->bro = NULL;
-	node->son = NULL;
-
-	return node;
-}
-
 void treeInsert(Node** root)
 {
 	int ch;
@@ -149,7 +139,10 @@ void treeInsert(Node** root)
 	while (*root != NULL)
 		root = &(*root)->bro;
 
-	*root = treeCreateNode(data);
+	*root = (Node*)malloc(sizeof(Node));
+	(*root)->value = data;
+	(*root)->bro = NULL;
+	(*root)->son = NULL;
 }
 
 int treeFind(Node* root, int value)
@@ -191,6 +184,22 @@ void treePrint(Node* root, int level)
 
 	treePrint(root->son, level + 1);
 	treePrint(root->bro, level);
+}
+
+void treeFindHelper(Data* data, Node* root)
+{
+	if (root == NULL)
+		return;
+
+	if (root->value == data->value)
+	{
+		data->found = 1;
+
+		return;
+	}
+
+	treeFindHelper(data, root->bro);
+	treeFindHelper(data, root->son);
 }
 
 void *tFind(void* arg)
@@ -241,9 +250,12 @@ void *tFind(void* arg)
 void createThread(pthread_t* t, Data* data, Node* root)
 {
 	pthread_mutex_lock(&data->mtx);
-
+	
 	data->node = root;
 
 	if (pthread_create(t, NULL, tFind, (void*)data) != 0)
+	{
 		pthread_mutex_unlock(&data->mtx);
+		treeFindHelper(data, root);
+	}
 }

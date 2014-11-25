@@ -22,9 +22,9 @@ int treeFind(Node* root, int value);
 void treeDestroy(Node** root);
 void treePrint(Node* root, int level);
 
-void treeFindHelper(Data* data, Node* root);
+int createThread(pthread_t* t, Data* data, Node* root);
 void *tFind(void* arg);
-void createThread(pthread_t* t, Data* data, Node* root);
+void treeFindHelper(Data* data, Node* root);
 
 int main(void)
 {
@@ -154,9 +154,14 @@ int treeFind(Node* root, int value)
 	data.value = value;
 	data.found = 0;
 
+	if (root == NULL)
+		return 0;
+
 	pthread_mutex_init(&data.mtx, NULL);
-	createThread(&t, &data, root);
-	pthread_join(t, NULL);
+	
+	if (createThread(&t, &data, root))
+		pthread_join(t, NULL);
+
 	pthread_mutex_destroy(&data.mtx);
 
 	return data.found;
@@ -186,9 +191,80 @@ void treePrint(Node* root, int level)
 	treePrint(root->bro, level);
 }
 
+int createThread(pthread_t* t, Data* data, Node* root)
+{
+	pthread_mutex_lock(&data->mtx);
+	
+	data->node = root;
+
+	if (pthread_create(t, NULL, tFind, (void*)data) != 0)
+	{
+		pthread_mutex_unlock(&data->mtx);
+		treeFindHelper(data, root);
+
+		return 0;
+	}
+
+	return 1;
+}
+
+void *tFind(void* arg)
+{
+	Data* data = (Data*)arg;
+	Node* node = data->node;
+	int value = data->value;
+	size_t threadsCnt = 0;
+	size_t i = 0;
+	pthread_t tid;
+	pthread_t* threads = NULL;
+	
+	pthread_mutex_unlock(&data->mtx);
+
+	while (node != NULL)
+	{
+		if (node->son != NULL)
+			++threadsCnt;
+		
+		node = node->bro;
+	}
+
+	threads = (pthread_t*)malloc(sizeof(pthread_t) * threadsCnt);
+	node = data->node;
+	threadsCnt = 0;
+
+	while (node != NULL)
+	{
+		if (node->value == value)
+		{
+			pthread_mutex_lock(&data->mtx);
+			
+			data->found = 1;
+
+			pthread_mutex_unlock(&data->mtx);
+			
+			break;
+		}
+
+		if (node->son != NULL && data->found != 1 && createThread(&tid, data, node->son))
+			threads[threadsCnt++] = tid;
+
+		node = node->bro;
+	}
+	
+	for (i = 0; i < threadsCnt; ++i)
+		pthread_join(threads[i], NULL);
+
+	pthread_mutex_lock(&data->mtx);
+
+	free(threads);
+
+	pthread_mutex_unlock(&data->mtx);
+	pthread_exit(NULL);
+}
+
 void treeFindHelper(Data* data, Node* root)
 {
-	if (root == NULL)
+	if (root == NULL || data->found == 1)
 		return;
 
 	if (root->value == data->value)
@@ -204,65 +280,4 @@ void treeFindHelper(Data* data, Node* root)
 
 	treeFindHelper(data, root->bro);
 	treeFindHelper(data, root->son);
-}
-
-void *tFind(void* arg)
-{
-	Data* data = (Data*)arg;
-	Node* node = data->node;
-	int value = data->value;
-	size_t threadsCnt = 0;
-	size_t i = 0;
-	pthread_t* threads = NULL;
-	
-	pthread_mutex_unlock(&data->mtx);
-
-	while (node != NULL)
-	{
-		if (node->son != NULL)
-			++threadsCnt;
-		
-		node = node->bro;
-	}
-
-	threads = (pthread_t*)malloc(sizeof(pthread_t) * threadsCnt);
-	node = data->node;
-
-	while (node != NULL)
-	{
-		if (node->value == value)
-		{
-			pthread_mutex_lock(&data->mtx);
-			
-			data->found = 1;
-
-			pthread_mutex_unlock(&data->mtx);
-			pthread_exit(NULL);
-		}
-
-		if (node->son != NULL && data->found != 1)
-			createThread(&threads[i++], data, node->son);
-
-		node = node->bro;
-	}
-	
-	for (i = 0; i < threadsCnt; ++i)
-		pthread_join(threads[i], NULL);
-
-	free(threads);
-
-	pthread_exit(NULL);
-}
-
-void createThread(pthread_t* t, Data* data, Node* root)
-{
-	pthread_mutex_lock(&data->mtx);
-	
-	data->node = root;
-
-	if (pthread_create(t, NULL, tFind, (void*)data) != 0)
-	{
-		pthread_mutex_unlock(&data->mtx);
-		treeFindHelper(data, root);
-	}
 }

@@ -11,7 +11,6 @@ class TString
 {
 public:
 	TString();
-	TString(const TString& s);
 	TString(const char* s);
 	~TString();
 

@@ -16,27 +16,6 @@ TString::TString()
 	mStr[0] = '\0';
 }
 
-TString::TString(const TString& s)
-{
-	try
-	{
-		mStr = new char[1];
-	}
-	catch (const std::bad_alloc& e)
-	{
-		printf("ERROR: No memory\n");
-
-		std::exit(0);
-	}
-
-	mStr[0] = '\0';
-
-	if (this != &s)
-	{
-		mCopy(s);
-	}
-}
-
 TString::TString(const char* s)
 {
 	try

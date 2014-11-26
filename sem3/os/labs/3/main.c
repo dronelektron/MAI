@@ -212,6 +212,7 @@ void *tFind(void* arg)
 {
 	Data* data = (Data*)arg;
 	Node* node = data->node;
+	Node* node2 = node;
 	int value = data->value;
 	size_t threadsCnt = 0;
 	size_t i = 0;
@@ -228,8 +229,13 @@ void *tFind(void* arg)
 		node = node->bro;
 	}
 
+	pthread_mutex_lock(&data->mtx);
+	
 	threads = (pthread_t*)malloc(sizeof(pthread_t) * threadsCnt);
-	node = data->node;
+	
+	pthread_mutex_unlock(&data->mtx);
+	
+	node = node2;
 	threadsCnt = 0;
 
 	while (node != NULL)

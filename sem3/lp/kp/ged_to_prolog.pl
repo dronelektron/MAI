@@ -17,6 +17,8 @@ $hash{''} = 'nil';
 
 while (my $line = <$hPid>)
 {
+	$line =~ s/[\r\n]//g;
+	
 	if ($line =~ qr/0 \@I([0-9]+)\@ INDI/)
 	{
 		$str = $1;
@@ -25,10 +27,14 @@ while (my $line = <$hPid>)
 	{
 		$hash{$str} = $1;
 	}
+	elsif ($line =~ qr/2 (SURN|_MARNM) (.*)/)
+	{
+		$hash{$str} = $hash{$str} . ' ' . $2;
+	}
 	elsif ($line =~ qr/0 \@F([0-9]+)\@ FAM/)
 	{
-		$husb = "";
-		$wife = "";
+		$husb = '';
+		$wife = '';
 	}
 	elsif ($line =~ qr/1 HUSB \@I([0-9]+)\@/)
 	{
@@ -40,7 +46,7 @@ while (my $line = <$hPid>)
 	}
 	elsif ($line =~ qr/1 CHIL \@I([0-9]+)\@/)
 	{
-		print 'parents(' . $hash{$1} . ', ' . $hash{$husb} . ', ' . $hash{$wife} . ').' . "\n";
+		print "parents(\"$hash{$1}\", \"$hash{$husb}\", \"$hash{$wife}\").\n";
 	}
 }
 

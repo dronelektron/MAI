@@ -23,7 +23,7 @@ while (my $line = <$hPid>)
 	{
 		$str = $1;
 	}
-	elsif ($line =~ m/1 NAME (.*) \/.*?\//)
+	elsif ($line =~ m!1 NAME (.*) /.*?/!)
 	{
 		$hash{$str} = $1;
 	}

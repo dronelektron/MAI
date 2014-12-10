@@ -17,7 +17,7 @@ $hash{''} = 'nil';
 
 while (my $line = <$hPid>)
 {
-	$line =~ s/[\r\n]//g;
+	$line =~ tr/\r\n//d;
 	
 	if ($line =~ qr/0 \@I([0-9]+)\@ INDI/)
 	{

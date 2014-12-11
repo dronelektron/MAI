@@ -46,7 +46,7 @@ while (my $line = <$hPid>)
 	}
 	elsif ($line =~ m/1 CHIL \@I([0-9]+)\@/)
 	{
-		print qq/parents("$hash{$1}", "$hash{$husb}", "$hash{$wife}").\n/;
+		print qq/parents('$hash{$1}', '$hash{$husb}', '$hash{$wife}').\n/;
 	}
 }
 

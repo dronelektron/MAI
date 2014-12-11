@@ -8,12 +8,13 @@ binmode(STDOUT, ":utf8");
 
 open(my $hPid, '<:utf8', $ARGV[0]) or die("Error. Can\'t open a file\n");
 
-my %hash;
+my %username;
+my %sex;
 my $str = "";
 my $husb = "";
 my $wife = "";
 
-$hash{''} = 'nil';
+$username{''} = 'nil';
 
 while (my $line = <$hPid>)
 {
@@ -25,11 +26,15 @@ while (my $line = <$hPid>)
 	}
 	elsif ($line =~ m!1 NAME (.*) /.*?/!)
 	{
-		$hash{$str} = $1;
+		$username{$str} = $1;
 	}
 	elsif ($line =~ m/2 (SURN|_MARNM) (.*)/)
 	{
-		$hash{$str} = $2 . ' ' . $hash{$str};
+		$username{$str} = $2 . ' ' . $username{$str};
+	}
+	elsif ($line =~ m/1 SEX (.)/)
+	{
+		$sex{$str} = $1;
 	}
 	elsif ($line =~ m/0 \@F([0-9]+)\@ FAM/)
 	{
@@ -46,7 +51,27 @@ while (my $line = <$hPid>)
 	}
 	elsif ($line =~ m/1 CHIL \@I([0-9]+)\@/)
 	{
-		print qq/parents('$hash{$1}', '$hash{$husb}', '$hash{$wife}').\n/;
+		print qq/parents('$username{$1}', '$username{$husb}', '$username{$wife}').\n/;
+	}
+}
+
+print "\n";
+
+foreach my $key (keys %sex)
+{
+	if ($sex{$key} eq 'M')
+	{
+		print qq/male('$username{$key}').\n/;
+	}
+}
+
+print "\n";
+
+foreach my $key (keys %sex)
+{
+	if ($sex{$key} eq 'F')
+	{
+		print qq/female('$username{$key}').\n/;
 	}
 }
 

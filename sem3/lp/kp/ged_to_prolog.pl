@@ -29,7 +29,7 @@ while (my $line = <$hPid>)
 	}
 	elsif ($line =~ m/2 (SURN|_MARNM) (.*)/)
 	{
-		$hash{$str} = $hash{$str} . ' ' . $2;
+		$hash{$str} = $2 . ' ' . $hash{$str};
 	}
 	elsif ($line =~ m/0 \@F([0-9]+)\@ FAM/)
 	{

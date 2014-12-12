@@ -1,10 +1,10 @@
 #include <exception>
 #include <new>
 #include <cstdio>
-#include <cstring>
 #include <cstdlib>
-
-static const int ASIZE = 128;
+#include <cstring>
+#include "vector.h"
+#include "queue.h"
 
 struct TPos
 {
@@ -12,51 +12,8 @@ struct TPos
 	int col;
 };
 
-template<class T>
-struct TVector
-{
-	T* begin;
-	int cap;
-	int size;
-};
-
-template<class T>
-void VectorInit(TVector<T>& v)
-{
-	v.begin = new T[1];
-	v.cap = 1;
-	v.size = 0;
-}
-
-template<class T>
-void VectorPushBack(TVector<T>& v, const T& val)
-{
-	if (v.size == v.cap)
-	{
-		v.cap *= 2;
-		T* v2 = new T[v.cap];
-
-		for (int i = 0; i < v.size; ++i)
-		{
-			v2[i] = v.begin[i];
-		}
-
-		delete v.begin;
-
-		v.begin = v2;
-	}
-
-	v.begin[v.size++] = val;
-}
-
-template<class T>
-void VectorDestroy(TVector<T>& v)
-{
-	delete[] v.begin;
-}
-
 int ToLower(int ch);
-void PreBmBc(char* x, int m, int* bmBc);
+void PreBmBc(char* x, int m, int* bmBc, int size);
 void Suffixes(char* x, int m, int* suff);
 void PreBmGs(char* x, int m, int* bmGs, int* suff);
 void AG(const TVector<char>& pat);
@@ -90,9 +47,9 @@ int ToLower(int ch)
 	return ch >= 'A' && ch <= 'Z' ? ch + 'a' - 'A' : ch;
 }
 
-void PreBmBc(char* x, int m, int* bmBc)
+void PreBmBc(char* x, int m, int* bmBc, int size)
 {
-	for (int i = 0; i < ASIZE; ++i)
+	for (int i = 0; i < size; ++i)
 	{
 		bmBc[i] = m;
 	}
@@ -174,34 +131,44 @@ void PreBmGs(char* x, int m, int* bmGs, int* suff)
 
 void AG(const TVector<char>& pat)
 {
-	const int Q_MAX_SIZE = (pat.size - 1) * 2;
+	const int A_SIZE = 128;
 	int i;
 	int j;
 	int k;
 	int s;
 	int shift;
 	int ch;
-	int qSize = 0;
-	int qSize2 = 0;
-	int qInd2 = 0;
 	int m = pat.size - 1;
-	int* bmBc = new int[ASIZE];
-	int* bmGs = new int[m];
-	int* skip = new int[m];
-	int* suff = new int[m];
-	char* y = new char[Q_MAX_SIZE];
-	char* x = pat.begin;
-	TPos* q = new TPos[Q_MAX_SIZE];
+	int* bmBc = NULL;
+	int* bmGs = NULL;
+	int* skip = NULL;
+	int* suff = NULL;
+	TQueue<char> text;
+	TQueue<TPos> pos;
 	TPos tmpPos;
+
+	try
+	{
+		bmBc = new int[A_SIZE];
+		bmGs = new int[m];
+		skip = new int[m];
+		suff = new int[m];
+	}
+	catch (const std::bad_alloc& e)
+	{
+		printf("ERROR: No memory\n");
+
+		std::exit(0);
+	}
 
 	tmpPos.row = 1;
 	tmpPos.col = 1;
 	
-	qInd2 = 0;
-	qSize2 = 0;
+	QueueInit<char>(text, m);
+	QueueInit<TPos>(pos, m);
 
-	PreBmGs(x, m, bmGs, suff);
-	PreBmBc(x, m, bmBc);
+	PreBmGs(pat.begin, m, bmGs, suff);
+	PreBmBc(pat.begin, m, bmBc, A_SIZE);
 	memset(skip, 0, m * sizeof(int));
 
 	j = 0;
@@ -210,15 +177,15 @@ void AG(const TVector<char>& pat)
 
 	while (true)
 	{
-		while (qSize < Q_MAX_SIZE && (ch = getchar()) != EOF)
+		while (text.size < m && (ch = getchar()) != EOF)
 		{
 			if (ch == ' ' || ch == '\t')
 			{
 				if (isWordFound)
 				{
-					y[(j + qSize++) % Q_MAX_SIZE] = ' ';
+					QueuePush<char>(text, ' ');
+					
 					isWordFound = false;
-
 					++tmpPos.col;
 				}
 			}
@@ -226,7 +193,8 @@ void AG(const TVector<char>& pat)
 			{
 				if (isWordFound)
 				{
-					y[(j + qSize++) % Q_MAX_SIZE] = ' ';
+					QueuePush<char>(text, ' ');
+
 					isWordFound = false;
 				}
 
@@ -237,15 +205,16 @@ void AG(const TVector<char>& pat)
 			{
 				if (!isWordFound)
 				{
-					q[(qInd2 + qSize2++) % Q_MAX_SIZE] = tmpPos;
+					QueuePush<TPos>(pos, tmpPos);
 				}
 
-				y[(j + qSize++) % Q_MAX_SIZE] = ToLower(ch);
+				QueuePush<char>(text, ToLower(ch));
+
 				isWordFound = true;
 			}
 		}
 
-		if (qSize < m)
+		if (text.size < m)
 		{
 			break;
 		}
@@ -284,7 +253,7 @@ void AG(const TVector<char>& pat)
 			}
 			else
 			{
-				if (x[i] == y[(i + j) % Q_MAX_SIZE])
+				if (pat.begin[i] == text.begin[(i + j) % m])
 				{
 					--i;
 				}
@@ -297,14 +266,16 @@ void AG(const TVector<char>& pat)
 
 		if (i < 0)
 		{
-			printf("%d, %d\n", q[qInd2].row, q[qInd2].col);
+			TPos wp = pos.begin[pos.offset];
+
+			printf("%d, %d\n", wp.row, wp.col);
 			
 			skip[m - 1] = m;
 			shift = bmGs[0];
 		}
 		else
 		{
-			int ind = static_cast<int>(y[(i + j) % Q_MAX_SIZE]);
+			int ind = static_cast<int>(text.begin[(i + j) % m]);
 
 			skip[m - 1] = m - 1 - i;
 			shift = Max(bmGs[i], bmBc[ind] - m + 1 + i);
@@ -313,14 +284,14 @@ void AG(const TVector<char>& pat)
 		int z = j;
 
 		j += shift;
-		qSize -= shift;
 		
 		for (; z < j; ++z)
 		{
-			if (y[z % Q_MAX_SIZE] == ' ')
+			QueuePop<char>(text);
+
+			if (text.begin[z % m] == ' ')
 			{
-				qInd2 = (qInd2 + 1) % Q_MAX_SIZE;
-				--qSize2;
+				QueuePop<TPos>(pos);
 			}
 		}
 
@@ -328,12 +299,13 @@ void AG(const TVector<char>& pat)
 		memset(skip + m - shift, 0, shift * sizeof(int));
 	}
 
+	QueueDestroy<char>(text);
+	QueueDestroy<TPos>(pos);
+
 	delete[] bmBc;
 	delete[] bmGs;
 	delete[] skip;
 	delete[] suff;
-	delete[] y;
-	delete[] q;
 }
 
 int Max(int a, int b)

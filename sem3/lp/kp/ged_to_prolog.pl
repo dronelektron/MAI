@@ -65,14 +65,4 @@ foreach my $key (keys %sex)
 	}
 }
 
-print "\n";
-
-foreach my $key (keys %sex)
-{
-	if ($sex{$key} eq 'F')
-	{
-		print qq/female('$username{$key}').\n/;
-	}
-}
-
 close($hPid);

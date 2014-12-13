@@ -30,6 +30,11 @@ int main()
 	{
 		ch = ToLower(ch);
 
+		if (ch == ' ')
+		{
+			ch = '{';
+		}
+
 		VectorPushBack<char>(pattern, ch);
 	}
 
@@ -56,7 +61,7 @@ void PreBmBc(char* x, int m, int* bmBc, int size)
 
 	for (int i = 0; i < m - 1; ++i)
 	{
-		int ind = static_cast<int>(x[i]);
+		int ind = x[i] - 'a';
 
 		bmBc[ind] = m - i - 1;
 	}
@@ -131,7 +136,7 @@ void PreBmGs(char* x, int m, int* bmGs, int* suff)
 
 void AG(const TVector<char>& pat)
 {
-	const int A_SIZE = 128;
+	const int A_SIZE = '{' - 'a' + 1;
 	int i;
 	int j;
 	int k;
@@ -183,7 +188,7 @@ void AG(const TVector<char>& pat)
 			{
 				if (isWordFound)
 				{
-					QueuePush<char>(text, ' ');
+					QueuePush<char>(text, '{');
 					
 					isWordFound = false;
 					++tmpPos.col;
@@ -193,7 +198,7 @@ void AG(const TVector<char>& pat)
 			{
 				if (isWordFound)
 				{
-					QueuePush<char>(text, ' ');
+					QueuePush<char>(text, '{');
 
 					isWordFound = false;
 				}
@@ -275,8 +280,8 @@ void AG(const TVector<char>& pat)
 		}
 		else
 		{
-			int ind = static_cast<int>(text.begin[(i + j) % m]);
-
+			int ind = text.begin[(i + j) % m] - 'a';
+			
 			skip[m - 1] = m - 1 - i;
 			shift = Max(bmGs[i], bmBc[ind] - m + 1 + i);
 		}
@@ -289,7 +294,7 @@ void AG(const TVector<char>& pat)
 		{
 			QueuePop<char>(text);
 
-			if (text.begin[z % m] == ' ')
+			if (text.begin[z % m] == '{')
 			{
 				QueuePop<TPos>(pos);
 			}

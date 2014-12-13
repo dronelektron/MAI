@@ -1,149 +1,171 @@
-#include <iostream>
-#include <string>
+#include <cstdio>
+#include <cstring>
 #include <vector>
 #include <queue>
-#include <map>
-
-typedef std::map<char, int> Node;
-
-enum kData
-{
-	LINK = 0,
-	LEAF = 10
-};
-
-struct VertexInfo
-{
-	int v;
-	int p;
-	char ch;
-};
 
 class AhoCorasick
 {
 public:
+	struct Node
+	{
+		bool flag;
+		char ch;
+		int par;
+		int suff;
+		int gsuff;
+		int nodes[26];
+	};
+
 	AhoCorasick();
 
-	void addString(const std::string &s);
+	void addString(const char* str);
 	void buildLinks();
-	int go(int v, char c);
-	void check(int v, int i);
-	void findAll(const std::string &s);
+	void find(const char* str);
 
 private:
-	std::vector<Node> _t;
+	std::vector<Node> _trie;
+
+	Node _createNode(int p, char ch);
+	void _check(int v, int i);
+	int _go(int v, char ch);
 };
 
 int main()
 {
 	AhoCorasick ac;
-
-	ac.addString("string");
-	ac.addString("search");
-
+	
+	ac.addString("d");
+	ac.addString("cd");
+	ac.addString("bcd");
+	ac.addString("abcd");
+	
 	ac.buildLinks();
-
-	ac.findAll("Testing string for searching");
-
-	return 0;
+	ac.find("abcdcdcdxabxacd");
+	
+	return 0;	
 }
 
 AhoCorasick::AhoCorasick()
 {
-	_t.push_back(Node());
+	_trie.push_back(_createNode(-1, '$'));
 }
 
-void AhoCorasick::addString(const std::string &s)
+void AhoCorasick::addString(const char* str)
 {
-	int v = 0;
+	int n = strlen(str);
+	int num = 0;
 
-	for (size_t i = 0; i < s.length(); i++)
+	for (int i = 0; i < n; ++i)
 	{
-		if (_t[v].count(s[i]) == 0)
-		{
-			_t.push_back(Node());
+		int ind = str[i] - 'a';
 
-			_t[v][s[i]] = _t.size() - 1;
+		if (_trie[num].nodes[ind] == -1)
+		{
+			_trie.push_back(_createNode(num, str[i]));
+			_trie[num].nodes[ind] = _trie.size() - 1;
 		}
 
-		v = _t[v][s[i]];
+		num = _trie[num].nodes[ind];
 	}
 
-	_t[v][LEAF] = s.length();
+	_trie[num].flag = true;
 }
 
 void AhoCorasick::buildLinks()
 {
-	std::queue<VertexInfo> q;
+	std::queue<int> q;
 
-	VertexInfo vi;
+	for (int i = 0; i < 26; ++i)
+		if (_trie[0].nodes[i] != -1)
+			q.push(_trie[0].nodes[i]);
 
-	vi.v = 0;
-	vi.p = 0;
-	vi.ch = '$';
-
-	q.push(vi);
-	
 	while (!q.empty())
 	{
-		vi = q.front();
-
-		int cur = vi.v;
-		int p = vi.p;
-		char ch = vi.ch;
-
+		int cur = q.front();
+		int ind = _trie[cur].ch - 'a';
+		int p = _trie[cur].par;
+		int suff = _trie[p].suff;
+		
 		q.pop();
+		
+		for (int i = 0; i < 26; ++i)
+			if (_trie[cur].nodes[i] != -1)
+				q.push(_trie[cur].nodes[i]);
 
-		if (cur != 0 && p != 0)
+		_trie[cur].suff = 0;
+
+		while (suff != -1)
 		{
-			int link = _t[p].count(LINK) > 0 ? _t[p][LINK] : 0;
+			if (_trie[suff].nodes[ind] != -1)
+			{
+				_trie[cur].suff = _trie[suff].nodes[ind];
 
-			if (_t[link].count(ch) > 0)
-				_t[cur][LINK] = _t[link][ch];
+				break;
+			}
+
+			suff = _trie[suff].suff;
 		}
 
-		for (Node::iterator it = _t[cur].begin(); it != _t[cur].end(); it++)
+		int gs = _trie[cur].suff;
+
+		while (gs != 0)
 		{
-			if (it->first == LEAF || it->first == LINK)
-				continue;
+			if (_trie[gs].flag)
+			{
+				_trie[cur].gsuff = gs;
 
-			vi.p = cur;
-			vi.v = it->second;
-			vi.ch = it->first;
+				break;
+			}
 
-			q.push(vi);
+			gs = _trie[gs].suff;
 		}
 	}
 }
 
-int AhoCorasick::go(int v, char c)
+void AhoCorasick::find(const char* str)
 {
-	if (_t[v].count(c) > 0)
-		return _t[v][c];
+	int n = strlen(str);
+	int v = 0;
+
+	for (int i = 0; i < n; ++i)
+	{
+		v = _go(v, str[i]);
+
+		_check(v, i);
+	}
+}
+
+AhoCorasick::Node AhoCorasick::_createNode(int p, char ch)
+{
+	Node node;
+
+	node.ch = ch;
+	node.par = p;
+	node.suff = -1;
+	node.gsuff = -1;
+	node.flag = false;
+
+	memset(node.nodes, 255, sizeof(node.nodes));
+
+	return node;
+}
+
+void AhoCorasick::_check(int v, int i)
+{
+	for (int u = v; u != -1; u = _trie[u].gsuff)
+		if (_trie[u].flag)
+			printf("Matched: %d\n", i);
+}
+
+int AhoCorasick::_go(int v, char ch)
+{
+	int ind = ch - 'a';
+
+	if (_trie[v].nodes[ind] != -1)
+		return _trie[v].nodes[ind];
 
 	if (v == 0)
 		return 0;
-	
-	return go(_t[v].count(LINK) > 0 ? _t[v][LINK] : 0, c);
-}
 
-void AhoCorasick::check(int v, int i)
-{
-	for (size_t u = v; u != 0; u = _t[u].count(LINK) > 0 ? _t[u][LINK] : 0)
-		if (_t[u].count(LEAF) > 0)
-			std::cout << "Matched: " << (i - _t[u][LEAF] + 1) << std::endl;
-		else
-			break;
-}
-
-void AhoCorasick::findAll(const std::string &s)
-{
-	int v = 0;
-
-	for (size_t i = 0; i < s.length(); i++)
-	{
-		v = go(v, s[i]);
-
-		check(v, i);
-	}
+	return _go(_trie[v].suff, ch);
 }

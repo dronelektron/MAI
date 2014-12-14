@@ -38,8 +38,6 @@ int main()
 		VectorPushBack<char>(pattern, ch);
 	}
 
-	VectorPushBack<char>(pattern, '\0');
-
 	AG(pattern);
 	
 	VectorDestroy<char>(pattern);
@@ -58,12 +56,10 @@ void PreBmBc(char* x, int m, int* bmBc, int size)
 	{
 		bmBc[i] = m;
 	}
-
+	
 	for (int i = 0; i < m - 1; ++i)
 	{
-		int ind = x[i] - 'a';
-
-		bmBc[ind] = m - i - 1;
+		bmBc[x[i] - 'a'] = m - i - 1;
 	}
 }
 
@@ -138,12 +134,10 @@ void AG(const TVector<char>& pat)
 {
 	const int A_SIZE = '{' - 'a' + 1;
 	int i;
-	int j;
 	int k;
 	int s;
 	int shift;
 	int ch;
-	int m = pat.size - 1;
 	int* bmBc = NULL;
 	int* bmGs = NULL;
 	int* skip = NULL;
@@ -155,9 +149,9 @@ void AG(const TVector<char>& pat)
 	try
 	{
 		bmBc = new int[A_SIZE];
-		bmGs = new int[m];
-		skip = new int[m];
-		suff = new int[m];
+		bmGs = new int[pat.size];
+		skip = new int[pat.size];
+		suff = new int[pat.size];
 	}
 	catch (const std::bad_alloc& e)
 	{
@@ -169,20 +163,18 @@ void AG(const TVector<char>& pat)
 	tmpPos.row = 1;
 	tmpPos.col = 1;
 	
-	QueueInit<char>(text, m);
-	QueueInit<TPos>(pos, m);
+	QueueInit<char>(text, pat.size);
+	QueueInit<TPos>(pos, pat.size);
 
-	PreBmGs(pat.begin, m, bmGs, suff);
-	PreBmBc(pat.begin, m, bmBc, A_SIZE);
-	memset(skip, 0, m * sizeof(int));
-
-	j = 0;
+	PreBmGs(pat.begin, pat.size, bmGs, suff);
+	PreBmBc(pat.begin, pat.size, bmBc, A_SIZE);
+	memset(skip, 0, pat.size * sizeof(int));
 
 	bool isWordFound = false;
 
 	while (true)
 	{
-		while (text.size < m && (ch = getchar()) != EOF)
+		while (text.size < pat.size && (ch = getchar()) != EOF)
 		{
 			if (ch == ' ' || ch == '\t')
 			{
@@ -219,12 +211,12 @@ void AG(const TVector<char>& pat)
 			}
 		}
 
-		if (text.size < m)
+		if (text.size < pat.size)
 		{
 			break;
 		}
 
-		i = m - 1;
+		i = pat.size - 1;
 
 		while (i >= 0)
 		{
@@ -258,7 +250,7 @@ void AG(const TVector<char>& pat)
 			}
 			else
 			{
-				if (pat.begin[i] == text.begin[(i + j) % m])
+				if (pat.begin[i] == text.begin[(i + text.offset) % pat.size])
 				{
 					--i;
 				}
@@ -275,33 +267,31 @@ void AG(const TVector<char>& pat)
 
 			printf("%d, %d\n", wp.row, wp.col);
 			
-			skip[m - 1] = m;
+			skip[pat.size - 1] = pat.size;
 			shift = bmGs[0];
 		}
 		else
 		{
-			int ind = text.begin[(i + j) % m] - 'a';
+			int ind = text.begin[(i + text.offset) % pat.size] - 'a';
 			
-			skip[m - 1] = m - 1 - i;
-			shift = Max(bmGs[i], bmBc[ind] - m + 1 + i);
+			skip[pat.size - 1] = pat.size - 1 - i;
+			shift = Max(bmGs[i], bmBc[ind] - pat.size + 1 + i);
 		}
 		
-		int z = j;
+		int offset = text.offset;
 
-		j += shift;
-		
-		for (; z < j; ++z)
+		for (size_t z = 0; z < shift; ++z)
 		{
 			QueuePop<char>(text);
 
-			if (text.begin[z % m] == '{')
+			if (text.begin[(offset + z) % pat.size] == '{')
 			{
 				QueuePop<TPos>(pos);
 			}
 		}
 
-		memcpy(skip, skip + shift, (m - shift) * sizeof(int));
-		memset(skip + m - shift, 0, shift * sizeof(int));
+		memcpy(skip, skip + shift, (pat.size - shift) * sizeof(int));
+		memset(skip + pat.size - shift, 0, shift * sizeof(int));
 	}
 
 	QueueDestroy<char>(text);

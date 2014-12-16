@@ -3,7 +3,7 @@
 #include <string>
 
 std::vector<int> prefix(const std::string &s);
-int KMP(const std::string &s1, const std::string &s2);
+void KMP(const std::string &s1, const std::string &s2);
 
 int main()
 {
@@ -12,7 +12,7 @@ int main()
 	std::getline(std::cin, s1);
 	std::getline(std::cin, s2);
 
-	std::cout << KMP(s1, s2) << std::endl;
+	KMP(s1, s2);
 	
 	return 0;
 }
@@ -40,7 +40,7 @@ std::vector<int> prefix(const std::string &s)
 	return overlap;
 }
 
-int KMP(const std::string &s1, const std::string &s2)
+void KMP(const std::string &s1, const std::string &s2)
 {
 	const int N = s1.length(), M = s2.length();
 	std::vector<int> pref = prefix(s2);
@@ -55,9 +55,7 @@ int KMP(const std::string &s1, const std::string &s2)
 		if (s1[i] == s2[j])
 			j++;
 
-		if (j >= M)
-			return i - M + 1;
+		if (j == M)
+			std::cout << "Matched: " << (i - M + 1) << std::endl;
 	}
-
-	return -1;
 }

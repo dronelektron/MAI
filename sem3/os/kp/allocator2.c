@@ -23,19 +23,6 @@ void splitPageToBlocksA2(size_t pageIndex, size_t size)
 	cur->next = NULL;
 }
 
-void* allocBlockA2(size_t pageIndex)
-{
-	BlockA2* cur = gPagesInfoA2[pageIndex].begin;
-
-	if (cur->next != NULL)
-		cur->next->prev = NULL;
-
-	gPagesInfoA2[pageIndex].begin = cur->next;
-	--gPagesInfoA2[pageIndex].count;
-
-	return (void*)cur;
-}
-
 int initAllocatorA2(size_t size)
 {
 	size_t i;
@@ -74,6 +61,7 @@ void* mallocA2(size_t size)
 	size_t freePage = -1;
 	size_t sizeA = sizeof(BlockA2);
 	size_t sizeB = (size_t)pow(2.0, ceil(log(size) / log(2.0)));
+	BlockA2* cur = NULL;
 	
 	size = sizeA > sizeB ? sizeA : sizeB;
 
@@ -93,7 +81,15 @@ void* mallocA2(size_t size)
 	if (gPagesInfoA2[freePage].size == FREE)
 		splitPageToBlocksA2(freePage, size);
 	
-	return allocBlockA2(freePage);
+	cur = gPagesInfoA2[freePage].begin;
+
+	if (cur->next != NULL)
+		cur->next->prev = NULL;
+
+	gPagesInfoA2[freePage].begin = cur->next;
+	--gPagesInfoA2[freePage].count;
+
+	return (void*)cur;
 }
 
 void freeA2(void* ptr)
@@ -145,7 +141,7 @@ void freeA2(void* ptr)
 		++gPagesInfoA2[pageIndex].count;
 	}
 
-	if (gPagesInfoA2[pageIndex].count * gPagesInfoA2[pageIndex].size == PAGE_SIZE_A2)
+	if (gPagesInfoA2[pageIndex].size * gPagesInfoA2[pageIndex].count == PAGE_SIZE_A2)
 	{
 		gPagesInfoA2[pageIndex].begin = NULL;
 		gPagesInfoA2[pageIndex].size = FREE;

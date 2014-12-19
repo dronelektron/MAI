@@ -1,6 +1,6 @@
 #include "allocator2.h"
 
-size_t getPageCountBySize(size_t size)
+size_t getPageCountBySizeA2(size_t size)
 {
 	return size / PAGE_SIZE_A2 + (size_t)(size % PAGE_SIZE_A2 != 0);
 }
@@ -34,7 +34,7 @@ void linkPagesA2(size_t pageIndex, size_t count)
 
 	gPagesInfoA2[pageIndex].begin = NULL;
 	gPagesInfoA2[pageIndex].size = count * PAGE_SIZE_A2;
-	gPagesInfoA2[pageIndex].count = 0;
+	gPagesInfoA2[pageIndex].count = 1;
 
 	for (i = 1; i < count; ++i)
 		gPagesInfoA2[pageIndex + i].size = LINK;
@@ -43,10 +43,11 @@ void linkPagesA2(size_t pageIndex, size_t count)
 void unlinkPagesA2(size_t pageIndex)
 {
 	size_t i;
-	size_t pages = getPageCountBySize(gPagesInfoA2[pageIndex].size);
+	size_t pages = getPageCountBySizeA2(gPagesInfoA2[pageIndex].size);
 
 	gPagesInfoA2[pageIndex].size = FREE;
-
+	gPagesInfoA2[pageIndex].count = 0;
+	
 	for (i = 1; i < pages; ++i)
 		gPagesInfoA2[pageIndex + i].size = FREE;
 }
@@ -55,7 +56,7 @@ int initAllocatorA2(size_t size)
 {
 	size_t i;
 
-	gPagesCntA2 = getPageCountBySize(size);
+	gPagesCntA2 = getPageCountBySizeA2(size);
 	gHeapA2 = malloc(gPagesCntA2 * PAGE_SIZE_A2);
 
 	if (gHeapA2 == NULL)
@@ -89,7 +90,7 @@ void* mallocA2(size_t size)
 	size_t freePage = -1;
 	size_t sizeA = sizeof(BlockA2);
 	size_t sizeB = (size_t)pow(2.0, ceil(log(size) / log(2.0)));
-	size_t pages = getPageCountBySize(size);
+	size_t pages = getPageCountBySizeA2(size);
 	BlockA2* cur = NULL;
 	
 	if (pages < 2)

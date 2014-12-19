@@ -1,21 +1,22 @@
 #include <stdio.h>
 #include <time.h>
 #include "allocator1.h"
-//#include "allocator2.h"
+#include "allocator2.h"
 
 size_t parseSize(const char* str);
 
 int main(int argc, char* argv[])
 {
-	const size_t N = 10000;
+	const size_t N = 100;
 	size_t i;
 	size_t j;
 	size_t k;
 	size_t arg;
 	clock_t time1;
 	clock_t time2;
-	void* ptr;
-	void* arr[N];
+	void* addr[N];
+	size_t bytes[N];
+	size_t delSeq[N];
 
 	srand((unsigned int)time(0));
 
@@ -48,42 +49,76 @@ int main(int argc, char* argv[])
 
 		return 0;
 	}
-	
-	time1 = clock();
 
-	for (i = 0; i < N; ++i)
+	if (!initAllocatorA2(arg))
 	{
-		arg = 1 + rand() % 256;
-		arr[i] = mallocA1(arg);
+		printf("Error. No memory\n");
+
+		return 0;
 	}
 	
-	time2 = clock();
-
-	printf("Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
+	for (i = 0; i < N; ++i)
+	{
+		bytes[i] = 1 + rand() % 256;
+		delSeq[i] = i;
+	}
 
 	for (i = 0; i < N; ++i)
 	{
 		j = rand() % N;
 		k = rand() % N;
 
-		ptr = arr[j];
-		arr[j] = arr[k];
-		arr[k] = ptr;
+		arg = delSeq[j];
+		delSeq[j] = delSeq[k];
+		delSeq[k] = arg;
 	}
+
+	// ALLOCATOR 1 TIMER
+	time1 = clock();
+
+	for (i = 0; i < N; ++i)
+		addr[i] = mallocA1(bytes[i]);
+	
+	time2 = clock();
+
+	printf("[1] Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
 
 	for (i = 0; i < N; ++i)
 	{
-		if (arr[i] == NULL)
+		if (addr[delSeq[i]] == NULL)
 			continue;
 		
-		freeA1(arr[i]);
+		freeA1(addr[delSeq[i]]);
 	}
 	
 	time1 = clock();
 
-	printf("Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
+	printf("[1] Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
+
+	// ALLOCATOR 2 TIMER
+	time1 = clock();
+
+	for (i = 0; i < N; ++i)
+		addr[i] = mallocA2(bytes[i]);
 	
+	time2 = clock();
+
+	printf("[2] Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
+
+	for (i = 0; i < N; ++i)
+	{
+		if (addr[delSeq[i]] == NULL)
+			continue;
+
+		freeA2(addr[delSeq[i]]);
+	}
+	
+	time1 = clock();
+
+	printf("[2] Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
+
 	destroyAllocatorA1();
+	destroyAllocatorA2();
 
 	return 0;
 }

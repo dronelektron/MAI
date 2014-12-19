@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef unsigned char* PBYTE_A1;
+
 typedef struct _BlockA1
 {
 	size_t size;
@@ -18,8 +20,8 @@ static size_t gSizeA1;
 
 int initAllocatorA1(size_t size);
 void destroyAllocatorA1();
-void insertBlockA1(BlockA1* left, BlockA1* block, BlockA1* right);
-void* eraseBlockA1(BlockA1* block, size_t size);
+void deallocBlockA1(BlockA1* left, BlockA1* block, BlockA1* right);
+void* allocBlockA1(BlockA1* block, size_t size);
 void* mallocA1(size_t size);
 void freeA1(void* ptr);
 

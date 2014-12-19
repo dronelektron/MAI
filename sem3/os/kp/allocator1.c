@@ -21,7 +21,7 @@ void destroyAllocatorA1()
 	free(gBeginA1);
 }
 
-void insertBlockA1(BlockA1* left, BlockA1* block, BlockA1* right)
+void deallocBlockA1(BlockA1* left, BlockA1* block, BlockA1* right)
 {
 	if (left == NULL && right == NULL)
 	{
@@ -51,13 +51,13 @@ void insertBlockA1(BlockA1* left, BlockA1* block, BlockA1* right)
 	}
 }
 
-void* eraseBlockA1(BlockA1* block, size_t size)
+void* allocBlockA1(BlockA1* block, size_t size)
 {
 	BlockA1* nextBlock = NULL;
 
 	if (block->size >= size + MIN_BLOCK_SIZE_A1)
 	{
-		nextBlock = (BlockA1*)((unsigned char*)block + size);
+		nextBlock = (BlockA1*)((PBYTE_A1)block + size);
 		nextBlock->size = block->size - size;
 		nextBlock->prev = block->prev;
 		nextBlock->next = block->next;
@@ -84,7 +84,7 @@ void* eraseBlockA1(BlockA1* block, size_t size)
 			gFreeA1 = block->next;
 	}
 
-	return (void*)((unsigned char*)block + sizeof(size_t));
+	return (void*)((PBYTE_A1)block + sizeof(size_t));
 }
 
 void* mallocA1(size_t size)
@@ -112,22 +112,22 @@ void* mallocA1(size_t size)
 	if (gFreeA1 == NULL || minBlock->size < size)
 		return NULL;
 	
-	return eraseBlockA1(minBlock, size);
+	return allocBlockA1(minBlock, size);
 }
 
 void freeA1(void* ptr)
 {
-	BlockA1* block = (BlockA1*)((unsigned char*)ptr - sizeof(size_t));
+	BlockA1* block = (BlockA1*)((PBYTE_A1)ptr - sizeof(size_t));
 	BlockA1* cur = gFreeA1;
 	BlockA1* leftBlock = NULL;
 	BlockA1* rightBlock = NULL;
 
 	while (cur != NULL)
 	{
-		if ((BlockA1*)((unsigned char*)cur + cur->size) <= block)
+		if ((BlockA1*)((PBYTE_A1)cur + cur->size) <= block)
 			leftBlock = cur;
 
-		if ((BlockA1*)((unsigned char*)block + block->size) <= cur)
+		if ((BlockA1*)((PBYTE_A1)block + block->size) <= cur)
 		{
 			rightBlock = cur;
 
@@ -137,13 +137,13 @@ void freeA1(void* ptr)
 		cur = cur->next;
 	}
 	
-	insertBlockA1(leftBlock, block, rightBlock);
+	deallocBlockA1(leftBlock, block, rightBlock);
 
 	cur = gFreeA1;
 
 	while (cur != NULL)
 	{
-		if ((BlockA1*)((unsigned char*)cur + cur->size) == cur->next)
+		if ((BlockA1*)((PBYTE_A1)cur + cur->size) == cur->next)
 		{
 			cur->size += cur->next->size;
 			cur->next = cur->next->next;

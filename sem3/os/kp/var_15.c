@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 	time2 = clock();
 
 	printf("[2] Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
-	
+
 	for (i = 0; i < N; ++i)
 	{
 		if (addr[delSeq[i]] == NULL)
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 	time1 = clock();
 
 	printf("[2] Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
-
+	
 	destroyAllocatorA1();
 	destroyAllocatorA2();
 

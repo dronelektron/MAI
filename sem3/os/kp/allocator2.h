@@ -31,7 +31,10 @@ static size_t gPagesCntA2 = 0;
 static void* gHeapA2 = NULL;
 static PageInfoA2* gPagesInfoA2 = NULL;
 
+size_t getPageCountBySize(size_t size);
 void splitPageToBlocksA2(size_t pageIndex, size_t size);
+void linkPagesA2(size_t pageIndex, size_t count);
+void unlinkPagesA2(size_t pageIndex);
 int initAllocatorA2(size_t size);
 void destroyAllocatorA2();
 void* mallocA2(size_t size);

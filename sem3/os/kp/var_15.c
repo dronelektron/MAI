@@ -8,6 +8,7 @@ size_t parseSize(const char* str);
 int main(int argc, char* argv[])
 {
 	const size_t N = 100;
+	const size_t MAX_BYTES = 9000;
 	size_t i;
 	size_t j;
 	size_t k;
@@ -59,7 +60,7 @@ int main(int argc, char* argv[])
 	
 	for (i = 0; i < N; ++i)
 	{
-		bytes[i] = 1 + rand() % 256;
+		bytes[i] = 1 + rand() % MAX_BYTES;
 		delSeq[i] = i;
 	}
 
@@ -104,7 +105,7 @@ int main(int argc, char* argv[])
 	time2 = clock();
 
 	printf("[2] Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
-
+	
 	for (i = 0; i < N; ++i)
 	{
 		if (addr[delSeq[i]] == NULL)

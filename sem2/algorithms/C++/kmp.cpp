@@ -56,6 +56,10 @@ void KMP(const std::string &s1, const std::string &s2)
 			j++;
 
 		if (j == M)
+		{
 			std::cout << "Matched: " << (i - M + 1) << std::endl;
+			
+			j = pref[j - 1];
+		}
 	}
 }

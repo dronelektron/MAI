@@ -15,7 +15,6 @@ typedef enum _kMemStateA2
 
 typedef struct _BlockA2
 {
-	struct _BlockA2* prev;
 	struct _BlockA2* next;
 } BlockA2;
 

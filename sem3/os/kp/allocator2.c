@@ -12,7 +12,6 @@ void splitPageToBlocksA2(size_t pageIndex, size_t size)
 	BlockA2* cur = (BlockA2*)((PBYTE_A2)gHeapA2 + pageIndex * PAGE_SIZE_A2);
 	BlockA2* next = NULL;
 
-	cur->prev = NULL;
 	gPagesInfoA2[pageIndex].begin = cur;
 	gPagesInfoA2[pageIndex].size = size;
 	gPagesInfoA2[pageIndex].count = 0;
@@ -21,7 +20,6 @@ void splitPageToBlocksA2(size_t pageIndex, size_t size)
 	{
 		next = (BlockA2*)((PBYTE_A2)cur + size);
 		cur->next = next;
-		next->prev = cur;
 		cur = cur->next;
 	}
 
@@ -132,11 +130,8 @@ void* mallocA2(size_t size)
 	{
 		if (gPagesInfoA2[freePage].size == FREE)
 			splitPageToBlocksA2(freePage, size);
-	
+		
 		cur = gPagesInfoA2[freePage].begin;
-
-		if (cur->next != NULL)
-			cur->next->prev = NULL;
 
 		gPagesInfoA2[freePage].begin = cur->next;
 		++gPagesInfoA2[freePage].count;
@@ -169,7 +164,6 @@ void freeA2(void* ptr)
 
 	if (gPagesInfoA2[pageIndex].begin == NULL)
 	{
-		block->prev = NULL;
 		block->next = NULL;
 		gPagesInfoA2[pageIndex].begin = block;
 	}
@@ -196,11 +190,7 @@ void freeA2(void* ptr)
 			left->next = block;
 		else
 			gPagesInfoA2[pageIndex].begin = block;
-
-		if (right != NULL)
-			right->prev = block;
-
-		block->prev = left;
+		
 		block->next = right;
 	}
 

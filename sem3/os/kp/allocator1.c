@@ -90,9 +90,10 @@ void* allocBlockA1(BlockA1* block, size_t size)
 void* mallocA1(size_t size)
 {
 	size_t minSize = gSizeA1;
+	size_t oldSize = size;
 	BlockA1* minBlock = gFreeA1;
 	BlockA1* cur = gFreeA1;
-	
+
 	size += sizeof(size_t);
 
 	if (size < MIN_BLOCK_SIZE_A1)
@@ -111,6 +112,12 @@ void* mallocA1(size_t size)
 
 	if (gFreeA1 == NULL || minBlock->size < size)
 		return NULL;
+
+	gReqA1 += oldSize;
+	gTotA1 += size;
+
+	//printf("Request: %zu bytes\n", oldSize);
+	//printf("Allocated: %zu bytes\n", size);
 	
 	return allocBlockA1(minBlock, size);
 }
@@ -156,4 +163,14 @@ void freeA1(void* ptr)
 
 		cur = cur->next;
 	}
+}
+
+size_t getReqA1()
+{
+	return gReqA1;
+}
+
+size_t getTotA1()
+{
+	return gTotA1;
 }

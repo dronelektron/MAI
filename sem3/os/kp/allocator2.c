@@ -89,6 +89,7 @@ void* mallocA2(size_t size)
 	size_t sizeA = sizeof(BlockA2);
 	size_t sizeB = (size_t)pow(2.0, ceil(log(size) / log(2.0)));
 	size_t pages = getPageCountBySizeA2(size);
+	size_t oldSize = size;
 	BlockA2* cur = NULL;
 	
 	if (pages < 2)
@@ -100,6 +101,9 @@ void* mallocA2(size_t size)
 			if ((gPagesInfoA2[i].size == size && gPagesInfoA2[i].begin != NULL) || gPagesInfoA2[i].size == FREE)
 			{
 				freePage = i;
+
+				gReqA2 += oldSize;
+				gTotA2 += size;
 
 				break;
 			}
@@ -117,6 +121,9 @@ void* mallocA2(size_t size)
 			if (pCnt == pages)
 			{
 				freePage = i - pCnt + 1;
+
+				gReqA2 += oldSize;
+				gTotA2 += pages * PAGE_SIZE_A2;
 
 				break;
 			}
@@ -136,11 +143,17 @@ void* mallocA2(size_t size)
 		gPagesInfoA2[freePage].begin = cur->next;
 		++gPagesInfoA2[freePage].count;
 
+		//printf("Request: %zu bytes\n", oldSize);
+		//printf("Allocated: %zu bytes\n", size);
+
 		return (void*)cur;
 	}
 	else
 	{
 		linkPagesA2(freePage, pages);
+		
+		//printf("Request: %zu bytes\n", oldSize);
+		//printf("Allocated: %zu bytes\n", pages * PAGE_SIZE_A2);
 
 		return (void*)((PBYTE_A2)gHeapA2 + freePage * PAGE_SIZE_A2);
 	}
@@ -202,4 +215,14 @@ void freeA2(void* ptr)
 		gPagesInfoA2[pageIndex].size = FREE;
 		gPagesInfoA2[pageIndex].count = 0;
 	}
+}
+
+size_t getReqA2()
+{
+	return gReqA2;
+}
+
+size_t getTotA2()
+{
+	return gTotA2;
 }

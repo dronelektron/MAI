@@ -7,17 +7,21 @@ size_t parseSize(const char* str);
 
 int main(int argc, char* argv[])
 {
-	const size_t N = 100;
+	const size_t N = 10000;
 	const size_t MAX_BYTES = 9000;
 	size_t i;
 	size_t j;
 	size_t k;
 	size_t arg;
-	clock_t time1;
-	clock_t time2;
-	void* addr[N];
+	size_t req = 0;
+	size_t tot = 0;
 	size_t bytes[N];
 	size_t delSeq[N];
+	void* addr[N];
+	clock_t time1;
+	clock_t time2;
+	clock_t time3;
+	clock_t time4;
 
 	srand((unsigned int)time(0));
 
@@ -74,15 +78,31 @@ int main(int argc, char* argv[])
 		delSeq[k] = arg;
 	}
 
-	// ALLOCATOR 1 TIMER
+	printf("--------------------------------\n");
+	printf("Alloc requests: %zu\n", N);
+	printf("Bytes: 1 to %zu\n", MAX_BYTES);
+	printf("--------------------------------\n");
+	printf("Allocator #1:\n");
+	printf("--------------------------------\n");
+
 	time1 = clock();
 
 	for (i = 0; i < N; ++i)
+	{
+		time3 = clock();
 		addr[i] = mallocA1(bytes[i]);
+		time4 = clock();
+
+		//printf("(%lf sec)\n\n", (double)(time4 - time3) / CLOCKS_PER_SEC);
+	}
 	
 	time2 = clock();
 
-	printf("[1] Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
+	//printf("--------------------------------\n");
+	printf("Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
+
+	req = getReqA1();
+	tot = getTotA1();
 
 	for (i = 0; i < N; ++i)
 	{
@@ -93,18 +113,31 @@ int main(int argc, char* argv[])
 	}
 	
 	time1 = clock();
+	
+	printf("Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
+	printf("Usage factor: %lf\n", (double)req / tot);
+	printf("--------------------------------\n");
+	printf("Allocator #2:\n");
+	printf("--------------------------------\n");
 
-	printf("[1] Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
-
-	// ALLOCATOR 2 TIMER
 	time1 = clock();
 
 	for (i = 0; i < N; ++i)
+	{
+		time3 = clock();
 		addr[i] = mallocA2(bytes[i]);
+		time4 = clock();
+
+		//printf("(%lf sec)\n\n", (double)(time4 - time3) / CLOCKS_PER_SEC);
+	}
 	
 	time2 = clock();
 
-	printf("[2] Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
+	//printf("--------------------------------\n");
+	printf("Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
+
+	req = getReqA2();
+	tot = getTotA2();
 
 	for (i = 0; i < N; ++i)
 	{
@@ -116,7 +149,9 @@ int main(int argc, char* argv[])
 	
 	time1 = clock();
 
-	printf("[2] Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
+	printf("Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
+	printf("Usage factor: %lf\n", (double)req / tot);
+	printf("--------------------------------\n");
 	
 	destroyAllocatorA1();
 	destroyAllocatorA2();

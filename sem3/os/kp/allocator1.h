@@ -17,6 +17,8 @@ static const size_t MIN_BLOCK_SIZE_A1 = sizeof(BlockA1);
 static BlockA1* gBeginA1;
 static BlockA1* gFreeA1;
 static size_t gSizeA1;
+static size_t gReqA1 = 0;
+static size_t gTotA1 = 0;
 
 int initAllocatorA1(size_t size);
 void destroyAllocatorA1();
@@ -24,5 +26,7 @@ void deallocBlockA1(BlockA1* left, BlockA1* block, BlockA1* right);
 void* allocBlockA1(BlockA1* block, size_t size);
 void* mallocA1(size_t size);
 void freeA1(void* ptr);
+size_t getReqA1();
+size_t getTotA1();
 
 #endif

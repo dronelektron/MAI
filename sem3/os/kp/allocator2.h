@@ -29,6 +29,8 @@ static const size_t PAGE_SIZE_A2 = 1024;
 static size_t gPagesCntA2 = 0;
 static void* gHeapA2 = NULL;
 static PageInfoA2* gPagesInfoA2 = NULL;
+static size_t gReqA2 = 0;
+static size_t gTotA2 = 0;
 
 size_t getPageCountBySizeA2(size_t size);
 void splitPageToBlocksA2(size_t pageIndex, size_t size);
@@ -38,5 +40,7 @@ int initAllocatorA2(size_t size);
 void destroyAllocatorA2();
 void* mallocA2(size_t size);
 void freeA2(void* ptr);
+size_t getReqA2();
+size_t getTotA2();
 
 #endif

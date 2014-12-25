@@ -1,66 +1,36 @@
 #include "allocator1.h"
 
-int initAllocatorA1(size_t size)
+int initList(size_t size)
 {
-	if (size < sizeof(BlockA1))
-		size = sizeof(BlockA1);
+	if (size < sizeof(BlockList))
+		size = sizeof(BlockList);
 	
-	gBeginA1 = (BlockA1*)malloc(size);
+	gBeginList = (BlockList*)malloc(size);
 	
-	if (gBeginA1 == NULL)
+	if (gBeginList == NULL)
 		return 0;
 
-	gBeginA1->size = size;
-	gBeginA1->prev = NULL;
-	gBeginA1->next = NULL;
-	gFreeA1 = gBeginA1;
-	gSizeA1 = size;
+	gBeginList->size = size;
+	gBeginList->prev = NULL;
+	gBeginList->next = NULL;
+	gFreeList = gBeginList;
+	gSizeList = size;
 
 	return 1;
 }
 
-void destroyAllocatorA1()
+void destroyList()
 {
-	free(gBeginA1);
+	free(gBeginList);
 }
 
-void deallocBlockA1(BlockA1* left, BlockA1* block, BlockA1* right)
+void* allocBlockList(BlockList* block, size_t size)
 {
-	if (left == NULL && right == NULL)
-	{
-		gFreeA1 = block;
-		gFreeA1->prev = NULL;
-		gFreeA1->next = NULL;
-	}
-	else if (left != NULL && right == NULL)
-	{
-		left->next = block;
-		block->prev = left;
-		block->next = NULL;
-	}
-	else if (left == NULL && right != NULL)
-	{
-		block->prev = NULL;
-		block->next = right;
-		right->prev = block;
-		gFreeA1 = block;
-	}
-	else
-	{
-		left->next = block;
-		right->prev = block;
-		block->prev = left;
-		block->next = right;
-	}
-}
+	BlockList* nextBlock = NULL;
 
-void* allocBlockA1(BlockA1* block, size_t size)
-{
-	BlockA1* nextBlock = NULL;
-
-	if (block->size >= size + sizeof(BlockA1))
+	if (block->size >= size + sizeof(BlockList))
 	{
-		nextBlock = (BlockA1*)((PBYTE_A1)block + size);
+		nextBlock = (BlockList*)((PBYTE_LIST)block + size);
 		nextBlock->size = block->size - size;
 		nextBlock->prev = block->prev;
 		nextBlock->next = block->next;
@@ -72,8 +42,8 @@ void* allocBlockA1(BlockA1* block, size_t size)
 		if (block->next != NULL)
 			block->next->prev = nextBlock;
 
-		if (block == gFreeA1)
-			gFreeA1 = nextBlock;
+		if (block == gFreeList)
+			gFreeList = nextBlock;
 	}
 	else
 	{
@@ -83,24 +53,24 @@ void* allocBlockA1(BlockA1* block, size_t size)
 		if (block->next != NULL)
 			block->next->prev = block->prev;
 
-		if (block == gFreeA1)
-			gFreeA1 = block->next;
+		if (block == gFreeList)
+			gFreeList = block->next;
 	}
 
-	return (void*)((PBYTE_A1)block + sizeof(size_t));
+	return (void*)((PBYTE_LIST)block + sizeof(size_t));
 }
 
-void* mallocA1(size_t size)
+void* mallocList(size_t size)
 {
-	size_t minSize = gSizeA1;
+	size_t minSize = gSizeList;
 	size_t oldSize = size;
-	BlockA1* minBlock = gFreeA1;
-	BlockA1* cur = gFreeA1;
+	BlockList* minBlock = gFreeList;
+	BlockList* cur = gFreeList;
 
 	size += sizeof(size_t);
 
-	if (size < sizeof(BlockA1))
-		size = sizeof(BlockA1);
+	if (size < sizeof(BlockList))
+		size = sizeof(BlockList);
 
 	while (cur != NULL)
 	{
@@ -113,31 +83,28 @@ void* mallocA1(size_t size)
 		cur = cur->next;
 	}
 
-	if (gFreeA1 == NULL || minBlock->size < size)
+	if (gFreeList == NULL || minBlock->size < size)
 		return NULL;
 
-	gReqA1 += oldSize;
-	gTotA1 += size;
-
-	//printf("Request: %zu bytes\n", oldSize);
-	//printf("Allocated: %zu bytes\n", size);
+	gReqList += oldSize;
+	gTotList += size;
 	
-	return allocBlockA1(minBlock, size);
+	return allocBlockList(minBlock, size);
 }
 
-void freeA1(void* ptr)
+void freeList(void* ptr)
 {
-	BlockA1* block = (BlockA1*)((PBYTE_A1)ptr - sizeof(size_t));
-	BlockA1* cur = gFreeA1;
-	BlockA1* leftBlock = NULL;
-	BlockA1* rightBlock = NULL;
+	BlockList* block = (BlockList*)((PBYTE_LIST)ptr - sizeof(size_t));
+	BlockList* cur = gFreeList;
+	BlockList* leftBlock = NULL;
+	BlockList* rightBlock = NULL;
 
 	while (cur != NULL)
 	{
-		if ((BlockA1*)((PBYTE_A1)cur + cur->size) <= block)
+		if ((BlockList*)((PBYTE_LIST)cur + cur->size) <= block)
 			leftBlock = cur;
 
-		if ((BlockA1*)((PBYTE_A1)block + block->size) <= cur)
+		if ((BlockList*)((PBYTE_LIST)block + block->size) <= cur)
 		{
 			rightBlock = cur;
 
@@ -147,13 +114,21 @@ void freeA1(void* ptr)
 		cur = cur->next;
 	}
 	
-	deallocBlockA1(leftBlock, block, rightBlock);
+	if (leftBlock != NULL)
+		leftBlock->next = block;
+	else
+		gFreeList = block;
+	
+	if (rightBlock != NULL)
+		rightBlock->prev = block;
 
-	cur = gFreeA1;
+	block->prev = leftBlock;
+	block->next = rightBlock;
+	cur = gFreeList;
 
 	while (cur != NULL)
 	{
-		if ((BlockA1*)((PBYTE_A1)cur + cur->size) == cur->next)
+		if ((BlockList*)((PBYTE_LIST)cur + cur->size) == cur->next)
 		{
 			cur->size += cur->next->size;
 			cur->next = cur->next->next;
@@ -168,12 +143,12 @@ void freeA1(void* ptr)
 	}
 }
 
-size_t getReqA1()
+size_t getReqList()
 {
-	return gReqA1;
+	return gReqList;
 }
 
-size_t getTotA1()
+size_t getTotList()
 {
-	return gTotA1;
+	return gTotList;
 }

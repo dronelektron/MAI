@@ -4,28 +4,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef unsigned char* PBYTE_A1;
+typedef unsigned char* PBYTE_LIST;
 
-typedef struct _BlockA1
+typedef struct _BlockList
 {
 	size_t size;
-	struct _BlockA1* prev;
-	struct _BlockA1* next;
-} BlockA1;
+	struct _BlockList* prev;
+	struct _BlockList* next;
+} BlockList;
 
-static BlockA1* gBeginA1;
-static BlockA1* gFreeA1;
-static size_t gSizeA1;
-static size_t gReqA1 = 0;
-static size_t gTotA1 = 0;
+static BlockList* gBeginList;
+static BlockList* gFreeList;
+static size_t gSizeList;
+static size_t gReqList = 0;
+static size_t gTotList = 0;
 
-int initAllocatorA1(size_t size);
-void destroyAllocatorA1();
-void deallocBlockA1(BlockA1* left, BlockA1* block, BlockA1* right);
-void* allocBlockA1(BlockA1* block, size_t size);
-void* mallocA1(size_t size);
-void freeA1(void* ptr);
-size_t getReqA1();
-size_t getTotA1();
+int initList(size_t size);
+void destroyList();
+void* allocBlockList(BlockList* block, size_t size);
+void* mallocList(size_t size);
+void freeList(void* ptr);
+size_t getReqList();
+size_t getTotList();
 
 #endif

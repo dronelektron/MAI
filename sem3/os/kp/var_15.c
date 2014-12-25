@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	if (!initAllocatorA1(arg))
+	if (!initList(arg))
 	{
 		printf("Error. No memory\n");
 
@@ -81,28 +81,21 @@ int main(int argc, char* argv[])
 	time1 = clock();
 
 	for (i = 0; i < N; ++i)
-	{
-		//time3 = clock();
-		addr[i] = mallocA1(bytes[i]);
-		//time4 = clock();
-
-		//printf("(%lf sec)\n\n", (double)(time4 - time3) / CLOCKS_PER_SEC);
-	}
+		addr[i] = mallocList(bytes[i]);
 	
 	time2 = clock();
 
-	//printf("--------------------------------\n");
 	printf("Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
 
-	req = getReqA1();
-	tot = getTotA1();
+	req = getReqList();
+	tot = getTotList();
 
 	for (i = 0; i < N; ++i)
 	{
 		if (addr[delSeq[i]] == NULL)
 			continue;
 		
-		freeA1(addr[delSeq[i]]);
+		freeList(addr[delSeq[i]]);
 	}
 	
 	time1 = clock();
@@ -116,17 +109,10 @@ int main(int argc, char* argv[])
 	time1 = clock();
 	
 	for (i = 0; i < N; ++i)
-	{
-		//time3 = clock();
 		addr[i] = mallocMKK(bytes[i]);
-		//time4 = clock();
-
-		//printf("(%lf sec)\n\n", (double)(time4 - time3) / CLOCKS_PER_SEC);
-	}
 	
 	time2 = clock();
 
-	//printf("--------------------------------\n");
 	printf("Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
 
 	req = getReqMKK();
@@ -146,9 +132,9 @@ int main(int argc, char* argv[])
 	printf("Usage factor: %lf\n", (double)req / tot);
 	printf("--------------------------------\n");
 	
-	destroyAllocatorA1();
+	destroyList();
 	destroyMKK();
-	
+
 	return 0;
 }
 

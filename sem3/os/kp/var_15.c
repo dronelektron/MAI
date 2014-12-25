@@ -41,13 +41,6 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	if (arg < MIN_BLOCK_SIZE_A1)
-	{
-		printf("Error. Heap size must be at least %zu bytes\n", MIN_BLOCK_SIZE_A1);
-
-		return 0;
-	}
-
 	if (!initAllocatorA1(arg))
 	{
 		printf("Error. No memory\n");
@@ -55,7 +48,7 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	if (!initAllocatorA2(arg))
+	if (!initMKK(arg))
 	{
 		printf("Error. No memory\n");
 
@@ -82,16 +75,16 @@ int main(int argc, char* argv[])
 	printf("Alloc requests: %zu\n", N);
 	printf("Bytes: 1 to %zu\n", MAX_BYTES);
 	printf("--------------------------------\n");
-	printf("Allocator #1:\n");
+	printf("Allocator #1 (LIST):\n");
 	printf("--------------------------------\n");
 
 	time1 = clock();
 
 	for (i = 0; i < N; ++i)
 	{
-		time3 = clock();
+		//time3 = clock();
 		addr[i] = mallocA1(bytes[i]);
-		time4 = clock();
+		//time4 = clock();
 
 		//printf("(%lf sec)\n\n", (double)(time4 - time3) / CLOCKS_PER_SEC);
 	}
@@ -117,16 +110,16 @@ int main(int argc, char* argv[])
 	printf("Free time: %lf\n", (double)(time1 - time2) / CLOCKS_PER_SEC);
 	printf("Usage factor: %lf\n", (double)req / tot);
 	printf("--------------------------------\n");
-	printf("Allocator #2:\n");
+	printf("Allocator #2 (MKK):\n");
 	printf("--------------------------------\n");
 
 	time1 = clock();
-
+	
 	for (i = 0; i < N; ++i)
 	{
-		time3 = clock();
-		addr[i] = mallocA2(bytes[i]);
-		time4 = clock();
+		//time3 = clock();
+		addr[i] = mallocMKK(bytes[i]);
+		//time4 = clock();
 
 		//printf("(%lf sec)\n\n", (double)(time4 - time3) / CLOCKS_PER_SEC);
 	}
@@ -136,15 +129,15 @@ int main(int argc, char* argv[])
 	//printf("--------------------------------\n");
 	printf("Alloc time: %lf\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
 
-	req = getReqA2();
-	tot = getTotA2();
+	req = getReqMKK();
+	tot = getTotMKK();
 
 	for (i = 0; i < N; ++i)
 	{
 		if (addr[delSeq[i]] == NULL)
 			continue;
 
-		freeA2(addr[delSeq[i]]);
+		freeMKK(addr[delSeq[i]]);
 	}
 	
 	time1 = clock();
@@ -154,8 +147,8 @@ int main(int argc, char* argv[])
 	printf("--------------------------------\n");
 	
 	destroyAllocatorA1();
-	destroyAllocatorA2();
-
+	destroyMKK();
+	
 	return 0;
 }
 

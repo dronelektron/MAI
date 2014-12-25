@@ -13,7 +13,6 @@ typedef struct _BlockA1
 	struct _BlockA1* next;
 } BlockA1;
 
-static const size_t MIN_BLOCK_SIZE_A1 = sizeof(BlockA1);
 static BlockA1* gBeginA1;
 static BlockA1* gFreeA1;
 static size_t gSizeA1;

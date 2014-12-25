@@ -1,228 +1,236 @@
 #include "allocator2.h"
 
-size_t getPageCountBySizeA2(size_t size)
-{
-	return size / PAGE_SIZE_A2 + (size_t)(size % PAGE_SIZE_A2 != 0);
-}
-
-void splitPageToBlocksA2(size_t pageIndex, size_t size)
+int initMKK(size_t size)
 {
 	size_t i;
-	size_t cnt = PAGE_SIZE_A2 / size;
-	BlockA2* cur = (BlockA2*)((PBYTE_A2)gHeapA2 + pageIndex * PAGE_SIZE_A2);
-	BlockA2* next = NULL;
-
-	gPagesInfoA2[pageIndex].begin = cur;
-	gPagesInfoA2[pageIndex].size = size;
-	gPagesInfoA2[pageIndex].count = 0;
-
-	for (i = 1; i < cnt; ++i)
-	{
-		next = (BlockA2*)((PBYTE_A2)cur + size);
-		cur->next = next;
-		cur = cur->next;
-	}
-
-	cur->next = NULL;
-}
-
-void linkPagesA2(size_t pageIndex, size_t count)
-{
-	size_t i;
-
-	gPagesInfoA2[pageIndex].begin = NULL;
-	gPagesInfoA2[pageIndex].size = count * PAGE_SIZE_A2;
-	gPagesInfoA2[pageIndex].count = 1;
-
-	for (i = 1; i < count; ++i)
-		gPagesInfoA2[pageIndex + i].size = LINK;
-}
-
-void unlinkPagesA2(size_t pageIndex)
-{
-	size_t i;
-	size_t pages = getPageCountBySizeA2(gPagesInfoA2[pageIndex].size);
-
-	gPagesInfoA2[pageIndex].size = FREE;
-	gPagesInfoA2[pageIndex].count = 0;
+	BlockMKK* block = NULL;
 	
-	for (i = 1; i < pages; ++i)
-		gPagesInfoA2[pageIndex + i].size = FREE;
-}
+	gPagesCntMKK = getPagesCountMKK(size);
+	gPowCntMKK = powOfSizeMKK(PAGE_SIZE_MKK);
+	gPowIndexMin = powOfSizeMKK(sizeof(BlockMKK));
+	gHeapMKK = malloc(gPagesCntMKK * PAGE_SIZE_MKK);
+	gMemsizeMKK = (size_t*)malloc(sizeof(size_t) * gPagesCntMKK);
+	gListMKK = (BlockMKK**)malloc(sizeof(BlockMKK*) * gPowCntMKK);
 
-int initAllocatorA2(size_t size)
-{
-	size_t i;
-
-	gPagesCntA2 = getPageCountBySizeA2(size);
-	gHeapA2 = malloc(gPagesCntA2 * PAGE_SIZE_A2);
-
-	if (gHeapA2 == NULL)
+	if (gHeapMKK == NULL || gMemsizeMKK == NULL || gListMKK == NULL)
 		return 0;
+	
+	gMemsizeMKK[FREE] = FREE;
+	gListMKK[FREE] = (BlockMKK*)gHeapMKK;
+	block = gListMKK[FREE];
 
-	gPagesInfoA2 = (PageInfoA2*)malloc(sizeof(PageInfoA2) * gPagesCntA2);
-
-	if (gPagesInfoA2 == NULL)
-		return 0;
-
-	for (i = 0; i < gPagesCntA2; ++i)
+	for (i = 1; i < gPagesCntMKK; ++i)
 	{
-		gPagesInfoA2[i].begin = NULL;
-		gPagesInfoA2[i].size = FREE;
-		gPagesInfoA2[i].count = 0;
+		gMemsizeMKK[i] = FREE;
+		block->next = (BlockMKK*)((PBYTE_MKK)block + PAGE_SIZE_MKK);
+		block = block->next;
 	}
+
+	block->next = NULL;
+
+	for (i = 1; i < gPowCntMKK; ++i)
+		gListMKK[i] = NULL;
 
 	return 1;
 }
 
-void destroyAllocatorA2()
+void destroyMKK()
 {
-	free(gHeapA2);
-	free(gPagesInfoA2);
+	free(gHeapMKK);
+	free(gMemsizeMKK);
+	free(gListMKK);
 }
 
-void* mallocA2(size_t size)
+void* mallocMKK(size_t size)
+{
+	size_t powIndex = powOfSizeMKK(size);
+	size_t oldSize = size;
+	BlockMKK* block = NULL;
+
+	if (powIndex < gPowIndexMin)
+		powIndex = gPowIndexMin;
+
+	size = 1 << powIndex;
+	
+	if (size < PAGE_SIZE_MKK)
+	{
+		if (gListMKK[powIndex] == NULL)
+		{
+			block = allocPageMKK(size);
+
+			if (block == NULL)
+				return NULL;
+
+			splitPageMMK(block, powIndex);
+		}
+		
+		block = gListMKK[powIndex];
+		gListMKK[powIndex] = block->next;
+
+		gReqMKK += oldSize;
+		gTotMKK += size;
+
+		return (void*)block;
+	}
+	else
+	{
+		gReqMKK += oldSize;
+		gTotMKK += size;
+
+		return allocPageMKK(size);
+	}
+}
+
+void freeMKK(void* ptr)
+{
+	size_t pageIndex = getPageIndexMKK((BlockMKK*)ptr);
+	size_t powIndex = powOfSizeMKK(gMemsizeMKK[pageIndex]);
+	BlockMKK* block = (BlockMKK*)ptr;
+	
+	if (gMemsizeMKK[pageIndex] < PAGE_SIZE_MKK)
+	{
+		block->next = gListMKK[powIndex];
+		gListMKK[powIndex] = block;
+	}
+	else
+		freePageMKK(block);
+}
+
+BlockMKK* allocPageMKK(size_t size)
+{
+	size_t cnt = 0;
+	size_t pageIndex = 0;
+	size_t prevIndex = getPageIndexMKK(gListMKK[FREE]);
+	size_t pages = getPagesCountMKK(size);
+	BlockMKK* cur = gListMKK[FREE];
+	BlockMKK* prev = NULL;
+	BlockMKK* page = NULL;
+
+	while (cur != NULL)
+	{
+		pageIndex = getPageIndexMKK(cur);
+
+		if (pageIndex - prevIndex <= 1)
+		{
+			if (page == NULL)
+				page = cur;
+
+			++cnt;
+		}
+		else
+		{
+			page = cur;
+			cnt = 1;
+		}
+
+		if (cnt == pages)
+			break;
+
+		prev = cur;
+		cur = cur->next;
+		prevIndex = pageIndex;
+	}
+
+	if (cnt < pages)
+		page = NULL;
+
+	if (page != NULL)
+	{
+		pageIndex = getPageIndexMKK(page);
+		gMemsizeMKK[pageIndex] = size;
+		cur = (BlockMKK*)((PBYTE_MKK)page + (pages - 1) * PAGE_SIZE_MKK);
+		
+		if (prev != NULL)	
+			prev->next = cur->next;
+		else
+			gListMKK[FREE] = cur->next;
+	}
+
+	return page;
+}
+
+void freePageMKK(BlockMKK* block)
 {
 	size_t i;
-	size_t pCnt = 0;
-	size_t freePage = -1;
-	size_t sizeA = sizeof(BlockA2);
-	size_t sizeB = (size_t)pow(2.0, ceil(log(size) / log(2.0)));
-	size_t pages = getPageCountBySizeA2(size);
-	size_t oldSize = size;
-	BlockA2* cur = NULL;
-	
-	if (pages < 2)
-	{
-		size = sizeA > sizeB ? sizeA : sizeB;
+	size_t pageIndex = getPageIndexMKK(block);
+	size_t blockCnt = gMemsizeMKK[pageIndex] / PAGE_SIZE_MKK;
+	BlockMKK* left = NULL;
+	BlockMKK* right = NULL;
+	BlockMKK* cur = block;
 
-		for (i = 0; i < gPagesCntA2; ++i)
+	while (cur != NULL)
+	{
+		if (cur < block)
+			left = cur;
+		else if (cur > block)
 		{
-			if ((gPagesInfoA2[i].size == size && gPagesInfoA2[i].begin != NULL) || gPagesInfoA2[i].size == FREE)
-			{
-				freePage = i;
+			right = cur;
 
-				gReqA2 += oldSize;
-				gTotA2 += size;
-
-				break;
-			}
-		}
-	}
-	else
-	{
-		for (i = 0; i < gPagesCntA2; ++i)
-		{
-			if (gPagesInfoA2[i].size == FREE)
-				++pCnt;
-			else
-				pCnt = 0;
-
-			if (pCnt == pages)
-			{
-				freePage = i - pCnt + 1;
-
-				gReqA2 += oldSize;
-				gTotA2 += pages * PAGE_SIZE_A2;
-
-				break;
-			}
-		}
-	}
-
-	if (freePage == -1)
-		return NULL;
-	
-	if (pages < 2)
-	{
-		if (gPagesInfoA2[freePage].size == FREE)
-			splitPageToBlocksA2(freePage, size);
-		
-		cur = gPagesInfoA2[freePage].begin;
-
-		gPagesInfoA2[freePage].begin = cur->next;
-		++gPagesInfoA2[freePage].count;
-
-		//printf("Request: %zu bytes\n", oldSize);
-		//printf("Allocated: %zu bytes\n", size);
-
-		return (void*)cur;
-	}
-	else
-	{
-		linkPagesA2(freePage, pages);
-		
-		//printf("Request: %zu bytes\n", oldSize);
-		//printf("Allocated: %zu bytes\n", pages * PAGE_SIZE_A2);
-
-		return (void*)((PBYTE_A2)gHeapA2 + freePage * PAGE_SIZE_A2);
-	}
-}
-
-void freeA2(void* ptr)
-{
-	BlockA2* left = NULL;
-	BlockA2* right = NULL;
-	BlockA2* cur = NULL;
-	BlockA2* block = (BlockA2*)ptr;
-	size_t pageIndex = (ptr - gHeapA2) / PAGE_SIZE_A2;
-	size_t blockSize = gPagesInfoA2[pageIndex].size;
-	
-	if (blockSize > PAGE_SIZE_A2)
-	{
-		unlinkPagesA2(pageIndex);
-
-		return;
-	}
-
-	if (gPagesInfoA2[pageIndex].begin == NULL)
-	{
-		block->next = NULL;
-		gPagesInfoA2[pageIndex].begin = block;
-	}
-	else
-	{
-		cur = gPagesInfoA2[pageIndex].begin;
-
-		while (cur != NULL)
-		{
-			if ((BlockA2*)((PBYTE_A2)cur + blockSize) <= block)
-				left = cur;
-
-			if ((BlockA2*)((PBYTE_A2)block + blockSize) <= cur)
-			{
-				right = cur;
-
-				break;
-			}
-
-			cur = cur->next;
+			break;
 		}
 
-		if (left != NULL)
-			left->next = block;
-		else
-			gPagesInfoA2[pageIndex].begin = block;
-		
-		block->next = right;
+		cur = cur->next;
 	}
 
-	--gPagesInfoA2[pageIndex].count;
-
-	if (gPagesInfoA2[pageIndex].count == 0)
+	for (i = 1; i < blockCnt; ++i)
 	{
-		gPagesInfoA2[pageIndex].begin = NULL;
-		gPagesInfoA2[pageIndex].size = FREE;
-		gPagesInfoA2[pageIndex].count = 0;
+		block->next = (BlockMKK*)((PBYTE_MKK)block + PAGE_SIZE_MKK);
+		block = block->next;
 	}
+
+	block->next = right;
+
+	if (left != NULL)
+		left->next = block;
+	else
+		gListMKK[FREE] = block;
 }
 
-size_t getReqA2()
+void splitPageMMK(BlockMKK* block, size_t powIndex)
 {
-	return gReqA2;
+	size_t i;
+	size_t pageIndex = getPageIndexMKK(block);
+	size_t blockSize = 1 << powIndex;
+	size_t blockCnt = PAGE_SIZE_MKK / blockSize;
+
+	gListMKK[powIndex] = block;
+	gMemsizeMKK[pageIndex] = blockSize;
+	
+	for (i = 1; i < blockCnt; ++i)
+	{
+		block->next = (BlockMKK*)((PBYTE_MKK)block + blockSize);
+		block = block->next;
+	}
+
+	block->next = NULL;
 }
 
-size_t getTotA2()
+size_t powOfSizeMKK(size_t size)
 {
-	return gTotA2;
+	size_t p = 0;
+
+	while (size > ((size_t)1 << p))
+		++p;
+
+	return p;
+}
+
+size_t getPagesCountMKK(size_t size)
+{
+	return size / PAGE_SIZE_MKK + (size_t)(size % PAGE_SIZE_MKK != 0);
+}
+
+size_t getPageIndexMKK(BlockMKK* block)
+{
+	return (size_t)((PBYTE_MKK)block - (PBYTE_MKK)gHeapMKK) / PAGE_SIZE_MKK;
+}
+
+size_t getReqMKK()
+{
+	return gReqMKK;
+}
+
+size_t getTotMKK()
+{
+	return gTotMKK;
 }

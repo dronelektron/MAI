@@ -2,6 +2,9 @@
 
 int initAllocatorA1(size_t size)
 {
+	if (size < sizeof(BlockA1))
+		size = sizeof(BlockA1);
+	
 	gBeginA1 = (BlockA1*)malloc(size);
 	
 	if (gBeginA1 == NULL)
@@ -55,7 +58,7 @@ void* allocBlockA1(BlockA1* block, size_t size)
 {
 	BlockA1* nextBlock = NULL;
 
-	if (block->size >= size + MIN_BLOCK_SIZE_A1)
+	if (block->size >= size + sizeof(BlockA1))
 	{
 		nextBlock = (BlockA1*)((PBYTE_A1)block + size);
 		nextBlock->size = block->size - size;
@@ -96,8 +99,8 @@ void* mallocA1(size_t size)
 
 	size += sizeof(size_t);
 
-	if (size < MIN_BLOCK_SIZE_A1)
-		size = MIN_BLOCK_SIZE_A1;
+	if (size < sizeof(BlockA1))
+		size = sizeof(BlockA1);
 
 	while (cur != NULL)
 	{

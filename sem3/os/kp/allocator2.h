@@ -3,44 +3,40 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
-typedef unsigned char* PBYTE_A2;
+typedef unsigned char* PBYTE_MKK;
 
-typedef enum _kMemStateA2
+typedef enum _kMemState
 {
-	LINK = -1,
-	FREE,
+	FREE = 0
 } kMemState;
 
-typedef struct _BlockA2
+typedef struct _BlockMKK
 {
-	struct _BlockA2* next;
-} BlockA2;
+	struct _BlockMKK* next;
+} BlockMKK;
 
-typedef struct _PageInfoA2
-{
-	BlockA2* begin;
-	int size;
-	size_t count;
-} PageInfoA2;
+static const size_t PAGE_SIZE_MKK = 4096;
+static void* gHeapMKK = NULL;
+static size_t* gMemsizeMKK = NULL;
+static BlockMKK** gListMKK = NULL;
+static size_t gPagesCntMKK = 0;
+static size_t gPowCntMKK = 0;
+static size_t gPowIndexMin = 0;
+static size_t gReqMKK = 0;
+static size_t gTotMKK = 0;
 
-static const size_t PAGE_SIZE_A2 = 1024;
-static size_t gPagesCntA2 = 0;
-static void* gHeapA2 = NULL;
-static PageInfoA2* gPagesInfoA2 = NULL;
-static size_t gReqA2 = 0;
-static size_t gTotA2 = 0;
-
-size_t getPageCountBySizeA2(size_t size);
-void splitPageToBlocksA2(size_t pageIndex, size_t size);
-void linkPagesA2(size_t pageIndex, size_t count);
-void unlinkPagesA2(size_t pageIndex);
-int initAllocatorA2(size_t size);
-void destroyAllocatorA2();
-void* mallocA2(size_t size);
-void freeA2(void* ptr);
-size_t getReqA2();
-size_t getTotA2();
+int initMKK(size_t size);
+void destroyMKK();
+void* mallocMKK(size_t size);
+void freeMKK(void* ptr);
+BlockMKK* allocPageMKK(size_t size);
+void freePageMKK(BlockMKK* block);
+void splitPageMMK(BlockMKK* block, size_t powIndex);
+size_t powOfSizeMKK(size_t size);
+size_t getPagesCountMKK(size_t size);
+size_t getPageIndexMKK(BlockMKK* block);
+size_t getReqMKK();
+size_t getTotMKK();
 
 #endif

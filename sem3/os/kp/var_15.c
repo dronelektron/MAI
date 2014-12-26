@@ -5,23 +5,34 @@
 
 size_t parseSize(const char* str);
 
+typedef struct _Req
+{
+	void* addr;
+	size_t bytes;
+} Req;
+
 int main(int argc, char* argv[])
 {
-	const size_t N = 10000;
-	const size_t MAX_BYTES = 9000;
+	const size_t N = 1000;
+	const size_t MAX_BYTES = 5000;
+	clock_t time1;
+	clock_t time2;
+	clock_t time3;
+	clock_t time4;
 	size_t i;
 	size_t j;
 	size_t k;
 	size_t arg;
 	size_t req = 0;
 	size_t tot = 0;
-	size_t bytes[N];
-	size_t delSeq[N];
-	void* addr[N];
-	clock_t time1;
-	clock_t time2;
-	clock_t time3;
-	clock_t time4;
+	size_t* delSeq = (size_t*)malloc(sizeof(size_t) * N);
+	Req* reqs = (Req*)malloc(sizeof(Req) * N);
+	FILE* allocLogA1 = fopen("alloc_1_data.txt", "w");
+	FILE* allocLogA2 = fopen("alloc_2_data.txt", "w");
+	FILE* freeLogA1 = fopen("free_1_data.txt", "w");
+	FILE* freeLogA2 = fopen("free_2_data.txt", "w");
+	FILE* factorLogA1 = fopen("factor_1_data.txt", "w");
+	FILE* factorLogA2 = fopen("factor_2_data.txt", "w");
 
 	srand((unsigned int)time(0));
 
@@ -33,13 +44,6 @@ int main(int argc, char* argv[])
 	}
 
 	arg = parseSize(argv[1]);
-
-	if (arg == 0)
-	{
-		printf("Error. Invalid size\n");
-
-		return 0;
-	}
 
 	if (!initList(arg))
 	{
@@ -54,10 +58,10 @@ int main(int argc, char* argv[])
 
 		return 0;
 	}
-	
+
 	for (i = 0; i < N; ++i)
 	{
-		bytes[i] = 1 + rand() % MAX_BYTES;
+		reqs[i].bytes = 1 + rand() % MAX_BYTES;
 		delSeq[i] = i;
 	}
 
@@ -81,7 +85,17 @@ int main(int argc, char* argv[])
 	time1 = clock();
 
 	for (i = 0; i < N; ++i)
-		addr[i] = mallocList(bytes[i]);
+	{
+		time3 = clock();
+		reqs[i].addr = mallocList(reqs[i].bytes);
+		time4 = clock();
+
+		if (i % 100 == 0)
+		{
+			fprintf(allocLogA1, "%zu\n", (size_t)(1000000 * (double)(time4 - time3) / CLOCKS_PER_SEC));
+			fprintf(factorLogA1, "%zu\t%zu\n", getReqList(), getTotList());
+		}
+	}
 	
 	time2 = clock();
 
@@ -92,10 +106,15 @@ int main(int argc, char* argv[])
 
 	for (i = 0; i < N; ++i)
 	{
-		if (addr[delSeq[i]] == NULL)
+		if (reqs[delSeq[i]].addr == NULL)
 			continue;
 		
-		freeList(addr[delSeq[i]]);
+		time3 = clock();
+		freeList(reqs[delSeq[i]].addr);
+		time4 = clock();
+
+		if (i % 100 == 0)
+			fprintf(freeLogA1, "%zu\n", (size_t)(1000000 * (double)(time4 - time3) / CLOCKS_PER_SEC));
 	}
 	
 	time1 = clock();
@@ -109,7 +128,17 @@ int main(int argc, char* argv[])
 	time1 = clock();
 	
 	for (i = 0; i < N; ++i)
-		addr[i] = mallocMKK(bytes[i]);
+	{
+		time3 = clock();
+		reqs[i].addr = mallocMKK(reqs[i].bytes);
+		time4 = clock();
+
+		if (i % 100 == 0)
+		{
+			fprintf(allocLogA2, "%zu\n", (size_t)(1000000 * (double)(time4 - time3) / CLOCKS_PER_SEC));
+			fprintf(factorLogA2, "%zu\t%zu\n", getReqMKK(), getTotMKK());
+		}
+	}
 	
 	time2 = clock();
 
@@ -120,10 +149,15 @@ int main(int argc, char* argv[])
 
 	for (i = 0; i < N; ++i)
 	{
-		if (addr[delSeq[i]] == NULL)
+		if (reqs[delSeq[i]].addr == NULL)
 			continue;
 
-		freeMKK(addr[delSeq[i]]);
+		time3 = clock();
+		freeMKK(reqs[delSeq[i]].addr);
+		time4 = clock();
+
+		if (i % 100 == 0)
+			fprintf(freeLogA2, "%zu\n", (size_t)(1000000 * (double)(time4 - time3) / CLOCKS_PER_SEC));
 	}
 	
 	time1 = clock();
@@ -134,6 +168,16 @@ int main(int argc, char* argv[])
 	
 	destroyList();
 	destroyMKK();
+	
+	fclose(allocLogA1);
+	fclose(allocLogA2);
+	fclose(freeLogA1);
+	fclose(freeLogA2);
+	fclose(factorLogA1);
+	fclose(factorLogA2);
+
+	free(reqs);
+	free(delSeq);
 
 	return 0;
 }

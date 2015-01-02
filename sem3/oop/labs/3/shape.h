@@ -8,6 +8,8 @@
 class Shape
 {
 public:
+	virtual ~Shape();
+	
 	virtual double accept(Visitor* vis) = 0;
 	virtual void printInfo() = 0;
 	virtual void randomize(std::default_random_engine& rnd, std::uniform_real_distribution<double>& urd) = 0;
@@ -31,8 +33,6 @@ private:
 class Side5 : public Shape
 {
 public:
-	Side5();
-
 	virtual double accept(Visitor* vis);
 	virtual void printInfo();
 	virtual void randomize(std::default_random_engine& rnd, std::uniform_real_distribution<double>& urd);

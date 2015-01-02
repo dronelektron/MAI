@@ -1,5 +1,7 @@
 #include "shape.h"
 
+Shape::~Shape() {}
+
 double Romb::accept(Visitor* vis)
 {
 	return vis->visit(this);
@@ -26,11 +28,6 @@ double Romb::getDiagHor() const
 double Romb::getDiagVer() const
 {
 	return _diagVer;
-}
-
-Side5::Side5()
-{
-	_side = 0.0;
 }
 
 double Side5::accept(Visitor* vis)

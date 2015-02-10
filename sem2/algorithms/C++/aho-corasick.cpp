@@ -164,7 +164,7 @@ int AhoCorasick::_go(int v, char ch)
 	if (_trie[v].nodes[ind] != -1)
 		return _trie[v].nodes[ind];
 
-	if (v == 0)
+	if (v <= 0)
 		return 0;
 
 	return _go(_trie[v].suff, ch);

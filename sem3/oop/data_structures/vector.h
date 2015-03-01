@@ -1,8 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <cstdlib>
-
 namespace ds
 {
 	template<class T>
@@ -67,7 +65,7 @@ ds::Vector<T>::Vector(size_t n, const T& val)
 template<class T>
 ds::Vector<T>::~Vector()
 {
-	clear();
+	delete[] _begin;
 }
 
 template<class T>
@@ -98,34 +96,29 @@ template<class T>
 void ds::Vector<T>::resize(size_t n, const T& val)
 {
 	const size_t copySize = n < _size ? n : _size;
-	T* _buffer = NULL;
+	T* _buffer = new T[n + 1];
 	
-	if (n > 0)
-		_buffer = new T[n];
-
 	for (size_t i = 0; i < copySize; i++)
 		_buffer[i] = _begin[i];
 
 	for (size_t i = copySize; i < n; i++)
 		_buffer[i] = val;
 
-	if (_begin != NULL)
-		delete [] _begin;
+	delete [] _begin;
 
 	_begin = _buffer;
 	_size = n;
-	_cap = n;
+	_cap = n + 1;
 }
 
 template<class T>
 void ds::Vector<T>::clear()
 {
-	if (_begin != NULL)
-		delete [] _begin;
+	delete [] _begin;
 
-	_begin = NULL;
+	_begin = new T[1];
 	_size = 0;
-	_cap = 0;
+	_cap = 1;
 }
 
 template<class T>
@@ -150,10 +143,7 @@ template<class T>
 ds::Vector<T>& ds::Vector<T>::operator=(const Vector& v)
 {
 	if (this != &v)
-	{
-		clear();
 		_copy(v);
-	}
 
 	return *this;
 }
@@ -162,7 +152,9 @@ template<class T>
 void ds::Vector<T>::_copy(const Vector& v)
 {
 	const size_t n = v.size();
-
+	
+	delete[] _begin;
+	
 	_begin = new T[n + 1];
 
 	for (size_t i = 0; i < n; i++)

@@ -6,7 +6,7 @@ double first__denomination(double kinds__of__coins);
 
 int main()
 {
-	display("baa 5:");
+	display("baa variant 5:");
 	newline();
 	display(count__change(100));
 	newline();

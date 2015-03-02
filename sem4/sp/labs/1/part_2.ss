@@ -17,3 +17,6 @@
         ((= kinds-of-coins 3) 5)
         ((= kinds-of-coins 4) 25)
         ((= kinds-of-coins 5) 50)))
+
+"baa variant 5"
+(count-change 100)

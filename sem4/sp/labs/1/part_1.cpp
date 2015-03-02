@@ -5,7 +5,7 @@ double fib__iter(double a, double b, double n);
 
 int main()
 {
-	display("baaFib(47)=");
+	display("baaFib(047)=");
 	newline();
 	display(baaFib(47));
 	newline();

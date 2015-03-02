@@ -1,7 +1,10 @@
 #include "mlisp.h"
 
-static double dx = 1e-5;
-static double tolerance = 1e-5;
+extern double dx;
+extern double tolerance;
+
+double dx = 1e-5;
+double tolerance = 1e-5;
 
 double fixed__point(double first__guess);
 double __baa__try(double guess);
@@ -13,6 +16,8 @@ double root(double first__guess);
 
 int main()
 {
+	display("baa variant 1");
+	newline();
 	display(root(4));
 	newline();
 
@@ -61,9 +66,9 @@ double deriv(double x)
 double fun(double x)
 {
 	{
-		double z = x - 101.0 / 102.0;
+		double z = x - (double)101 / 102;
 
-		return exp(z) + log(z) - 10.0 * z;
+		return exp(z) + log(z) - 10 * z;
 	}
 }
 

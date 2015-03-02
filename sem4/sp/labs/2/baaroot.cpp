@@ -76,8 +76,7 @@ double root(double first__guess)
 {
 	{
 		double temp = fixed__point(first__guess);
-
-		display("baa variant 1");
+		
 		newline();
 		display("first-guess=\t");
 		display(first__guess);

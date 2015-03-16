@@ -14,18 +14,16 @@ tFSM::tStateSet tFSMcheck::unreached() //unreached, deadlocks
 	std::queue<tFSM::tState> q; // очередь для обхода в ширину
 	std::vector<bool> used(fsm.size(), false); // вектор достигнутых вершин
 	
-	invalid = fsm.finals; // заносим все терминирующие состояния в недостижимые
-	
-	// заносим все оставшиеся состояния в недостижимые кроме 0-го
+	// заносим все состояния в недостижимые кроме 0-го
 	for (tFSM::tState s = 1; s < fsm.size(); ++s)
 	{
 		invalid.insert(s);
 	}
 	
 	// обход графа в ширину
-	used[0] = true; // начало с 0-го состояния
-
-	q.push(0);
+	used[0] = true; 
+	
+	q.push(0); // начало с 0-го состояния
 
 	while (!q.empty())
 	{

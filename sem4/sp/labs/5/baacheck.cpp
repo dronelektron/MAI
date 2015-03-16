@@ -12,14 +12,13 @@ tFSM::tStateSet tFSMcheck::unreached() //unreached, deadlocks
 	"unreached: ";
 	tFSM::tStateSet invalid; //создает пустое множество состояний
 	
-	invalid = fsm.finals; // заносим все терминирующие состояния в недостижимые
-	
-	// заносим все оставшиеся состояния в недостижимые кроме 0-го
+	// заносим все состояния в недостижимые кроме 0-го
 	for (tFSM::tState s = 1; s < fsm.size(); ++s)
 	{
 		invalid.insert(s);
 	}
 	
+	// просматривам все переходы из текущей вершины
 	for (tFSM::tState s = 0; s < fsm.size(); ++s)
 	{
 		for (tFSM::tTransMap::const_iterator it = fsm.table[s].begin(); it != fsm.table[s].end(); ++it)

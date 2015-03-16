@@ -1,4 +1,4 @@
-// baacheck_faq.cpp
+// baacheck.cpp
 #include "fsmcheck.h"
 #include <queue>
 #include <vector>

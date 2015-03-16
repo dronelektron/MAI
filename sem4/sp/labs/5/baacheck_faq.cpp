@@ -11,6 +11,8 @@ tFSM::tStateSet tFSMcheck::unreached() //unreached, deadlocks
 	"*** Developed by baa ***\n"
 	"unreached: ";
 	tFSM::tStateSet invalid; //создает пустое множество состояний
+	std::queue<tFSM::tState> q; // очередь для обхода в ширину
+	std::vector<bool> used(fsm.size(), false); // вектор достигнутых вершин
 	
 	invalid = fsm.finals; // заносим все терминирующие состояния в недостижимые
 	
@@ -20,14 +22,31 @@ tFSM::tStateSet tFSMcheck::unreached() //unreached, deadlocks
 		invalid.insert(s);
 	}
 	
-	for (tFSM::tState s = 0; s < fsm.size(); ++s)
+	// обход графа в ширину
+	used[0] = true; // начало с 0-го состояния
+
+	q.push(0);
+
+	while (!q.empty())
 	{
-		for (tFSM::tTransMap::const_iterator it = fsm.table[s].begin(); it != fsm.table[s].end(); ++it)
+		tFSM::tState state = q.front(); // текущее состояние
+
+		q.pop(); // убираем текущее состояние из очереди
+		
+		invalid.erase(state); // удаляем состояние из недостижимых
+
+		// добавляем в очередь все состояния, которые достижимы из текущего
+		for (tFSM::tTransMap::const_iterator it2 = fsm.table[state].begin(); it2 != fsm.table[state].end(); ++it2)
 		{
-			invalid.erase(it->second); // удаляем состояние из недостижимых
+			// если состояние не было еще в очереди, то добавлем его
+			if (!used[it2->second])
+			{
+				used[it2->second] = true;
+				q.push(it2->second);
+			}
 		}
 	}
-
+	
 	return invalid;
 }
 

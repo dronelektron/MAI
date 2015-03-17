@@ -27,9 +27,9 @@ public:
 		addstr  (Aint, 0, "0", 1);
 		addstr  (Aint, 1, "0", 1);
 		addstr  (Aint, 2, "0", 1);
-		addrange(Aint, 0,'1','9',3);
-		addrange(Aint, 2,'1','9',3);
-		addrange(Aint, 3,'0','9',3);
+		addrange(Aint, 0, '1', '9',3);
+		addrange(Aint, 2, '1', '9',3);
+		addrange(Aint, 3, '0', '9',3);
 		Aint.final(1);
 		Aint.final(3);
 
@@ -77,10 +77,10 @@ public:
 		//________________________________________
 
 		// #5 идентификатор предиката Aidq
-
-		addstr  (Aidq, 0, "?", 1);
+		
 		addrange(Aidq, 0, 'a', 'z', 1);
 		addrange(Aidq, 0, 'A', 'Z', 1);
+		addstr  (Aidq, 0, "?", 2);
 		addstr  (Aidq, 1, "-", 1);
 		addstr  (Aidq, 1, "?", 2);
 		addrange(Aidq, 1, '0', '9', 1);

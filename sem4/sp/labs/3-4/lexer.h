@@ -86,9 +86,8 @@ public:
 		addrange(Aidq, 1, '0', '9', 1);
 		addrange(Aidq, 1, 'a', 'z', 1);
 		addrange(Aidq, 1, 'A', 'Z', 1);
-		Aidq.final(1);
 		Aidq.final(2);
-
+		
 		//________________________________________
 
 		// #6 оператор Aoper
@@ -111,7 +110,7 @@ public:
 
 		// #8 строка
 		// ФАКУЛЬТАТИВНОЕ ЗАДАНИЕ*
-		// дополнить esc-последовательностями \" и \\
+		// дополнить esc-последовательностями \" \\ \t \n
 		// тест L8.ss
 		addstr  (Astr, 0, "\"", 1);
 		addstr  (Astr, 1, "\"", 2);
@@ -119,7 +118,7 @@ public:
 		addrange(Astr, 1, '"' + 1, '\\' - 1, 1);
 		addrange(Astr, 1, '\\' + 1, '~', 1);
 		addstr	(Astr, 1, "\\", 3);
-		addstr	(Astr, 3, "\\\"", 1);
+		addstr	(Astr, 3, "\\\"\t\n", 1);
 		addrange(Astr, 1, -128, -1, 1);
 		Astr.final(2);
 		

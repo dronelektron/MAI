@@ -1,4 +1,4 @@
-// baacheck.cpp
+// baacheck_faq.cpp
 #include "fsmcheck.h"
 #include <queue>
 #include <vector>
@@ -23,7 +23,10 @@ tFSM::tStateSet tFSMcheck::unreached() //unreached, deadlocks
 	{
 		for (tFSM::tTransMap::const_iterator it = fsm.table[s].begin(); it != fsm.table[s].end(); ++it)
 		{
-			invalid.erase(it->second); // удаляем состояние из недостижимых
+			if (s != it->second)
+			{
+				invalid.erase(it->second); // удаляем состояние из недостижимых
+			}
 		}
 	}
 

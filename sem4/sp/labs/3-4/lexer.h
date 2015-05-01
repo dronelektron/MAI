@@ -118,7 +118,7 @@ public:
 		addrange(Astr, 1, '"' + 1, '\\' - 1, 1);
 		addrange(Astr, 1, '\\' + 1, '~', 1);
 		addstr	(Astr, 1, "\\", 3);
-		addstr	(Astr, 3, "\\\"\t\n", 1);
+		addstr	(Astr, 3, "\\\"tn", 1);
 		addrange(Astr, 1, -128, -1, 1);
 		Astr.final(2);
 		

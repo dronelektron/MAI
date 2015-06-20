@@ -10,7 +10,7 @@ int tCG::p01()
 	"   */\n#include \"mlisp.h\"\n";
 	header += declarations + "//________________ \n";
 	S1->obj = header + S1->obj;
-
+	
 	return 0;
 }
 
@@ -41,6 +41,8 @@ int tCG::p04()
 // CALC -> DISP
 int tCG::p05()
 {
+	S1->obj += "; newline();\n";
+
 	return 0;
 }
 
@@ -244,10 +246,18 @@ int tCG::p30()
 {
 	int i = 0;
 
-	while (i < S1->name.size() - 1 && S1->name[i] == '0')
-		++i;
+	S1->obj = "";
 
-	S1->obj = &S1->name[i];
+	if (S1->name[0] == '-')
+	{
+		for (i = 1; i < S1->name.length() - 1 && S1->name[i] == '0'; ++i);
+
+		S1->obj = "-";
+	}
+	else
+		for (; i < S1->name.length() - 1 && S1->name[i] == '0'; ++i);
+
+	S1->obj += &S1->name.c_str()[i];
 
 	return 0;
 }

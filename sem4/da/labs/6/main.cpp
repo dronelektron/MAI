@@ -4,22 +4,29 @@
 int main()
 {
 	char arg[100001];
-	char ch;
 		
 	while (scanf("%s", arg) == 1)
 	{
 		TBigInteger a(arg);
 
-		scanf("%s", arg);
+		if (scanf("%s", arg) != 1)
+		{
+			printf("ERROR\n");
+
+			return 0;
+		}
 		
 		TBigInteger b(arg);
 		TBigInteger c;
 		
-		getchar();
-		ch = getchar();
-		getchar();
+		if (scanf("%s", arg) != 1)
+		{
+			printf("ERROR\n");
+
+			return 0;
+		}
 		
-		switch (ch)
+		switch (arg[0])
 		{
 			case '+':
 			{

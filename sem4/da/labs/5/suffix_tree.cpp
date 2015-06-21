@@ -51,36 +51,37 @@ const char* TST::GetText() const
 {
 	return mText;
 }
-
 /*
-bool TST::Find(const char* str)
+void TST::Find(const char* str)
 {
 	int i = 0;
-	int j = 0;
 	int deep = 0;
 	int len = strlen(str);
 	TNode* node = mRoot;
 
 	if (len > strlen(mText))
 	{
-		return false;
+		return;
 	}
 
-	while (i < len && node != NULL)
+	while (i < len)
 	{
-		int ind = j + node->start;
-
-		if (ind >= node->end)
+		if (node->next.Find(str[i]) == NULL)
 		{
-			deep += node->end - node->start;
-			node = node->next[str[i] - '`'];
-			j = 0;
+			return;
 		}
-		else
+
+		deep += mEdgeLen(node);
+		node = node->next.Find(str[i])->data.val;
+
+		int edgeLen = mEdgeLen(node);
+		int j = 0;
+
+		while (j < edgeLen && i < len)
 		{
-			if (str[i] != mText[ind])
+			if (str[i] != mText[node->start + j])
 			{
-				return false;
+				return;
 			}
 
 			++i;
@@ -88,18 +89,15 @@ bool TST::Find(const char* str)
 		}
 	}
 
-	if (node != NULL)
-	{
-		mSuffNums(node, deep);
-	}
-	
-	return true;
+	mFindDFS(node, deep);
+
+	printf("\n");
 }
 
 void TST::Print()
 {
 	printf("--------\n");
-	printf("Suffixes:\n");
+	printf("Suffix Tree:\n");
 	printf("--------\n");
 	mPrint(mRoot, -1);
 	printf("--------\n");
@@ -282,8 +280,6 @@ void TST::mSuffNums(TNode* node, int len)
 	if (node->end == mINF)
 	{
 		node->pat = node->start - len;
-
-		//printf("Pos: %d\n", node->start - len + 1);
 	}
 
 	for (NDS::TMap<char, TNode*>::TIterator it = node->next.Begin(); it != node->next.End(); ++it)
@@ -291,3 +287,17 @@ void TST::mSuffNums(TNode* node, int len)
 		mSuffNums(it->val, len + node->end - node->start);
 	}
 }
+/*
+void TST::mFindDFS(TNode* node, int deep)
+{
+	if (node->end == mINF)
+	{
+		printf(" %d", node->start - deep + 1);
+	}
+
+	for (NDS::TMap<char, TNode*>::TIterator it = node->next.Begin(); it != node->next.End(); ++it)
+	{
+		mFindDFS(it->val, deep + node->end - node->start);
+	}
+}
+*/

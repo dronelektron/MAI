@@ -24,7 +24,7 @@ public:
 	TNode* GetRoot();
 	const char* GetText() const;
 
-	//bool Find(const char* str);
+	//void Find(const char* str);
 	//void Print();
 	//void mPrint(TNode* node, int level);
 
@@ -47,6 +47,8 @@ private:
 	void mAddSL(TNode* node);
 	void mExtend(int i);
 	void mSuffNums(TNode* node, int len);
+
+	//void mFindDFS(TNode* node, int deep);
 };
 
 #endif

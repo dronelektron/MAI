@@ -151,10 +151,10 @@ TBigInteger TBigInteger::operator / (const TBigInteger& bi) const
 		r = r * mBASE;
 		r = r + a.mNums[i];
 
-		int s1 = r.mNums.Size() <= b.mNums.Size() ? 0 : r.mNums[b.mNums.Size()];
-		int s2 = r.mNums.Size() <= b.mNums.Size() - 1 ? 0 : r.mNums[b.mNums.Size() - 1];
-		int d = (s1 * mBASE + s2) / b.mNums.Back();
-
+		short s1 = r.mNums.Size() <= b.mNums.Size() ? 0 : r.mNums[b.mNums.Size()];
+		short s2 = r.mNums.Size() <= b.mNums.Size() - 1 ? 0 : r.mNums[b.mNums.Size() - 1];
+		short d = (s1 * mBASE + s2) / b.mNums.Back();
+		
 		TBigInteger tmp = b * d;
 
 		while (tmp > r)

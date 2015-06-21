@@ -12,12 +12,9 @@ public:
 	TBigInteger();
 	TBigInteger(int num);
 	TBigInteger(const char* str);
-	TBigInteger(const TBigInteger& bi);
 	
 	void Print() const;
-	TBigInteger Abs() const;
-
-	TBigInteger operator - () const;
+	
 	TBigInteger operator + (const TBigInteger& bi) const;
 	TBigInteger operator - (const TBigInteger& bi) const;
 	TBigInteger operator * (const TBigInteger& bi) const;
@@ -29,13 +26,12 @@ public:
 	bool operator == (const TBigInteger& bi) const;
 
 private:
-	int mSign;
 	NDS::TVector<short> mNums;
 	
-	static const int mBase;
+	static const int mBASE;
 
 	void mFix();
-	TBigInteger mPower(const TBigInteger& a, const TBigInteger& b) const;
+	TBigInteger mPower(const TBigInteger& bi) const;
 };
 
 #endif

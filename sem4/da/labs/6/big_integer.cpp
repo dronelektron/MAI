@@ -1,6 +1,6 @@
 #include "big_integer.h"
 
-const int TBigInteger::mBASE = 10000;
+const short TBigInteger::mBASE = 10000;
 
 TBigInteger::TBigInteger()
 {
@@ -153,7 +153,7 @@ TBigInteger TBigInteger::operator / (const TBigInteger& bi) const
 
 		short s1 = r.mNums.Size() <= b.mNums.Size() ? 0 : r.mNums[b.mNums.Size()];
 		short s2 = r.mNums.Size() <= b.mNums.Size() - 1 ? 0 : r.mNums[b.mNums.Size() - 1];
-		short d = (s1 * mBASE + s2) / b.mNums.Back();
+		short d = static_cast<short>((static_cast<int>(s1) * mBASE + s2) / b.mNums.Back());
 		
 		TBigInteger tmp = b * d;
 

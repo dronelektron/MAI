@@ -28,7 +28,7 @@ public:
 private:
 	NDS::TVector<short> mNums;
 	
-	static const int mBASE;
+	static const short mBASE;
 
 	void mFix();
 	TBigInteger mPower(const TBigInteger& bi) const;

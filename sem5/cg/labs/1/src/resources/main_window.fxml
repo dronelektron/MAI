@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="borderPane" prefHeight="480.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
+   <center>
+      <AnchorPane fx:id="canvasHolder" prefHeight="480.0" prefWidth="480.0" BorderPane.alignment="CENTER" />
+   </center>
+   <right>
+      <TabPane fx:id="tabPane" prefWidth="320.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Figure 1">
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <VBox prefWidth="320.0">
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="A" />
+                                    <Slider fx:id="param1A" majorTickUnit="20.0" max="200.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="B" />
+                                    <Slider fx:id="param1B" majorTickUnit="20.0" max="200.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="C" />
+                                    <Slider fx:id="param1C" majorTickUnit="1.0" max="10.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="T" />
+                                    <Slider fx:id="param1T" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Step" />
+                                    <Slider fx:id="param1Step" majorTickUnit="0.1" max="1.0" min="0.1" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="0.1" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+          <Tab text="Figure 2">
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <VBox prefWidth="320.0">
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="A" />
+                                    <Slider fx:id="param2A" majorTickUnit="20.0" max="200.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="B" />
+                                    <Slider fx:id="param2B" majorTickUnit="1.0" max="10.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="T" />
+                                    <Slider fx:id="param2T" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="r" />
+                                    <Slider fx:id="param2r" majorTickUnit="10.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="R" />
+                                    <Slider fx:id="param2R" majorTickUnit="20.0" max="200.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Step" />
+                                    <Slider fx:id="param2Step" majorTickUnit="0.1" max="1.0" min="0.1" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="0.1" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
+                        </VBox>
+                     </children></AnchorPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </right>
+</BorderPane>

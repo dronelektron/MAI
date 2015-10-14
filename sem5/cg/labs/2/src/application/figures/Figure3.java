@@ -1,9 +1,6 @@
 package application.figures;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
-import javafx.scene.paint.Color;
 import math.Vector;
 
 public class Figure3 extends Figure {
@@ -52,30 +49,5 @@ public class Figure3 extends Figure {
 		indexes.add(points.size() - 1);
 		indexes.add(points.size() - 2);
 		indexes.add(points.size() - 3);
-	}
-
-	@Override
-	public void draw(Canvas canvas) {
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-
-		gc.setFill(Color.BLACK);
-		gc.fillRect(0.0, 0.0, canvas.getWidth(), canvas.getHeight());
-		gc.setStroke(Color.WHITE);
-
-		for (int i = 0; i < indexes.size(); i += 3) {
-			double width = canvas.getWidth();
-			double height = canvas.getHeight();
-			Vector p1 = mat.transform(points.get(indexes.get(i))).perspectiveDivide();
-			Vector p2 = mat.transform(points.get(indexes.get(i + 1))).perspectiveDivide();
-			Vector p3 = mat.transform(points.get(indexes.get(i + 2))).perspectiveDivide();
-
-			if (!inRange(0.0, 0.0, width - 1.0, height - 1.0, p1.getX(), p1.getY()) ||
-					!inRange(0.0, 0.0, width - 1.0, height - 1.0, p2.getX(), p2.getY()) ||
-					!inRange(0.0, 0.0, width - 1.0, height - 1.0, p3.getX(), p3.getY())) {
-				continue;
-			}
-
-			drawTriangle(gc, p1, p2, p3);
-		}
 	}
 }

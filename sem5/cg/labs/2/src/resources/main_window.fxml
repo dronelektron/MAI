@@ -22,20 +22,20 @@
                            <children>
                               <HBox>
                                  <children>
-                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Height" />
-                                    <Slider fx:id="param1Height" majorTickUnit="40.0" max="400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
-                                 </children>
-                              </HBox>
-                              <HBox>
-                                 <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Radius" />
-                                    <Slider fx:id="param1Radius" majorTickUnit="40.0" max="400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param1Radius" majorTickUnit="40.0" max="400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="400.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
-                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Sides" />
-                                    <Slider fx:id="param1Sides" majorTickUnit="3.0" max="36.0" min="3.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Step V" />
+                                    <Slider fx:id="param1StepVert" majorTickUnit="6.0" max="72.0" min="6.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="36.0" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Step H" />
+                                    <Slider fx:id="param1StepHor" majorTickUnit="6.0" max="72.0" min="6.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="36.0" />
                                  </children>
                               </HBox>
                            </children>
@@ -56,43 +56,43 @@
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="X start" />
-                                    <Slider fx:id="param2XStart" majorTickUnit="40.0" max="-5.0" min="-400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param2XStart" majorTickUnit="40.0" max="-5.0" min="-400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="-300.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="X end" />
-                                    <Slider fx:id="param2XEnd" majorTickUnit="40.0" max="400.0" min="5.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param2XEnd" majorTickUnit="40.0" max="400.0" min="5.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="300.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Y start" />
-                                    <Slider fx:id="param2YStart" majorTickUnit="40.0" max="-5.0" min="-400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param2YStart" majorTickUnit="40.0" max="-5.0" min="-400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="-300.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Y end" />
-                                    <Slider fx:id="param2YEnd" majorTickUnit="40.0" max="400.0" min="5.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param2YEnd" majorTickUnit="40.0" max="400.0" min="5.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="300.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="A" />
-                                    <Slider fx:id="param2A" majorTickUnit="0.1" max="1.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param2A" majorTickUnit="0.1" max="1.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="0.4" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="X step" />
-                                    <Slider fx:id="param2XStep" majorTickUnit="10.0" min="5.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param2XStep" majorTickUnit="10.0" min="5.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="15.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Y step" />
-                                    <Slider fx:id="param2YStep" majorTickUnit="10.0" min="5.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param2YStep" majorTickUnit="10.0" min="5.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="15.0" />
                                  </children>
                               </HBox>
                            </children>
@@ -115,25 +115,25 @@
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Height" />
-                                    <Slider fx:id="param3Height" majorTickUnit="40.0" max="400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param3Height" majorTickUnit="40.0" max="400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="250.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Radius" />
-                                    <Slider fx:id="param3Radius" majorTickUnit="40.0" max="400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param3Radius" majorTickUnit="40.0" max="400.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="250.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Sides" />
-                                    <Slider fx:id="param3Sides" majorTickUnit="3.0" max="36.0" min="3.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param3Sides" majorTickUnit="3.0" max="36.0" min="3.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="18.0" />
                                  </children>
                               </HBox>
                               <HBox>
                                  <children>
                                     <Label alignment="TOP_LEFT" prefHeight="40.0" prefWidth="48.0" text="Angle" />
-                                    <Slider fx:id="param3Angle" majorTickUnit="36.0" max="360.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" />
+                                    <Slider fx:id="param3Angle" majorTickUnit="36.0" max="360.0" minorTickCount="4" prefHeight="40.0" prefWidth="260.0" showTickLabels="true" showTickMarks="true" value="288.0" />
                                  </children>
                               </HBox>
                            </children>

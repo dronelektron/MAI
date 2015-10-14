@@ -18,7 +18,7 @@ public class MainController {
 		AnchorPane.setLeftAnchor(canvas, 0.0);
 		AnchorPane.setRightAnchor(canvas, 0.0);
 
-		Slider[] paramsFig1 = new Slider[] {param1Height, param1Radius, param1Sides};
+		Slider[] paramsFig1 = new Slider[] {param1Radius, param1StepVert, param1StepHor};
 		Slider[] paramsFig2 = new Slider[] {param2XStart, param2XEnd, param2YStart, param2YEnd, param2A, param2XStep, param2YStep};
 		Slider[] paramsFig3 = new Slider[] {param3Height, param3Radius, param3Sides, param3Angle};
 		HandlerFigures handlerFigures = new HandlerFigures(canvas, tabPane, paramsFig1, paramsFig2, paramsFig3);
@@ -46,11 +46,11 @@ public class MainController {
 	private TabPane tabPane;
 
 	@FXML
-	private Slider param1Height;
-	@FXML
 	private Slider param1Radius;
 	@FXML
-	private Slider param1Sides;
+	private Slider param1StepVert;
+	@FXML
+	private Slider param1StepHor;
 
 	@FXML
 	private Slider param2XStart;

@@ -4,6 +4,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
 import java.util.ArrayList;
+
+import javafx.scene.paint.Color;
 import math.Matrix;
 import math.Vector;
 
@@ -15,6 +17,8 @@ public abstract class Figure {
 		points = new ArrayList<Vector>();
 		indexes = new ArrayList<Integer>();
 	}
+
+	public abstract void generate();
 
 	public double getAngleX() {
 		return angleX;
@@ -38,6 +42,28 @@ public abstract class Figure {
 		transform(projMat);
 	}
 
+	public void draw(Canvas canvas) {
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+
+		gc.setFill(Color.BLACK);
+		gc.fillRect(0.0, 0.0, canvas.getWidth(), canvas.getHeight());
+		gc.setStroke(Color.WHITE);
+
+		for (int i = 0; i < indexes.size(); i += 3) {
+			Vector p1 = mat.transform(points.get(indexes.get(i))).perspectiveDivide();
+			Vector p2 = mat.transform(points.get(indexes.get(i + 1))).perspectiveDivide();
+			Vector p3 = mat.transform(points.get(indexes.get(i + 2))).perspectiveDivide();
+
+			if (!inRangeOfCanvas(p1, canvas) ||
+					!inRangeOfCanvas(p2, canvas) ||
+					!inRangeOfCanvas(p3, canvas)) {
+				continue;
+			}
+
+			drawTriangle(gc, p1, p2, p3);
+		}
+	}
+
 	private void transform(Matrix projMat) {
 		Matrix rotMatX = new Matrix().initRotationX(angleX);
 		Matrix rotMatY = new Matrix().initRotationY(angleY);
@@ -45,7 +71,7 @@ public abstract class Figure {
 		mat = projMat.mul(rotMatX.mul(rotMatY));
 	}
 
-	protected void drawTriangle(GraphicsContext gc, Vector p1, Vector p2, Vector p3) {
+	private void drawTriangle(GraphicsContext gc, Vector p1, Vector p2, Vector p3) {
 		if (p1.areaTimesTwo(p2, p3) <= 0.0) {
 			return;
 		}
@@ -55,12 +81,10 @@ public abstract class Figure {
 		gc.strokeLine(p3.getX(), p3.getY(), p1.getX(), p1.getY());
 	}
 
-	protected boolean inRange(double x1, double y1, double x2, double y2, double x, double y) {
-		return !(x < x1 || x > x2 || y < y1 || y > y2);
+	private boolean inRangeOfCanvas(Vector p, Canvas canvas) {
+		return p.getX() >= 0.0 && p.getX() < canvas.getWidth() &&
+				p.getY() >= 0.0 && p.getY() < canvas.getHeight();
 	}
-
-	public abstract void generate();
-	public abstract void draw(Canvas canvas);
 
 	private double angleX;
 	private double angleY;

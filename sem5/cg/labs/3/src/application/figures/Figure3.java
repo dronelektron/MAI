@@ -28,8 +28,8 @@ public class Figure3 extends Figure {
 			for (int j = 0; j < paramStepV; ++j) {
 				double curAngleV = (j + 1) * deltaAngleV;
 				double x = paramRadius * Math.sin(curAngleV) * Math.cos(curAngleH);
-				double z = paramRadius * Math.sin(curAngleV) * Math.sin(curAngleH); // Perspective bug
-				double y = paramRadius * Math.cos(curAngleV); // Perspective bug
+				double z = paramRadius * Math.sin(curAngleV) * Math.sin(curAngleH);
+				double y = paramRadius * Math.cos(curAngleV);
 
 				points.add(new Vector(x, y, z, 1.0));
 			}
@@ -37,7 +37,6 @@ public class Figure3 extends Figure {
 
 		points.add(new Vector(0.0, 0.0, 0.0, 1.0));
 		points.add(new Vector(0.0, paramRadius, 0.0, 1.0));
-		//points.add(new Vector(0.0, 0.0, paramRadius, 1.0)); // Perspective bug
 
 		int mod = points.size() - 2;
 

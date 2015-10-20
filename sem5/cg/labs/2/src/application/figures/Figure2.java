@@ -17,8 +17,8 @@ public class Figure2 extends Figure {
 		double paramYStart = params[2].getValue();
 		double paramYEnd = params[3].getValue();
 		double paramA = params[4].getValue();
-		int paramXStep = (int) params[5].getValue();
-		int paramYStep = (int) params[6].getValue();
+		int paramXStep = (int)params[5].getValue();
+		int paramYStep = (int)params[6].getValue();
 		double deltaX = (paramXEnd - paramXStart) / paramXStep;
 		double deltaY = (paramYEnd - paramYStart) / paramYStep;
 

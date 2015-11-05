@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cars>
+	<info name="Alfa Romeo GR Coupe" engine="3.2 i V6 24V GTA (240 Hp)" doors_count="2" hp="240" body_type="Купе" slots="4"/>
+	<info name="Audi TT Roadster (8S)" engine="2.0 TFSI quattro (230 Hp) S tronic" doors_count="2" hp="230" body_type="Кабриолет" slots="2"/>
+	<info name="Bentley Azure II" engine="6.7 i V8 16V" doors_count="2" hp="457" body_type="Кабриолет" slots="4"/>
+	<info name="BMW 1er Hatchback (F21 LCI, facelift 2015)" engine="118i (136 Hp)" doors_count="3" hp="136" body_type="Хэтчбек" slots="4 или 5"/>
+	<info name="Ford Focus III Wagon (facelift 2014)" engine="ST 2.0 EcoBoost (250 Hp)" doors_count="5" hp="250" body_type="Универсал" slots="5"/>
+	<info name="Ferrari F12 Berlinetta" engine="6.3 V12 (740 Hp)" doors_count="2" hp="740" body_type="Купе" slots="4"/>
+	<info name="Honda Legend IV (KB1)" engine="3.7 VTEC V6 4WD" doors_count="4" hp="295" body_type="Седан" slots="5"/>
+	<info name="Lamborghini Diablo" engine="VT (530 Hp)" doors_count="2" hp="530" body_type="Купе" slots="2"/>
+	<info name="Lexus GC (J15)" engine="460 (301 Hp)" doors_count="5" hp="301" body_type="Внедорожник" slots="7"/>
+	<info name="Subaru Forester III (facelift 2010)" engine="2.0i (150 Hp) MT" doors_count="5" hp="150" body_type="Кроссовер" slots="5"/>
+</cars>

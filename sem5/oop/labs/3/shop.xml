@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+	<tv>
+		<company>LG</company>
+		<model>42LF620V</model>
+		<country>Республика Корея</country>
+		<resolution>1920x1080</resolution> <!-- Full HD -->
+		<diagonal><![CDATA[42<br />(106 см)]]></diagonal>
+	</tv>
+	<tv>
+		<company>Panasonic</company>
+		<model>TX-50CSR520</model>
+		<country>Чешская республика</country>
+		<resolution>1920x1080</resolution>
+		<diagonal><![CDATA[50<br />(127 см)]]></diagonal>
+	</tv>
+	<tv>
+		<company>Philips</company>
+		<model>65PFT6520</model>
+		<country>Российская Федерация</country>
+		<resolution>1920x1080</resolution>
+		<diagonal><![CDATA[65<br />(165 см)]]></diagonal>
+	</tv>
+	<tv>
+		<company>Samsung</company>
+		<model>UE22H5600AKXRU</model>
+		<country>Российская Федерация</country>
+		<resolution>1920x1080</resolution>
+		<diagonal><![CDATA[22<br />(55 см)]]></diagonal>
+	</tv>
+	<tv>
+		<company>Samsung</company>
+		<model>UE24H4070AUXRU</model>
+		<country>Российская Федерация</country>
+		<resolution>1366x768</resolution>
+		<diagonal><![CDATA[24<br />(61 см)]]></diagonal>
+	</tv>
+</catalog>

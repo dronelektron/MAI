@@ -64,6 +64,9 @@ int main()
 	else
 		std::cout << "Errors:" << std::endl << errors;
 	
+	for (int i = 0; i < validators.size(); ++i)
+		delete validators[i];
+
 	return 0;
 }
 

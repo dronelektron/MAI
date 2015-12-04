@@ -29,11 +29,18 @@ public class Main {
 			e.printStackTrace();
 		}
 
+		ParticleSystem ps = new ParticleSystem(50);
+
+		ps.setPosition(120.0f, 130.0f, 100.0f);
+
 		prevTime = System.nanoTime();
 		delta = 0.0f;
 		camera = new Camera(WIDTH, HEIGHT);
 		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
-		entities = new Entity[] {new Terrain(), new ParticleSystem(50)};
+		entities = new Entity[]{new Terrain(), ps};
+		camera.setX(100.0f);
+		camera.setY(150.0f);
+		camera.setZ(50.0f);
 
 		for (Entity ent : entities) {
 			ent.compile();
@@ -44,8 +51,6 @@ public class Main {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	private static void loop() {
@@ -69,14 +74,13 @@ public class Main {
 
 	private static void draw() {
 		Matrix view = camera.getView();
-		Matrix viewProjMat = projection.mul(view);
 
 		GL11.glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		for (Entity ent : entities) {
 			ent.update(delta);
-			ent.draw(viewProjMat);
+			ent.draw(projection, view);
 		}
 	}
 

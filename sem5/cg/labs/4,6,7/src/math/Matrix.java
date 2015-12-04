@@ -132,5 +132,13 @@ public class Matrix {
 		return buffer;
 	}
 
+	public float get(int i, int j) {
+		return mat[i][j];
+	}
+
+	public void set(int i, int j, float value) {
+		mat[i][j] = value;
+	}
+
 	private float[][] mat;
 }

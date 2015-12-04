@@ -89,13 +89,13 @@ public class Terrain extends Entity {
 	}
 
 	@Override
-	public void draw(Matrix viewProjMat) {
+	public void draw(Matrix projMat, Matrix viewMat) {
 		texture.bind();
 		shader.bind();
 		shader.setUniform1("u_sampler", 0);
-		shader.setUniformMatrix4("u_mvp", viewProjMat.toBuffer());
+		shader.setUniformMatrix4("u_mvp", projMat.mul(viewMat).toBuffer());
 
-		super.draw(viewProjMat);
+		GL11.glCallList(dispList);
 
 		shader.unbind();
 	}

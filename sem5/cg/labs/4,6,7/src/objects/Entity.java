@@ -9,12 +9,9 @@ public abstract class Entity {
 	}
 
 	public abstract void compile();
+	public abstract void draw(Matrix projMat, Matrix viewMat);
 
 	public void update(float delta) {}
-
-	public void draw(Matrix viewProjMat) {
-		GL11.glCallList(dispList);
-	}
 
 	public void delete() {
 		GL11.glDeleteLists(dispList, 1);

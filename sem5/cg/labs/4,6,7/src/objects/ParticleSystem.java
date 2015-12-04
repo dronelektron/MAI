@@ -12,6 +12,7 @@ import math.*;
 
 public class ParticleSystem extends Entity {
 	public ParticleSystem(int count) {
+		posMat = new Matrix().initTranslation(0.0f, 0.0f, 0.0f);
 		rnd = new Random();
 
 		try
@@ -63,9 +64,7 @@ public class ParticleSystem extends Entity {
 	}
 
 	@Override
-	public void draw(Matrix viewProjMat) {
-		Matrix posMat = new Matrix().initTranslation(0.0f, 0.0f, 0.0f);
-
+	public void draw(Matrix projMat, Matrix viewMat) {
 		texture.bind();
 		shader.bind();
 		shader.setUniform1("u_sampler", 0);
@@ -76,18 +75,30 @@ public class ParticleSystem extends Entity {
 			}
 
 			Matrix scaleMat = new Matrix().initScaleUniform(particle.getSize());
-			Matrix modelMat = posMat.mul(scaleMat);
+			Matrix modelMat = posMat;
 
-			shader.setUniformMatrix4("u_mvp", viewProjMat.mul(modelMat).toBuffer());
+			modelMat.set(0, 0, viewMat.get(0, 0));
+			modelMat.set(0, 1, viewMat.get(1, 0));
+			modelMat.set(0, 2, viewMat.get(2, 0));
+			modelMat.set(1, 0, viewMat.get(0, 1));
+			modelMat.set(1, 1, viewMat.get(1, 1));
+			modelMat.set(1, 2, viewMat.get(2, 1));
+			modelMat.set(2, 0, viewMat.get(0, 2));
+			modelMat.set(2, 1, viewMat.get(1, 2));
+			modelMat.set(2, 2, viewMat.get(2, 2));
+			modelMat = modelMat.mul(scaleMat);
+
+			shader.setUniformMatrix4("u_mvp", projMat.mul(viewMat).mul(modelMat).toBuffer());
 			shader.setUniform4("u_velocity", particle.getVelocity().toBuffer());
 			shader.setUniform1f("u_lifetime", particle.getLifeTime());
 			shader.setUniform1f("u_maxlifetime", particle.getMaxLifeTime());
 
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-			super.draw(viewProjMat);
-
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GL11.glCallList(dispList);
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			GL11.glDisable(GL11.GL_BLEND);
 		}
 
 		shader.unbind();
@@ -101,10 +112,15 @@ public class ParticleSystem extends Entity {
 		super.delete();
 	}
 
+	public void setPosition(float x, float y, float z) {
+		posMat = new Matrix().initTranslation(x, y, z);
+	}
+
 	private int random(int a, int b) {
 		return a + rnd.nextInt(b - a + 1);
 	}
 
+	private Matrix posMat;
 	private Random rnd;
 	private Texture texture;
 	private Shader shader;

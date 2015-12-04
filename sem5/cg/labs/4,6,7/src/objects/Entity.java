@@ -37,7 +37,7 @@ public class Entity {
 		GL11.glCallList(dispList);
 	}
 
-	public void cleanUp() {
+	public void delete() {
 		GL11.glDeleteLists(dispList, 1);
 	}
 

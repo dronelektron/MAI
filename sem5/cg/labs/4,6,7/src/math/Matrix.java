@@ -111,6 +111,15 @@ public class Matrix {
 		return res;
 	}
 
+	public Vector transform(Vector v) {
+		float x = mat[0][0] * v.getX() + mat[0][1] * v.getY() + mat[0][2] * v.getZ() + mat[0][3] * v.getW();
+		float y = mat[1][0] * v.getX() + mat[1][1] * v.getY() + mat[1][2] * v.getZ() + mat[1][3] * v.getW();
+		float z = mat[2][0] * v.getX() + mat[2][1] * v.getY() + mat[2][2] * v.getZ() + mat[2][3] * v.getW();
+		float w = mat[3][0] * v.getX() + mat[3][1] * v.getY() + mat[3][2] * v.getZ() + mat[3][3] * v.getW();
+
+		return new Vector(x, y, z, w);
+	}
+
 	public FloatBuffer toBuffer() {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
 

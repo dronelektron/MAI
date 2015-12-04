@@ -54,11 +54,11 @@ public class Shader {
 		GL20.glValidateProgram(shaderProgram);
 
 		if (GL20.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-			System.out.println("Vertex shader compilation failed");
+			System.out.println("Vertex shader compilation failed: " + fileName);
 		}
 
 		if (GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-			System.out.println("Fragment shader compilation failed");
+			System.out.println("Fragment shader compilation failed: " + fileName);
 		}
 	}
 

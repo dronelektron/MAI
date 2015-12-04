@@ -32,7 +32,7 @@ public class Terrain extends Entity {
 				float z = i * step;
 				float y = (bi.getRGB(j, i) & 255) * step;
 				float texCoordX = (float)j / bi.getWidth();
-				float texCoordY = (float)i / bi.getHeight();
+				float texCoordY = 1.0f - (float)i / bi.getHeight();
 
 				points.add(x);
 				points.add(y);
@@ -46,12 +46,13 @@ public class Terrain extends Entity {
 		for (int i = 0; i < bi.getHeight() - 1; ++i) {
 			for (int j = 0; j < bi.getWidth() - 1; ++j) {
 				int offset = i * bi.getWidth() + j;
+
 				indices.add(offset);
+				indices.add(offset + bi.getWidth() + 1);
 				indices.add(offset + bi.getWidth());
-				indices.add(offset + bi.getWidth() + 1);
 				indices.add(offset);
-				indices.add(offset + bi.getWidth() + 1);
 				indices.add(offset + 1);
+				indices.add(offset + bi.getWidth() + 1);
 			}
 		}
 

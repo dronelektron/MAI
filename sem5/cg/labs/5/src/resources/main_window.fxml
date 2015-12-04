@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
+   <center>
+      <AnchorPane fx:id="canvasHolder" BorderPane.alignment="CENTER" />
+   </center>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Сплайны">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#menuSpline1" text="Кривая Безье" />
+              <MenuItem mnemonicParsing="false" onAction="#menuSpline2" text="Интерполяционный многочлен Лагранжа" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuSpline3" text="Фундаментальная кривая" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Вид">
+              <items>
+                  <RadioMenuItem fx:id="viewItem1" mnemonicParsing="false" onAction="#menuView1" text="Линии между точками" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

@@ -1,14 +1,12 @@
 package main;
 
-import objects.Entity;
-import objects.Terrain;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import math.Matrix;
-import particles.ParticleSystem;
+import objects.*;
 
 public class Main {
 	public static void main(String[] args) {
@@ -19,24 +17,26 @@ public class Main {
 	}
 
 	private static void initDisplay() {
-		try {
-			final int WIDTH = 800;
-			final int HEIGHT = 600;
+		final int WIDTH = 800;
+		final int HEIGHT = 600;
 
+		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			Display.setTitle(TITLE);
 			Display.setResizable(true);
 			Display.create();
-
-			prevTime = 0;
-			camera = new Camera(WIDTH, HEIGHT);
-			projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
-			terrainShader = new Shader("src/resources/shaders/terrain");
-			particleSystem = new ParticleSystem(50);
-			terrainObj = new Terrain();
-			terrainObj.compile();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
+		}
+
+		prevTime = System.nanoTime();
+		delta = 0.0f;
+		camera = new Camera(WIDTH, HEIGHT);
+		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
+		entities = new Entity[] {new Terrain(), new ParticleSystem(50)};
+
+		for (Entity ent : entities) {
+			ent.compile();
 		}
 	}
 
@@ -50,6 +50,7 @@ public class Main {
 
 	private static void loop() {
 		while (!Display.isCloseRequested()) {
+			updateDelta();
 			getInput();
 			draw();
 
@@ -59,49 +60,34 @@ public class Main {
 	}
 
 	private static void delete() {
-		particleSystem.delete();
-		terrainShader.delete();
-		terrainObj.delete();
+		for (Entity ent : entities) {
+			ent.delete();
+		}
 
 		Display.destroy();
 	}
 
 	private static void draw() {
-		//float delta = getDelta();
 		Matrix view = camera.getView();
 		Matrix viewProjMat = projection.mul(view);
 
 		GL11.glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-		// TODO: Draw stuff
-		terrainShader.bind();
-		terrainShader.setUniform1("u_sampler", 0);
-		terrainShader.setUniformMatrix4("u_mvp", viewProjMat.toBuffer());
-		terrainObj.draw();
+		for (Entity ent : entities) {
+			ent.update(delta);
+			ent.draw(viewProjMat);
+		}
+	}
 
-		GL11.glBegin(GL11.GL_LINES);
+	private static void updateDelta() {
+		long curTime = System.nanoTime();
 
-		GL11.glColor3f(1.0f, 0.0f, 0.0f);
-		GL11.glVertex3f(0.0f, 0.0f, 0.0f);
-		GL11.glVertex3f(100.0f, 0.0f, 0.0f);
-
-		GL11.glColor3f(0.0f, 1.0f, 0.0f);
-		GL11.glVertex3f(0.0f, 0.0f, 0.0f);
-		GL11.glVertex3f(0.0f, 100.0f, 0.0f);
-
-		GL11.glColor3f(0.0f, 0.0f, 1.0f);
-		GL11.glVertex3f(0.0f, 0.0f, 0.0f);
-		GL11.glVertex3f(0.0f, 0.0f, 100.0f);
-
-		GL11.glEnd();
-
-		terrainShader.unbind();
+		delta = (curTime - prevTime) / 1000000000.0f;
+		prevTime = curTime;
 	}
 
 	private static void getInput() {
-		float delta = getDelta();
-
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			camera.move(-delta, 1.0f);
 		}
@@ -141,22 +127,12 @@ public class Main {
 		}
 	}
 
-	private static float getDelta() {
-		long curTime = System.nanoTime();
-		float delta = (curTime - prevTime) / 1000000000.0f;
-
-		prevTime = curTime;
-
-		return delta;
-	}
-
 	private static final int FPS = 60;
 	private static final String TITLE = "Компьютерная графика - лабораторная работа 4, 6, 7";
 
 	private static long prevTime;
+	private static float delta;
 	private static Camera camera;
 	private static Matrix projection;
-	private static Shader terrainShader;
-	private static ParticleSystem particleSystem;
-	private static Entity terrainObj;
+	private static Entity[] entities;
 }

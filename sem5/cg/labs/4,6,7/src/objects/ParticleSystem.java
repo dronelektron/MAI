@@ -59,6 +59,7 @@ public class ParticleSystem extends Entity {
 				particles[i] = null;
 			} else {
 				particles[i].setLifeTime(particles[i].getLifeTime() + delta);
+				particles[i].update(delta);
 			}
 		}
 	}
@@ -74,8 +75,10 @@ public class ParticleSystem extends Entity {
 				continue;
 			}
 
+			Vector pos = particle.getPosition();
+			Matrix posDeltaMat = new Matrix().initTranslation(pos.getX(), pos.getY(), pos.getZ());
 			Matrix scaleMat = new Matrix().initScaleUniform(particle.getSize());
-			Matrix modelMat = posMat;
+			Matrix modelMat = posDeltaMat.mul(posMat);
 
 			modelMat.set(0, 0, viewMat.get(0, 0));
 			modelMat.set(0, 1, viewMat.get(1, 0));
@@ -89,7 +92,6 @@ public class ParticleSystem extends Entity {
 			modelMat = modelMat.mul(scaleMat);
 
 			shader.setUniformMatrix4("u_mvp", projMat.mul(viewMat).mul(modelMat).toBuffer());
-			shader.setUniform4("u_velocity", particle.getVelocity().toBuffer());
 			shader.setUniform1f("u_lifetime", particle.getLifeTime());
 			shader.setUniform1f("u_maxlifetime", particle.getMaxLifeTime());
 

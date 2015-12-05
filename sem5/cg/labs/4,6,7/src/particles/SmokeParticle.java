@@ -4,14 +4,19 @@ import math.Vector;
 
 public class SmokeParticle {
 	public SmokeParticle(Vector velocity, float size, float maxLifeTime) {
+		this.position = new Vector(0.0f, 0.0f, 0.0f, 1.0f);
 		this.velocity = velocity;
 		this.size = size;
 		this.maxLifeTime = maxLifeTime;
 		lifeTime = 0.0f;
 	}
 
-	public Vector getVelocity() {
-		return velocity;
+	public void update(float delta) {
+		position = position.add(velocity.mul(delta));
+	}
+
+	public Vector getPosition() {
+		return position;
 	}
 
 	public float getLifeTime() {
@@ -30,6 +35,7 @@ public class SmokeParticle {
 		return maxLifeTime;
 	}
 
+	private Vector position;
 	private Vector velocity;
 	private float size;
 	private float maxLifeTime;

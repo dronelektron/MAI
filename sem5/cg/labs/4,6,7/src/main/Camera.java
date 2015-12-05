@@ -9,8 +9,8 @@ public class Camera {
 		z = 0.0f;
 		pitch = 0.0f;
 		yaw = 0.0f;
-		moveSpeed = 80.0f;
-		rotateSpeed = 90.0f;
+		moveSpeed = 40.0f;
+		rotateSpeed = 80.0f;
 	}
 
 	public void move(float delta, float dir) {

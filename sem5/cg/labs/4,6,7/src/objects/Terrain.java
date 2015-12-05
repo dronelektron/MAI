@@ -13,6 +13,7 @@ import math.Matrix;
 public class Terrain extends Entity {
 	public Terrain() {
 		float step = 1.0f;
+		int texSize = 64;
 		BufferedImage bi = null;
 
 		points = new ArrayList<>();
@@ -31,8 +32,8 @@ public class Terrain extends Entity {
 				float x = j * step;
 				float z = i * step;
 				float y = (bi.getRGB(j, i) & 255) * step;
-				float texCoordX = (float)j / bi.getWidth();
-				float texCoordY = 1.0f - (float)i / bi.getHeight();
+				float texCoordX = (float)j / texSize;
+				float texCoordY = 1.0f - (float)i / texSize;
 
 				points.add(x);
 				points.add(y);
@@ -58,7 +59,7 @@ public class Terrain extends Entity {
 
 		try
 		{
-			texture = TextureLoader.getTexture("png", getClass().getResource("../resources/textures/terrain4.png").openStream());
+			texture = TextureLoader.getTexture("png", getClass().getResource("../resources/textures/terrain5.png").openStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

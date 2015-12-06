@@ -1,11 +1,13 @@
 package main;
 
+import math.Vector;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import math.Matrix;
+import math.Physics;
 import objects.*;
 
 public class Main {
@@ -30,6 +32,7 @@ public class Main {
 		}
 
 		ParticleSystem ps = new ParticleSystem(50);
+		Terrain terrain = new Terrain();
 
 		ps.setPosition(128.0f, 16.0f, 128.0f);
 
@@ -37,7 +40,8 @@ public class Main {
 		delta = 0.0f;
 		camera = new Camera(WIDTH, HEIGHT);
 		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
-		entities = new Entity[]{new Terrain(), ps};
+		entities = new Entity[]{terrain, ps};
+		physics = new Physics(camera, terrain);
 		camera.setX(128.0f);
 		camera.setY(32.0f);
 		camera.setZ(128.0f);
@@ -57,6 +61,7 @@ public class Main {
 		while (!Display.isCloseRequested()) {
 			updateDelta();
 			getInput();
+			physics.solve(speedX, speedZ, delta);
 			draw();
 
 			Display.update();
@@ -92,20 +97,47 @@ public class Main {
 	}
 
 	private static void getInput() {
+		float yaw = (float)Math.toRadians(camera.getYaw());
+
+		speedX = 0.0f;
+		speedZ = 0.0f;
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			camera.move(-delta, 1.0f);
+			//camera.move(-delta, 1.0f);
+			float yawOffset = (float)Math.toRadians(90.0f);
+			float dx = (float)Math.cos(yaw + yawOffset);
+			float dz = (float)Math.sin(yaw + yawOffset);
+
+			speedX += -dx;
+			speedZ += dz;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			camera.move(delta, 1.0f);
+			//camera.move(delta, 1.0f);
+			float yawOffset = (float)Math.toRadians(90.0f);
+			float dx = (float)Math.cos(yaw + yawOffset);
+			float dz = (float)Math.sin(yaw + yawOffset);
+
+			speedX += dx;
+			speedZ += -dz;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			camera.move(-delta, 0.0f);
+			//camera.move(-delta, 0.0f);
+			float dx = (float)Math.cos(yaw);
+			float dz = (float)Math.sin(yaw);
+
+			speedX += -dx;
+			speedZ += dz;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			camera.move(delta, 0.0f);
+			//camera.move(delta, 0.0f);
+			float dx = (float)Math.cos(yaw);
+			float dz = (float)Math.sin(yaw);
+
+			speedX += dx;
+			speedZ += -dz;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
@@ -124,6 +156,10 @@ public class Main {
 			camera.rotate(0.0f, delta);
 		}
 
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			physics.makeJump();
+		}
+
 		if (Display.wasResized()) {
 			GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 
@@ -136,7 +172,10 @@ public class Main {
 
 	private static long prevTime;
 	private static float delta;
+	private static float speedX;
+	private static float speedZ;
 	private static Camera camera;
 	private static Matrix projection;
 	private static Entity[] entities;
+	private static Physics physics;
 }

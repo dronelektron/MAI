@@ -24,8 +24,8 @@ public class Terrain extends Entity {
 		try {
 			BufferedImage bi = ImageIO.read(getClass().getResource("../resources/textures/terrain_hm3.png"));
 
-			int width = bi.getWidth();
-			int height = bi.getHeight();
+			width = bi.getWidth();
+			height = bi.getHeight();
 
 			for (int i = 0; i < height; ++i) {
 				for (int j = 0; j < width; ++j) {
@@ -129,6 +129,16 @@ public class Terrain extends Entity {
 		super.delete();
 	}
 
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	private int width;
+	private int height;
 	private ArrayList<Float> points;
 	private ArrayList<Float> texCoords;
 	private ArrayList<Integer> indices;

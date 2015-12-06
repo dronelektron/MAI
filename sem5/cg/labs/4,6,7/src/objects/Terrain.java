@@ -12,49 +12,69 @@ import math.Matrix;
 
 public class Terrain extends Entity {
 	public Terrain() {
-		float step = 1.0f;
+		float topLimit = 16.0f;
 		int texSize = 64;
-		BufferedImage bi = null;
+		int minColor = 255;
+		int maxColor = 0;
 
 		points = new ArrayList<>();
 		texCoords = new ArrayList<>();
 		indices = new ArrayList<>();
 
-		try
-		{
-			bi = ImageIO.read(getClass().getResource("../resources/textures/terrain_hm4_v2.png"));
+		try {
+			BufferedImage bi = ImageIO.read(getClass().getResource("../resources/textures/terrain_hm3.png"));
+
+			int width = bi.getWidth();
+			int height = bi.getHeight();
+
+			for (int i = 0; i < height; ++i) {
+				for (int j = 0; j < width; ++j) {
+					int color = bi.getRGB(j, i) & 255;
+
+					if (color < minColor) {
+						minColor = color;
+					}
+
+					if (color > maxColor) {
+						maxColor = color;
+					}
+				}
+			}
+
+			float colorDiff = maxColor - minColor + 1.0f;
+
+			for (int i = 0; i < height; ++i) {
+				for (int j = 0; j < width; ++j) {
+					int color = (bi.getRGB(j, i) & 255) - minColor;
+					float x = (float)j;
+					float y = topLimit * color / colorDiff;
+					float z = (float)i;
+					float texCoordX = (float)j / texSize;
+					float texCoordY = 1.0f - (float)i / texSize;
+
+					points.add(x);
+					points.add(y);
+					points.add(z);
+
+					texCoords.add(texCoordX);
+					texCoords.add(texCoordY);
+				}
+			}
+
+			for (int i = 0; i < height - 1; ++i) {
+				for (int j = 0; j < width - 1; ++j) {
+					int offset = i * width + j;
+
+					indices.add(offset);
+					indices.add(offset + width + 1);
+					indices.add(offset + width);
+					indices.add(offset);
+					indices.add(offset + 1);
+					indices.add(offset + width + 1);
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-
-		for (int i = 0; i < bi.getHeight(); ++i) {
-			for (int j = 0; j < bi.getWidth(); ++j) {
-				float x = j * step;
-				float z = i * step;
-				float y = (bi.getRGB(j, i) & 255) * step;
-				float texCoordX = (float)j / texSize;
-				float texCoordY = 1.0f - (float)i / texSize;
-
-				points.add(x);
-				points.add(y);
-				points.add(z);
-
-				texCoords.add(texCoordX);
-				texCoords.add(texCoordY);
-			}
-		}
-
-		for (int i = 0; i < bi.getHeight() - 1; ++i) {
-			for (int j = 0; j < bi.getWidth() - 1; ++j) {
-				int offset = i * bi.getWidth() + j;
-
-				indices.add(offset);
-				indices.add(offset + bi.getWidth() + 1);
-				indices.add(offset + bi.getWidth());
-				indices.add(offset);
-				indices.add(offset + 1);
-				indices.add(offset + bi.getWidth() + 1);
-			}
 		}
 
 		try

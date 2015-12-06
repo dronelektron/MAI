@@ -31,16 +31,16 @@ public class Main {
 
 		ParticleSystem ps = new ParticleSystem(50);
 
-		ps.setPosition(120.0f, 130.0f, 100.0f);
+		ps.setPosition(128.0f, 16.0f, 128.0f);
 
 		prevTime = System.nanoTime();
 		delta = 0.0f;
 		camera = new Camera(WIDTH, HEIGHT);
 		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
 		entities = new Entity[]{new Terrain(), ps};
-		camera.setX(100.0f);
-		camera.setY(150.0f);
-		camera.setZ(50.0f);
+		camera.setX(128.0f);
+		camera.setY(32.0f);
+		camera.setZ(128.0f);
 
 		for (Entity ent : entities) {
 			ent.compile();

@@ -21,30 +21,35 @@ public class Physics {
 		camera.setX(camera.getX() + deltaX);
 		camera.setZ(camera.getZ() + deltaZ);
 
+		float y = terrain.getY(camera.getX(), camera.getZ());
+
 		if (!isOnGround) {
-			if (camera.getY() < 0.0f) {
-				camera.setY(0.0f);
+			if (camera.getY() < y) {
+				camera.setY(y + PLAYER_TALL);
 				velocity.setY(0.0f);
 				isOnGround = true;
 			} else {
-				velocity = velocity.add(new Vector(0.0f, -GRAVITY * flyTime, 0.0f, 0.0f));
+				velocity.setY(velocity.getY() - GRAVITY * flyTime);
 				camera.setY(camera.getY() + velocity.getY() * delta);
 				flyTime += delta;
 			}
+		} else {
+			camera.setY(y + PLAYER_TALL);
 		}
 	}
 
 	public void makeJump() {
 		if (isOnGround) {
-			velocity = velocity.add(JUMP_SPEED);
+			velocity.setY(JUMP_SPEED);
 			flyTime = 0.0f;
 			isOnGround = false;
 		}
 	}
 
 	public static final float GRAVITY = 9.81f; // units/sec^2
-	public static final float WALK_SPEED = 40.0f; // units/sec
-	public static final Vector JUMP_SPEED = new Vector(0.0f, 30.0f, 0.0f, 0.0f); // units/sec
+	public static final float WALK_SPEED = 30.0f; // units/sec
+	public static final float JUMP_SPEED = 25.0f; // units/sec
+	public static final float PLAYER_TALL = 1.0f; // units
 	private Camera camera;
 	private Terrain terrain;
 	private Vector velocity;

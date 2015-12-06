@@ -9,11 +9,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import main.Shader;
 import math.Matrix;
+import math.Vector;
 
 public class Terrain extends Entity {
 	public Terrain() {
 		float topLimit = 16.0f;
-		int texSize = 64;
+		int texSize = 1;//64;
 		int minColor = 255;
 		int maxColor = 0;
 
@@ -26,6 +27,7 @@ public class Terrain extends Entity {
 
 			width = bi.getWidth();
 			height = bi.getHeight();
+			levels = new float[height][width];
 
 			for (int i = 0; i < height; ++i) {
 				for (int j = 0; j < width; ++j) {
@@ -48,9 +50,9 @@ public class Terrain extends Entity {
 					int color = (bi.getRGB(j, i) & 255) - minColor;
 					float x = (float)j;
 					float y = topLimit * color / colorDiff;
-					float z = (float)i;
+					float z = -(float)i;
 					float texCoordX = (float)j / texSize;
-					float texCoordY = 1.0f - (float)i / texSize;
+					float texCoordY = (float)i / texSize;
 
 					points.add(x);
 					points.add(y);
@@ -58,6 +60,8 @@ public class Terrain extends Entity {
 
 					texCoords.add(texCoordX);
 					texCoords.add(texCoordY);
+
+					levels[i][j] = y;
 				}
 			}
 
@@ -66,11 +70,11 @@ public class Terrain extends Entity {
 					int offset = i * width + j;
 
 					indices.add(offset);
-					indices.add(offset + width + 1);
 					indices.add(offset + width);
-					indices.add(offset);
 					indices.add(offset + 1);
 					indices.add(offset + width + 1);
+					indices.add(offset + 1);
+					indices.add(offset + width);
 				}
 			}
 		} catch (IOException e) {
@@ -79,7 +83,7 @@ public class Terrain extends Entity {
 
 		try
 		{
-			texture = TextureLoader.getTexture("png", getClass().getResource("../resources/textures/terrain5.png").openStream());
+			texture = TextureLoader.getTexture("png", getClass().getResource("../resources/textures/terrain2.png").openStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -129,16 +133,68 @@ public class Terrain extends Entity {
 		super.delete();
 	}
 
-	public int getWidth() {
-		return width;
+	public float getY(float x, float z) {
+		int gridX = (int)Math.floor(x);
+		int gridZ = (int)Math.floor(-z);
+
+		if (gridX < 0 || gridZ < 0 || gridX >= width - 1 || gridZ >= height - 1) {
+			return 0.0f;
+		}
+
+		//int offset = (gridX + gridZ * width) * 6;
+
+		float coordX = x % 1.0f;
+		float coordZ = -z % 1.0f;
+
+		if (coordX <= 1.0f - coordZ) {
+			return barryCentric(
+					new Vector(0.0f, levels[gridZ][gridX], 0.0f, 1.0f),
+					new Vector(0.0f, levels[gridZ + 1][gridX], 1.0f, 1.0f),
+					new Vector(1.0f, levels[gridZ][gridX + 1], 0.0f, 1.0f),
+					coordX,
+					coordZ
+			);
+			/*
+			return barryCentric(
+					new Vector(0.0f, points.get(indices.get(offset) * 3 + 1), 0.0f, 1.0f),
+					new Vector(0.0f, points.get(indices.get(offset + 1) * 3 + 1), 1.0f, 1.0f),
+					new Vector(1.0f, points.get(indices.get(offset + 2) * 3 + 1), 0.0f, 1.0f),
+					coordX,
+					coordZ
+			);
+			*/
+		} else {
+			return barryCentric(
+					new Vector(1.0f, levels[gridZ + 1][gridX + 1], 1.0f, 1.0f),
+					new Vector(1.0f, levels[gridZ][gridX + 1], 0.0f, 1.0f),
+					new Vector(0.0f, levels[gridZ + 1][gridX], 1.0f, 1.0f),
+					coordX,
+					coordZ
+			);
+			/*
+			return barryCentric(
+					new Vector(1.0f, points.get(indices.get(offset + 3) * 3 + 1), 1.0f, 1.0f),
+					new Vector(1.0f, points.get(indices.get(offset + 4) * 3 + 1), 0.0f, 1.0f),
+					new Vector(0.0f, points.get(indices.get(offset + 5) * 3 + 1), 1.0f, 1.0f),
+					coordX,
+					coordZ
+			);
+			*/
+		}
 	}
 
-	public int getHeight() {
-		return height;
+	private float barryCentric(Vector p1, Vector p2, Vector p3, float x, float z) {
+		float det = (p2.getZ() - p3.getZ()) * (p1.getX() - p3.getX()) + (p3.getX() - p2.getX()) * (p1.getZ() - p3.getZ());
+		float a = ((p2.getZ() - p3.getZ()) * (x - p3.getX()) + (p3.getX() - p2.getX()) * (z - p3.getZ())) / det;
+		float b = ((p3.getZ() - p1.getZ()) * (x - p3.getX()) + (p1.getX() - p3.getX()) * (z - p3.getZ())) / det;
+		float c = 1.0f - a - b;
+
+		return a * p1.getY() + b * p2.getY() + c * p3.getY();
 	}
 
 	private int width;
 	private int height;
+	private float[][] levels; // TEST
 	private ArrayList<Float> points;
 	private ArrayList<Float> texCoords;
 	private ArrayList<Integer> indices;

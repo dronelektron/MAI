@@ -1,6 +1,5 @@
 package main;
 
-import math.Vector;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -34,7 +33,7 @@ public class Main {
 		ParticleSystem ps = new ParticleSystem(50);
 		Terrain terrain = new Terrain();
 
-		ps.setPosition(128.0f, 16.0f, 128.0f);
+		ps.setPosition(128.0f, 16.0f, -128.0f);
 
 		prevTime = System.nanoTime();
 		delta = 0.0f;
@@ -43,8 +42,8 @@ public class Main {
 		entities = new Entity[]{terrain, ps};
 		physics = new Physics(camera, terrain);
 		camera.setX(128.0f);
-		camera.setY(32.0f);
-		camera.setZ(128.0f);
+		camera.setY(64.0f);
+		camera.setZ(-128.0f);
 
 		for (Entity ent : entities) {
 			ent.compile();
@@ -167,7 +166,7 @@ public class Main {
 		}
 	}
 
-	private static final int FPS = 60;
+	private static final int FPS = 120;
 	private static final String TITLE = "Компьютерная графика - лабораторная работа 4, 6, 7";
 
 	private static long prevTime;

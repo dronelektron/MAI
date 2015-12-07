@@ -21,20 +21,20 @@ public class Physics {
 		camera.setX(camera.getX() + deltaX);
 		camera.setZ(camera.getZ() + deltaZ);
 
-		float y = terrain.getY(camera.getX(), camera.getZ());
+		float y = terrain.getY(camera.getX(), camera.getZ()) + PLAYER_TALL;
 
 		if (!isOnGround) {
 			if (camera.getY() < y) {
-				camera.setY(y + PLAYER_TALL);
+				camera.setY(y);
 				velocity.setY(0.0f);
 				isOnGround = true;
 			} else {
-				velocity.setY(velocity.getY() - GRAVITY * flyTime);
 				camera.setY(camera.getY() + velocity.getY() * delta);
+				velocity.setY(JUMP_SPEED - GRAVITY * flyTime);
 				flyTime += delta;
 			}
 		} else {
-			camera.setY(y + PLAYER_TALL);
+			camera.setY(y);
 		}
 	}
 
@@ -47,8 +47,8 @@ public class Physics {
 	}
 
 	public static final float GRAVITY = 9.81f; // units/sec^2
-	public static final float WALK_SPEED = 30.0f; // units/sec
-	public static final float JUMP_SPEED = 25.0f; // units/sec
+	public static final float WALK_SPEED = 15.0f; // units/sec
+	public static final float JUMP_SPEED = 5.0f; // units/sec
 	public static final float PLAYER_TALL = 1.0f; // units
 	private Camera camera;
 	private Terrain terrain;

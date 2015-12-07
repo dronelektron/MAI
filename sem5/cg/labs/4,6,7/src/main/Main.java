@@ -39,10 +39,9 @@ public class Main {
 		delta = 0.0f;
 		camera = new Camera(WIDTH, HEIGHT);
 		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
-		entities = new Entity[]{terrain, ps};
+		entities = new Entity[]{ps, terrain};
 		physics = new Physics(camera, terrain);
 		camera.setX(128.0f);
-		camera.setY(64.0f);
 		camera.setZ(-128.0f);
 
 		for (Entity ent : entities) {
@@ -166,7 +165,7 @@ public class Main {
 		}
 	}
 
-	private static final int FPS = 120;
+	private static final int FPS = 300;
 	private static final String TITLE = "Компьютерная графика - лабораторная работа 4, 6, 7";
 
 	private static long prevTime;

@@ -14,7 +14,7 @@ import math.Vector;
 public class Terrain extends Entity {
 	public Terrain() {
 		float topLimit = 16.0f;
-		int texSize = 1;//64;
+		int texSize = 32;
 		int minColor = 255;
 		int maxColor = 0;
 
@@ -83,7 +83,7 @@ public class Terrain extends Entity {
 
 		try
 		{
-			texture = TextureLoader.getTexture("png", getClass().getResource("../resources/textures/terrain2.png").openStream());
+			texture = TextureLoader.getTexture("png", getClass().getResource("../resources/textures/terrain5.png").openStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -141,8 +141,6 @@ public class Terrain extends Entity {
 			return 0.0f;
 		}
 
-		//int offset = (gridX + gridZ * width) * 6;
-
 		float coordX = x % 1.0f;
 		float coordZ = -z % 1.0f;
 
@@ -154,15 +152,6 @@ public class Terrain extends Entity {
 					coordX,
 					coordZ
 			);
-			/*
-			return barryCentric(
-					new Vector(0.0f, points.get(indices.get(offset) * 3 + 1), 0.0f, 1.0f),
-					new Vector(0.0f, points.get(indices.get(offset + 1) * 3 + 1), 1.0f, 1.0f),
-					new Vector(1.0f, points.get(indices.get(offset + 2) * 3 + 1), 0.0f, 1.0f),
-					coordX,
-					coordZ
-			);
-			*/
 		} else {
 			return barryCentric(
 					new Vector(1.0f, levels[gridZ + 1][gridX + 1], 1.0f, 1.0f),
@@ -171,15 +160,6 @@ public class Terrain extends Entity {
 					coordX,
 					coordZ
 			);
-			/*
-			return barryCentric(
-					new Vector(1.0f, points.get(indices.get(offset + 3) * 3 + 1), 1.0f, 1.0f),
-					new Vector(1.0f, points.get(indices.get(offset + 4) * 3 + 1), 0.0f, 1.0f),
-					new Vector(0.0f, points.get(indices.get(offset + 5) * 3 + 1), 1.0f, 1.0f),
-					coordX,
-					coordZ
-			);
-			*/
 		}
 	}
 
@@ -194,7 +174,7 @@ public class Terrain extends Entity {
 
 	private int width;
 	private int height;
-	private float[][] levels; // TEST
+	private float[][] levels;
 	private ArrayList<Float> points;
 	private ArrayList<Float> texCoords;
 	private ArrayList<Integer> indices;

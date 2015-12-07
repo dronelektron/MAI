@@ -52,7 +52,7 @@ public class ParticleSystem extends Entity {
 			if (particles[i] == null) {
 				float size = random(3, 5) / 5.0f;
 				float maxLifeTime = random(10, 25) / 10.0f;
-				Vector speed = new Vector(random(-2, 2) / 10.0f, random(7, 10) / 10.0f, 0.0f, 1.0f);
+				Vector speed = new Vector(random(-2, 2) / 10.0f, random(7, 10) / 10.0f, random(-2, 2) / 10.0f, 1.0f);
 
 				particles[i] = new SmokeParticle(speed, size, maxLifeTime);
 			} else if (particles[i].getLifeTime() >= particles[i].getMaxLifeTime()) {

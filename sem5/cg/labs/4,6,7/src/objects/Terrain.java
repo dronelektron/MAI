@@ -14,16 +14,18 @@ import math.Vector;
 public class Terrain extends Entity {
 	public Terrain() {
 		float topLimit = 16.0f;
-		int texSize = 32;
+		int texSize = 1;//32;
 		int minColor = 255;
 		int maxColor = 0;
+		String heightmapImg = "../resources/textures/terrain_hm3.png";
+		String textureImg = "../resources/textures/terrain5.png";
 
 		points = new ArrayList<>();
 		texCoords = new ArrayList<>();
 		indices = new ArrayList<>();
 
 		try {
-			BufferedImage bi = ImageIO.read(getClass().getResource("../resources/textures/terrain_hm3.png"));
+			BufferedImage bi = ImageIO.read(getClass().getResource(heightmapImg));
 
 			width = bi.getWidth();
 			height = bi.getHeight();
@@ -83,7 +85,7 @@ public class Terrain extends Entity {
 
 		try
 		{
-			texture = TextureLoader.getTexture("png", getClass().getResource("../resources/textures/terrain5.png").openStream());
+			texture = TextureLoader.getTexture("png", getClass().getResource(textureImg).openStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -163,10 +165,21 @@ public class Terrain extends Entity {
 		}
 	}
 
+	public Vector getPoint(int triangle, int p) {
+		int offset1 = triangle * 3 + p;
+		int offset2 = indices.get(offset1) * 3;
+
+		return new Vector(points.get(offset2), points.get(offset2 + 1), points.get(offset2 + 2), 1.0f);
+	}
+
+	public int getTrianglesCount() {
+		return (width - 1) * (height - 1) * 2;
+	}
+
 	private float barryCentric(Vector p1, Vector p2, Vector p3, float x, float z) {
-		float det = (p2.getZ() - p3.getZ()) * (p1.getX() - p3.getX()) + (p3.getX() - p2.getX()) * (p1.getZ() - p3.getZ());
-		float a = ((p2.getZ() - p3.getZ()) * (x - p3.getX()) + (p3.getX() - p2.getX()) * (z - p3.getZ())) / det;
-		float b = ((p3.getZ() - p1.getZ()) * (x - p3.getX()) + (p1.getX() - p3.getX()) * (z - p3.getZ())) / det;
+		float det = 1.0f / (p2.getZ() - p3.getZ()) * (p1.getX() - p3.getX()) + (p3.getX() - p2.getX()) * (p1.getZ() - p3.getZ());
+		float a = ((p2.getZ() - p3.getZ()) * (x - p3.getX()) + (p3.getX() - p2.getX()) * (z - p3.getZ())) * det;
+		float b = ((p3.getZ() - p1.getZ()) * (x - p3.getX()) + (p1.getX() - p3.getX()) * (z - p3.getZ())) * det;
 		float c = 1.0f - a - b;
 
 		return a * p1.getY() + b * p2.getY() + c * p3.getY();

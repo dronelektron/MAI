@@ -63,6 +63,10 @@ public class Vector {
 		return x * v.x + y * v.y + z * v.z;
 	}
 
+	public float length() {
+		return (float)Math.sqrt(x * x + y * y + z * z);
+	}
+
 	public Vector add(Vector v) {
 		return new Vector(x + v.x, y + v.y, z + v.z, w + v.w);
 	}
@@ -77,6 +81,12 @@ public class Vector {
 
 	public Vector vec(Vector v) {
 		return new Vector(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x, w);
+	}
+
+	public Vector normalize() {
+		float len = length();
+
+		return new Vector(x / len, y / len, z / len, w);
 	}
 
 	public FloatBuffer toBuffer() {

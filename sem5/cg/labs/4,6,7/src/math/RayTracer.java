@@ -32,7 +32,7 @@ public class RayTracer {
 				System.out.println("Hit: " + i);
 
 				ParticleSystem ps = (ParticleSystem)entities.getLast();
-				
+
 				ps.setPosition(v0.getX(), v0.getY(), v0.getZ());
 			}
 		}

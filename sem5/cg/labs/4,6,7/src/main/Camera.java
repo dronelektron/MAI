@@ -3,7 +3,7 @@ package main;
 import math.Matrix;
 
 public class Camera {
-	public Camera(int width, int height) {
+	public Camera() {
 		x = 0.0f;
 		y = 0.0f;
 		z = 0.0f;

@@ -36,16 +36,19 @@ public class Main {
 
 		ps.setPosition(128.0f, 16.0f, -128.0f);
 
+		isFlyMode = false;
 		isMouseClicked = false;
 		prevTime = System.nanoTime();
 		delta = 0.0f;
-		camera = new Camera(WIDTH, HEIGHT);
-		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
 		entities = new LinkedList<>();
-		entities.add(terrain);
-		entities.add(ps);
+		camera = new Camera();
+		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
 		physics = new Physics(camera, terrain);
 		rayTracer = new RayTracer(camera, terrain, entities);
+
+		entities.add(terrain);
+		entities.add(ps);
+
 		camera.setX(128.0f);
 		camera.setZ(-128.0f);
 
@@ -67,7 +70,11 @@ public class Main {
 		while (!Display.isCloseRequested()) {
 			updateDelta();
 			getInput();
-			//physics.solve(speedX, speedZ, delta);
+
+			if (!isFlyMode) {
+				physics.solve(speedX, speedZ, delta);
+			}
+
 			draw();
 
 			Display.update();
@@ -109,41 +116,53 @@ public class Main {
 		speedZ = 0.0f;
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			camera.move(-delta, 1.0f);
-			float yawOffset = (float)Math.toRadians(90.0f);
-			float dx = (float)Math.cos(yaw + yawOffset);
-			float dz = (float)Math.sin(yaw + yawOffset);
+			if (isFlyMode) {
+				camera.move(-delta, 1.0f);
+			} else {
+				float yawOffset = (float)Math.toRadians(90.0f);
+				float dx = (float)Math.cos(yaw + yawOffset);
+				float dz = (float)Math.sin(yaw + yawOffset);
 
-			speedX += -dx;
-			speedZ += dz;
+				speedX += -dx;
+				speedZ += dz;
+			}
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			camera.move(delta, 1.0f);
-			float yawOffset = (float)Math.toRadians(90.0f);
-			float dx = (float)Math.cos(yaw + yawOffset);
-			float dz = (float)Math.sin(yaw + yawOffset);
+			if (isFlyMode) {
+				camera.move(delta, 1.0f);
+			} else {
+				float yawOffset = (float)Math.toRadians(90.0f);
+				float dx = (float)Math.cos(yaw + yawOffset);
+				float dz = (float)Math.sin(yaw + yawOffset);
 
-			speedX += dx;
-			speedZ += -dz;
+				speedX += dx;
+				speedZ += -dz;
+			}
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			camera.move(-delta, 0.0f);
-			float dx = (float)Math.cos(yaw);
-			float dz = (float)Math.sin(yaw);
+			if (isFlyMode) {
+				camera.move(-delta, 0.0f);
+			} else {
+				float dx = (float)Math.cos(yaw);
+				float dz = (float)Math.sin(yaw);
 
-			speedX += -dx;
-			speedZ += dz;
+				speedX += -dx;
+				speedZ += dz;
+			}
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			camera.move(delta, 0.0f);
-			float dx = (float)Math.cos(yaw);
-			float dz = (float)Math.sin(yaw);
+			if (isFlyMode) {
+				camera.move(delta, 0.0f);
+			} else {
+				float dx = (float)Math.cos(yaw);
+				float dz = (float)Math.sin(yaw);
 
-			speedX += dx;
-			speedZ += -dz;
+				speedX += dx;
+				speedZ += -dz;
+			}
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
@@ -172,6 +191,14 @@ public class Main {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
 			Mouse.setGrabbed(false);
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+			isFlyMode = true;
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
+			isFlyMode = false;
 		}
 
 		if (Mouse.isButtonDown(0) && !isMouseClicked) {
@@ -206,21 +233,23 @@ public class Main {
 				dy = 1;
 			}
 
-			camera.rotate(-dy * delta, dx * delta);
+			camera.rotate(-dy * delta * MOUSE_SENS, dx * delta * MOUSE_SENS);
 		}
 	}
 
+	private static final float MOUSE_SENS = 2.0f;
 	private static final int FPS = 300;
 	private static final String TITLE = "Компьютерная графика - лабораторная работа 4, 6, 7";
 
+	private static boolean isFlyMode;
 	private static boolean isMouseClicked;
 	private static long prevTime;
 	private static float delta;
 	private static float speedX;
 	private static float speedZ;
+	private static LinkedList<Entity> entities;
 	private static Camera camera;
 	private static Matrix projection;
-	private static LinkedList<Entity> entities;
 	private static Physics physics;
 	private static RayTracer rayTracer;
 }

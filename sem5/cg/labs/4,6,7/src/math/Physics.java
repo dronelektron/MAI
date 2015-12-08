@@ -47,8 +47,8 @@ public class Physics {
 	}
 
 	public static final float GRAVITY = 9.81f; // units/sec^2
-	public static final float WALK_SPEED = 15.0f; // units/sec
-	public static final float JUMP_SPEED = 5.0f; // units/sec
+	public static final float WALK_SPEED = 6.0f; // units/sec
+	public static final float JUMP_SPEED = 4.0f; // units/sec
 	public static final float PLAYER_TALL = 1.0f; // units
 	private Camera camera;
 	private Terrain terrain;

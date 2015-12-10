@@ -1,6 +1,5 @@
 package main;
 
-import math.RayTracer;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -8,6 +7,7 @@ import org.lwjgl.opengl.*;
 import java.util.LinkedList;
 import math.Matrix;
 import math.Physics;
+import math.RayTracer;
 import objects.*;
 
 public class Main {
@@ -42,7 +42,7 @@ public class Main {
 		delta = 0.0f;
 		entities = new LinkedList<>();
 		camera = new Camera();
-		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 1000.0f);
+		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 500.0f);
 		physics = new Physics(camera, terrain);
 		rayTracer = new RayTracer(camera, terrain, entities);
 
@@ -117,7 +117,7 @@ public class Main {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			if (isFlyMode) {
-				camera.move(-delta, 1.0f);
+				camera.move(delta, true);
 			} else {
 				float yawOffset = (float)Math.toRadians(90.0f);
 				float dx = (float)Math.cos(yaw + yawOffset);
@@ -130,7 +130,7 @@ public class Main {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			if (isFlyMode) {
-				camera.move(delta, 1.0f);
+				camera.move(-delta, true);
 			} else {
 				float yawOffset = (float)Math.toRadians(90.0f);
 				float dx = (float)Math.cos(yaw + yawOffset);
@@ -143,7 +143,7 @@ public class Main {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			if (isFlyMode) {
-				camera.move(-delta, 0.0f);
+				camera.move(-delta, false);
 			} else {
 				float dx = (float)Math.cos(yaw);
 				float dz = (float)Math.sin(yaw);
@@ -155,7 +155,7 @@ public class Main {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			if (isFlyMode) {
-				camera.move(delta, 0.0f);
+				camera.move(delta, false);
 			} else {
 				float dx = (float)Math.cos(yaw);
 				float dz = (float)Math.sin(yaw);
@@ -220,24 +220,13 @@ public class Main {
 		if (Mouse.isGrabbed()) {
 			int dx = Mouse.getDX();
 			int dy = Mouse.getDY();
+			float angle = delta * MOUSE_SENS;
 
-			if (dx < -1) {
-				dx = -1;
-			} else if (dx > 1) {
-				dx = 1;
-			}
-
-			if (dy < -1) {
-				dy = -1;
-			} else if (dy > 1) {
-				dy = 1;
-			}
-
-			camera.rotate(-dy * delta * MOUSE_SENS, dx * delta * MOUSE_SENS);
+			camera.rotate(-dy * angle, dx * angle);
 		}
 	}
 
-	private static final float MOUSE_SENS = 2.0f;
+	private static final float MOUSE_SENS = 0.6f;
 	private static final int FPS = 300;
 	private static final String TITLE = "Компьютерная графика - лабораторная работа 4, 6, 7";
 
@@ -247,9 +236,9 @@ public class Main {
 	private static float delta;
 	private static float speedX;
 	private static float speedZ;
-	private static LinkedList<Entity> entities;
 	private static Camera camera;
 	private static Matrix projection;
 	private static Physics physics;
 	private static RayTracer rayTracer;
+	private static LinkedList<Entity> entities;
 }

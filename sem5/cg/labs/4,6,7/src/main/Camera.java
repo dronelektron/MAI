@@ -1,6 +1,8 @@
 package main;
 
+import math.Angle;
 import math.Matrix;
+import math.Vector;
 
 public class Camera {
 	public Camera() {
@@ -9,18 +11,23 @@ public class Camera {
 		z = 0.0f;
 		pitch = 0.0f;
 		yaw = 0.0f;
-		moveSpeed = 40.0f;
+		moveSpeed = 20.0f;
 		rotateSpeed = 80.0f;
 	}
 
-	public void move(float delta, float dir) {
+	public void move(float delta, boolean forward) {
 		float dist = moveSpeed * delta;
-		float pitchRad = (float)Math.toRadians(pitch);
-		float yawRad = (float)Math.toRadians(yaw + 90.0f * dir);
+		Vector dir;
 
-		x += dist * Math.cos(yawRad) * (dir > 0.0f ? Math.cos(pitchRad) : 1.0f);
-		z -= dist * Math.sin(yawRad) * (dir > 0.0f ? Math.cos(pitchRad) : 1.0f);
-		y += dist * Math.sin(pitchRad * dir);
+		if (forward) {
+			dir = Angle.toVector(pitch, yaw - 90.0f).mul(dist);
+		} else {
+			dir = Angle.toVector(0.0f, yaw).mul(dist);
+		}
+
+		x += dir.getX();
+		y += dir.getY();
+		z += dir.getZ();
 	}
 
 	public void rotate(float deltaPitch, float deltaYaw) {

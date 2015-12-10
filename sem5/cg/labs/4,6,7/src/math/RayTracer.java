@@ -13,15 +13,8 @@ public class RayTracer {
 
 	public void check() {
 		float rayLen = 8;
-		float pitch = (float)Math.toRadians(camera.getPitch());
-		float yaw = (float)Math.toRadians(camera.getYaw() + 90.0f);
 		Vector orig = new Vector(camera.getX(), camera.getY(), camera.getZ(), 1.0f);
-		Vector dir = new Vector(
-				-(float)Math.cos(yaw) * (float)Math.cos(pitch),
-				-(float)Math.sin(pitch),
-				(float)Math.sin(yaw) * (float)Math.cos(pitch),
-				0.0f
-		).mul(rayLen);
+		Vector dir = Angle.toVector(camera.getPitch(), camera.getYaw() - 90.0f).mul(rayLen);
 
 		for (int i = 0; i < terrain.getTrianglesCount(); ++i) {
 			Vector v0 = terrain.getPoint(i, 0);
@@ -29,7 +22,7 @@ public class RayTracer {
 			Vector v2 = terrain.getPoint(i, 2);
 
 			if (isHit(orig, orig.add(dir), v0, v1, v2)) {
-				System.out.println("Hit: " + i);
+				//System.out.println("Hit: " + i);
 
 				ParticleSystem ps = (ParticleSystem)entities.getLast();
 

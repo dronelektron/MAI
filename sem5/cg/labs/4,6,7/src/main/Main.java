@@ -1,11 +1,11 @@
 package main;
 
-import math.Vector;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
 import math.Matrix;
+import math.Vector;
 import math.Physics;
 import math.RayTracer;
 import objects.*;
@@ -202,7 +202,7 @@ public class Main {
 
 			if (res != null) {
 				ParticleSystem ps = (ParticleSystem)entities[2];
-				
+
 				ps.setPosition(res.getX(), res.getY(), res.getZ());
 			}
 		}

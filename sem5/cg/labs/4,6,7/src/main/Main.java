@@ -40,7 +40,7 @@ public class Main {
 		isMouseClicked = false;
 		prevTime = System.nanoTime();
 		delta = 0.0f;
-		entities = new Entity[] {terrain, ps};
+		entities = new Entity[] {terrain, new Cylinder(), ps};
 		camera = new Camera();
 		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 500.0f);
 		physics = new Physics(camera, terrain);
@@ -201,10 +201,8 @@ public class Main {
 			Vector res = rayTracer.trace((Terrain)entities[0]);
 
 			if (res != null) {
-				//System.out.println("Hit: " + res.getX() + ", " + res.getY() + ", " + res.getZ());
-
-				ParticleSystem ps = (ParticleSystem)entities[1];
-
+				ParticleSystem ps = (ParticleSystem)entities[2];
+				
 				ps.setPosition(res.getX(), res.getY(), res.getZ());
 			}
 		}

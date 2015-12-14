@@ -1,10 +1,10 @@
 package main;
 
+import math.Vector;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
-import java.util.LinkedList;
 import math.Matrix;
 import math.Physics;
 import math.RayTracer;
@@ -40,14 +40,11 @@ public class Main {
 		isMouseClicked = false;
 		prevTime = System.nanoTime();
 		delta = 0.0f;
-		entities = new LinkedList<>();
+		entities = new Entity[] {terrain, ps};
 		camera = new Camera();
 		projection = new Matrix().initPerspective(75.0f, (float)WIDTH / HEIGHT, 0.1f, 500.0f);
 		physics = new Physics(camera, terrain);
-		rayTracer = new RayTracer(camera, terrain, entities);
-
-		entities.add(terrain);
-		entities.add(ps);
+		rayTracer = new RayTracer(camera, 16.0f);
 
 		camera.setX(128.0f);
 		camera.setZ(-128.0f);
@@ -61,9 +58,6 @@ public class Main {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -1.0f);
 	}
 
 	private static void loop() {
@@ -204,7 +198,15 @@ public class Main {
 		if (Mouse.isButtonDown(0) && !isMouseClicked) {
 			isMouseClicked = true;
 
-			rayTracer.check();
+			Vector res = rayTracer.trace((Terrain)entities[0]);
+
+			if (res != null) {
+				//System.out.println("Hit: " + res.getX() + ", " + res.getY() + ", " + res.getZ());
+
+				ParticleSystem ps = (ParticleSystem)entities[1];
+
+				ps.setPosition(res.getX(), res.getY(), res.getZ());
+			}
 		}
 
 		if (!Mouse.isButtonDown(0) && isMouseClicked) {
@@ -240,5 +242,5 @@ public class Main {
 	private static Matrix projection;
 	private static Physics physics;
 	private static RayTracer rayTracer;
-	private static LinkedList<Entity> entities;
+	private static Entity[] entities;
 }

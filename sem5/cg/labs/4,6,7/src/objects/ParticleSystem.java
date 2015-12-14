@@ -2,11 +2,9 @@ package objects;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
-import java.io.IOException;
 import java.util.Random;
 import particles.SmokeParticle;
+import main.TextureLoader;
 import main.Shader;
 import math.*;
 
@@ -14,14 +12,7 @@ public class ParticleSystem extends Entity {
 	public ParticleSystem(int count) {
 		posMat = new Matrix().initTranslation(0.0f, 0.0f, 0.0f);
 		rnd = new Random();
-
-		try
-		{
-			texture = TextureLoader.getTexture("png", ResourceLoader.getResourceAsStream("src/resources/sprites/smoke.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		texture = TextureLoader.getTexture("src/resources/sprites/smoke.png");
 		shader = new Shader("src/resources/shaders/particle");
 		particles = new SmokeParticle[count];
 

@@ -2,11 +2,12 @@ package objects;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import main.TextureLoader;
 import main.Shader;
 import math.Matrix;
 import math.Vector;
@@ -14,18 +15,18 @@ import math.Vector;
 public class Terrain extends Entity {
 	public Terrain() {
 		float topLimit = 16.0f;
-		int texSize = 1;//32;
+		int texSize = 1;
 		int minColor = 255;
 		int maxColor = 0;
-		String heightmapImg = "../resources/textures/terrain_hm3.png";
-		String textureImg = "../resources/textures/terrain5.png";
+		String heightmapImg = "src/resources/textures/terrain_hm3.png";
+		String textureImg = "src/resources/textures/terrain5.png";
 
 		points = new ArrayList<>();
 		texCoords = new ArrayList<>();
 		indices = new ArrayList<>();
 
 		try {
-			BufferedImage bi = ImageIO.read(getClass().getResource(heightmapImg));
+			BufferedImage bi = ImageIO.read(ResourceLoader.getResourceAsStream(heightmapImg));
 
 			width = bi.getWidth();
 			height = bi.getHeight();
@@ -83,13 +84,7 @@ public class Terrain extends Entity {
 			e.printStackTrace();
 		}
 
-		try
-		{
-			texture = TextureLoader.getTexture("png", getClass().getResource(textureImg).openStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		texture = TextureLoader.getTexture(textureImg);
 		shader = new Shader("src/resources/shaders/terrain");
 	}
 

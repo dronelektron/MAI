@@ -89,7 +89,7 @@ public class MainHandler implements EventHandler<MouseEvent> {
 	}
 
 	private void draw() {
-		GraphicsContext gc =  canvas.getGraphicsContext2D();
+		GraphicsContext gc = canvas.getGraphicsContext2D();
 		int radius = Point.getRadius();
 		int diam = radius * 2;
 

@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 public class Comp {
 	public static void main(String[] args) {
 		if (args.length < 3) {
-			System.out.println("Usage: java Comp file.xml file.xsd file.html");
+			System.out.println("Usage: java Comp file.xml file.xslt file.html");
 
 			return;
 		}

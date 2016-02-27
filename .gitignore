@@ -4,4 +4,4 @@ out/
 .idea
 META-INF
 *.log
-
+.DS_Store

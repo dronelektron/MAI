@@ -5,3 +5,5 @@ out/
 META-INF
 *.log
 .DS_Store
+sem6/nm/labs/*/src/test/
+sem6/nm/junit

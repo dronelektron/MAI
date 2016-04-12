@@ -120,13 +120,13 @@ public class Splines {
 		output.writeln("X*=" + x);
 
 		PolynomLagrange polyL = new PolynomLagrange(vecX, expr);
-		PolynomNewton polyN = new PolynomNewton(vecX);
+		PolynomNewton polyN = new PolynomNewton(vecX, expr);
 
 		output.writeln("Полиномы:");
 		output.writeln("L(x)=" + polyL);
 		output.writeln("e(X)=" + Math.abs(polyL.getValue(x) - expr.setVar("x", x).calculate()));
 		output.writeln("N(x)=" + polyN);
-		output.writeln("e(X)=" + Math.abs(polyN.getValue(x) - polyN.func(x)));
+		output.writeln("e(X)=" + Math.abs(polyN.getValue(x) - expr.setVar("x", x).calculate()));
 		output.close();
 		reader.close();
 	}

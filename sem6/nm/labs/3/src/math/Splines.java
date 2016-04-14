@@ -125,8 +125,10 @@ public class Splines {
 		output.writeln("Полиномы:");
 		output.writeln("L(x)=" + polyL);
 		output.writeln("e(X)=" + Math.abs(polyL.getValue(x) - expr.setVar("x", x).calculate()));
+		output.writeln("y(X)=" + polyL.getValue(x));
 		output.writeln("N(x)=" + polyN);
 		output.writeln("e(X)=" + Math.abs(polyN.getValue(x) - expr.setVar("x", x).calculate()));
+		output.writeln("y(X)=" + polyN.getValue(x));
 		output.close();
 		reader.close();
 	}

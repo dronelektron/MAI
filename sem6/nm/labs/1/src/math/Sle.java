@@ -54,8 +54,9 @@ public class Sle {
 		output.writeln("Исходный вектор:\n" + vec);
 
 		m_method.setLogger(logger);
+
 		if (!m_method.tma(mat, vec, vecX)) {
-			logger.writeln("Матрица A не является трехдиагональной");
+			logger.writeln("Матрица A не является трехдиагональной или не выполнено условие |b| >= |a| + |b|");
 		} else {
 			output.writeln("Решение:\n" + vecX);
 		}

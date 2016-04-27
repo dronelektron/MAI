@@ -1,12 +1,13 @@
 package math;
 
+import java.awt.*;
+
 import libnm.math.Vector;
 import libnm.math.expression.ExpTree;
 import libnm.math.method.MethodDiffEqBoundary;
 import libnm.math.method.MethodDiffEqCauchy;
 import libnm.math.method.MethodError;
-import libnm.util.Logger;
-import libnm.util.Reader;
+import libnm.util.*;
 
 public class DiffEq {
 	public void method1() {
@@ -30,16 +31,23 @@ public class DiffEq {
 		Vector vecX2 = new Vector(n * 2);
 		Vector vecY2 = new Vector(n * 2);
 		Vector vecZ2 = new Vector(n * 2);
+		Vector vecY = new Vector(n);
 
 		method.euler(vecX1, vecY1);
 		method.setH(h2);
 		method.euler(vecX2, vecY2);
 		method.setH(h);
 
+		for (int i = 0; i < n; ++i) {
+			vecY.set(i, exprA.setVar("x", vecX1.get(i)).calculate());
+		}
+
 		output.writeln("Метод 1: Метод Эйлера");
 		output.writeln("Решение:");
 		output.writeln("X: " + vecX1);
 		output.writeln("Y: " + vecY1);
+		output.writeln("Точное решение:");
+		output.writeln("Y: " + vecY);
 		output.writeln("Погрешность относительно точного решения:\n" + MethodError.calcError(exprA, vecX1, vecY1));
 		output.writeln("Погрешность методом Рунге-Ромберга:");
 
@@ -56,6 +64,8 @@ public class DiffEq {
 		output.writeln("Решение:");
 		output.writeln("X: " + vecX1);
 		output.writeln("Y: " + vecY1);
+		output.writeln("Точное решение:");
+		output.writeln("Y: " + vecY);
 		output.writeln("Погрешность относительно точного решения:\n" + MethodError.calcError(exprA, vecX1, vecY1));
 		output.writeln("Погрешность методом Рунге-Ромберга:");
 
@@ -72,6 +82,8 @@ public class DiffEq {
 		output.writeln("Решение:");
 		output.writeln("X: " + vecX1);
 		output.writeln("Y: " + vecY1);
+		output.writeln("Точное решение:");
+		output.writeln("Y: " + vecY);
 		output.writeln("Погрешность относительно точного решения:\n" + MethodError.calcError(exprA, vecX1, vecY1));
 		output.writeln("Погрешность методом Рунге-Ромберга:");
 
@@ -108,22 +120,40 @@ public class DiffEq {
 		Vector vecY1 = new Vector(n);
 		Vector vecX2 = new Vector(n * 2);
 		Vector vecY2 = new Vector(n * 2);
+		Vector vecY = new Vector(n);
+		Vector vecError = new Vector(n);
+		Plotter plot = new Plotter(512.0, 512.0);
 
 		method.shooting(vecX1, vecY1, eps);
 		method.setH(h2);
 		method.shooting(vecX2, vecY2, eps);
 		method.setH(h);
 
+		for (int i = 0; i < n; ++i) {
+			vecY.set(i, exprA.setVar("x", vecX1.get(i)).calculate());
+		}
+
 		output.writeln("Метод 1: Метод стрельбы");
 		output.writeln("Решение:");
 		output.writeln("X: " + vecX1);
 		output.writeln("Y: " + vecY1);
+		output.writeln("Точное решение:");
+		output.writeln("Y: " + vecY);
 		output.writeln("Погрешность относительно точного решения:\n" + MethodError.calcError(exprA, vecX1, vecY1));
 		output.writeln("Погрешность методом Рунге-Ромберга:");
 
 		for (int i = 0; i < n; ++i) {
-			output.writeln("X[" + i + "]: " + MethodError.rungeRomberg(h, h2, vecY1.get(i), vecY2.get(i * 2), 2.0));
+			vecError.set(i, MethodError.rungeRomberg(h, h2, vecY1.get(i), vecY2.get(i * 2), 2.0));
+			output.writeln("X[" + i + "]: " + vecError.get(i));
 		}
+
+		plot.addData(vecX1, vecY, Color.RED, "Аналитическое");
+		plot.addData(vecX1, vecY1, Color.BLUE, "Численное");
+		plot.savePng("src/data/plot/plot21.png");
+
+		plot.clearData();
+		plot.addData(vecX1, vecError, Color.BLUE, "Погрешность (Рунге-Ромберг)");
+		plot.savePng("src/data/plot/plot21_error.png");
 
 		method.finiteDifference(vecX1, vecY1);
 		method.setH(h2);
@@ -134,12 +164,24 @@ public class DiffEq {
 		output.writeln("Решение:");
 		output.writeln("X: " + vecX1);
 		output.writeln("Y: " + vecY1);
+		output.writeln("Точное решение:");
+		output.writeln("Y: " + vecY);
 		output.writeln("Погрешность относительно точного решения:\n" + MethodError.calcError(exprA, vecX1, vecY1));
 		output.writeln("Погрешность методом Рунге-Ромберга:");
 
 		for (int i = 0; i < n; ++i) {
-			output.writeln("X[" + i + "]: " + MethodError.rungeRomberg(h, h2, vecY1.get(i), vecY2.get(i * 2), 2.0));
+			vecError.set(i, MethodError.rungeRomberg(h, h2, vecY1.get(i), vecY2.get(i * 2), 2.0));
+			output.writeln("X[" + i + "]: " + vecError.get(i));
 		}
+
+		plot.clearData();
+		plot.addData(vecX1, vecY, Color.RED, "Аналитическое");
+		plot.addData(vecX1, vecY1, Color.BLUE, "Численное");
+		plot.savePng("src/data/plot/plot22.png");
+
+		plot.clearData();
+		plot.addData(vecX1, vecError, Color.BLUE, "Погрешность (Рунге-Ромберг)");
+		plot.savePng("src/data/plot/plot22_error.png");
 
 		output.close();
 		reader.close();

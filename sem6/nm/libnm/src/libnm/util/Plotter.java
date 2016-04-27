@@ -3,8 +3,6 @@ package libnm.util;
 import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.Format;
-
 import de.erichseifert.gral.data.DataSeries;
 import de.erichseifert.gral.data.DataTable;
 import de.erichseifert.gral.graphics.*;
@@ -21,21 +19,16 @@ import libnm.math.Vector;
 
 public class Plotter {
 	public Plotter(double width, double height) {
-		final double MARGIN = 64.0;
-
 		m_width = width;
 		m_height = height;
-		m_plot = new XYPlot();
-		m_plot.setInsets(new Insets2D.Double(MARGIN, MARGIN, MARGIN, MARGIN));
-		m_plot.setLegendVisible(true);
+
+		m_initPlot();
 	}
 
 	public void addData(Vector vecX, Vector vecY, Color color, String legend) {
 		DataTable data = new DataTable(Double.class, Double.class);
 		PointRenderer pointRenderer = new DefaultPointRenderer2D();
 		LineRenderer lineRenderer = new DefaultLineRenderer2D();
-		AxisRenderer axisX = m_plot.getAxisRenderer(XYPlot.AXIS_X);
-		AxisRenderer axisY = m_plot.getAxisRenderer(XYPlot.AXIS_Y);
 		DataSeries dataSeries = new DataSeries(legend, data);
 
 		for (int i = 0; i < vecX.getSize(); ++i) {
@@ -44,8 +37,6 @@ public class Plotter {
 
 		pointRenderer.setColor(color);
 		lineRenderer.setColor(color);
-		axisX.setLabel(new Label("X"));
-		axisY.setLabel(new Label("Y"));
 
 		m_plot.add(dataSeries);
 		m_plot.setPointRenderers(dataSeries, pointRenderer);
@@ -53,7 +44,7 @@ public class Plotter {
 	}
 
 	public void clearData() {
-		m_plot.clear();
+		m_initPlot();
 	}
 
 	public void savePng(String fileName) {
@@ -64,6 +55,20 @@ public class Plotter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void m_initPlot() {
+		final double MARGIN = 64.0;
+
+		m_plot = new XYPlot();
+		m_plot.setInsets(new Insets2D.Double(MARGIN, MARGIN, MARGIN, MARGIN));
+		m_plot.setLegendVisible(true);
+
+		AxisRenderer axisX = m_plot.getAxisRenderer(XYPlot.AXIS_X);
+		AxisRenderer axisY = m_plot.getAxisRenderer(XYPlot.AXIS_Y);
+
+		axisX.setLabel(new Label("X"));
+		axisY.setLabel(new Label("Y"));
 	}
 
 	private double m_width;

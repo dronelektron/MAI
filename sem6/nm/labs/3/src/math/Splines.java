@@ -1,7 +1,9 @@
 package math;
 
+import java.awt.*;
 import libnm.math.expression.ExpTree;
 import libnm.math.method.MethodDerivate;
+import libnm.math.method.MethodError;
 import libnm.math.method.MethodIntegral;
 import libnm.util.*;
 import libnm.math.Vector;
@@ -39,6 +41,10 @@ public class Splines {
 		Logger output = new Logger("src/data/output/out3.txt");
 		Vector vecX = reader.readVector();
 		Vector vecY = reader.readVector();
+		Vector vecTmp = new Vector(vecX.getSize());
+		Plotter plot = new Plotter(512.0, 512.0);
+
+		plot.addData(vecX, vecY, Color.RED, "f(x)");
 
 		output.writeln("Метод 3: МНК-аппроксимация");
 		output.writeln("X: " + vecX);
@@ -50,10 +56,24 @@ public class Splines {
 		output.writeln("P1(x)=" + polyM);
 		output.writeln("e1=" + polyM.getSumOfSquares());
 
+		for (int i = 0; i < vecTmp.getSize(); ++i) {
+			vecTmp.set(i, polyM.getValue(vecX.get(i)));
+		}
+
+		plot.addData(vecX, vecTmp, Color.GREEN, "P1(x)");
+
 		polyM = new PolynomMNK(vecX, vecY, 2);
 
 		output.writeln("P2(x)=" + polyM);
 		output.writeln("e2=" + polyM.getSumOfSquares());
+
+		for (int i = 0; i < vecTmp.getSize(); ++i) {
+			vecTmp.set(i, polyM.getValue(vecX.get(i)));
+		}
+
+		plot.addData(vecX, vecTmp, Color.BLUE, "P2(x)");
+		plot.savePng("src/data/plot/plot3.png");
+
 		output.close();
 		reader.close();
 	}
@@ -85,23 +105,59 @@ public class Splines {
 		double x1 = reader.readDouble();
 		double h1 = reader.readDouble();
 		double h2 = reader.readDouble();
+		int n = (int)((x1 - x0) / h1) + 1;
 		MethodIntegral method = new MethodIntegral(expr, x0, x1, h1);
 
 		output.writeln("Метод 5: Численное интегрирование");
 		output.writeln("Функция:" + line);
 		output.writeln("x0=" + x0);
 		output.writeln("x1=" + x1);
+
+		double rect1 = method.rectangle();
+
 		output.writeln("h1=" + h1);
-		output.writeln("Прямоугольник: " + method.rectangle());
-		output.writeln("Трапеция: " + method.trapezoidal());
-		output.writeln("Симпсон: " + method.simpson());
+		output.writeln("Прямоугольник: " + rect1);
 
 		method.setH(h2);
 
+		double rect2 = method.rectangle();
+		double rectError = MethodError.rungeRomberg(h1, h2, rect1, rect2, 2.0);
+
 		output.writeln("h2=" + h2);
-		output.writeln("Прямоугольник: " + method.rectangle());
-		output.writeln("Трапеция: " + method.trapezoidal());
-		output.writeln("Симпсон: " + method.simpson());
+		output.writeln("Прямоугольник: " + rect2);
+		output.writeln("Погрешность методом Рунге-Ромберга: " + rectError);
+
+		method.setH(h1);
+
+		double trap1 = method.trapezoidal();
+
+		output.writeln("h1=" + h1);
+		output.writeln("Трапеция: " + trap1);
+
+		method.setH(h2);
+
+		double trap2 = method.trapezoidal();
+		double trapError = MethodError.rungeRomberg(h1, h2, trap1, trap2, 2.0);
+
+		output.writeln("h2=" + h2);
+		output.writeln("Трапеция: " + trap2);
+		output.writeln("Погрешность методом Рунге-Ромберга: " + trapError);
+
+		method.setH(h1);
+
+		double simp1 = method.simpson();
+
+		output.writeln("h1=" + h1);
+		output.writeln("Симпсон: " + simp1);
+
+		method.setH(h2);
+
+		double simp2 = method.simpson();
+		double simpError = MethodError.rungeRomberg(h1, h2, simp1, simp2, 2.0);
+
+		output.writeln("h2=" + h2);
+		output.writeln("Симпсон: " + simp2);
+		output.writeln("Погрешность методом Рунге-Ромберга: " + simpError);
 
 		output.close();
 		reader.close();

@@ -121,11 +121,11 @@ public class Splines {
 		method.setH(h2);
 
 		double rect2 = method.rectangle();
-		double rectError = MethodError.rungeRomberg(h1, h2, rect1, rect2, 2.0);
+		double rectError = rect1 + MethodError.rungeRomberg(h1, h2, rect1, rect2, 2.0);
 
 		output.writeln("h2=" + h2);
 		output.writeln("Прямоугольник: " + rect2);
-		output.writeln("Погрешность методом Рунге-Ромберга: " + rectError);
+		output.writeln("Уточнение методом Рунге-Ромберга: " + rectError);
 
 		method.setH(h1);
 
@@ -137,11 +137,11 @@ public class Splines {
 		method.setH(h2);
 
 		double trap2 = method.trapezoidal();
-		double trapError = MethodError.rungeRomberg(h1, h2, trap1, trap2, 2.0);
+		double trapError = trap1 + MethodError.rungeRomberg(h1, h2, trap1, trap2, 2.0);
 
 		output.writeln("h2=" + h2);
 		output.writeln("Трапеция: " + trap2);
-		output.writeln("Погрешность методом Рунге-Ромберга: " + trapError);
+		output.writeln("Уточнение методом Рунге-Ромберга: " + trapError);
 
 		method.setH(h1);
 
@@ -153,11 +153,11 @@ public class Splines {
 		method.setH(h2);
 
 		double simp2 = method.simpson();
-		double simpError = MethodError.rungeRomberg(h1, h2, simp1, simp2, 2.0);
+		double simpError = simp1 + MethodError.rungeRomberg(h1, h2, simp1, simp2, 2.0);
 
 		output.writeln("h2=" + h2);
 		output.writeln("Симпсон: " + simp2);
-		output.writeln("Погрешность методом Рунге-Ромберга: " + simpError);
+		output.writeln("Уточнение методом Рунге-Ромберга: " + simpError);
 
 		output.close();
 		reader.close();

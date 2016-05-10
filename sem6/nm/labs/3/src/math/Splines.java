@@ -105,7 +105,6 @@ public class Splines {
 		double x1 = reader.readDouble();
 		double h1 = reader.readDouble();
 		double h2 = reader.readDouble();
-		int n = (int)((x1 - x0) / h1) + 1;
 		MethodIntegral method = new MethodIntegral(expr, x0, x1, h1);
 
 		output.writeln("Метод 5: Численное интегрирование");

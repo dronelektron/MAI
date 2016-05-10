@@ -4,23 +4,22 @@ import libnm.math.Matrix;
 import libnm.math.method.MethodSle;
 import libnm.math.Vector;
 
-public class PolynomCubic extends Polynom {
+public class PolynomCubic {
 	public PolynomCubic(Vector vecX, Vector vecY) {
-		super(vecX);
-
-		int n = getSize();
+		int n = vecX.getSize();
 		Matrix mat = new Matrix(n - 2);
 		Vector vec = new Vector(n - 2);
 		MethodSle method = new MethodSle();
 		Vector vecH = new Vector(n - 1);
-		
+
+		m_vecX = vecX;
 		m_vecA = new Vector(n - 1);
 		m_vecB = new Vector(n - 1);
 		m_vecC = new Vector(n - 1);
 		m_vecD = new Vector(n - 1);
 
 		for (int i = 0; i < n - 1; ++i) {
-			vecH.set(i, get(i + 1) - get(i));
+			vecH.set(i, m_vecX.get(i + 1) - m_vecX.get(i));
 		}
 
 		for (int i = 0; i < n - 2; ++i) {
@@ -64,11 +63,10 @@ public class PolynomCubic extends Polynom {
 		m_vecD.set(n - 2, -m_vecC.get(n - 2) / (3.0 * h));
 	}
 
-	@Override
 	public double getValue(double x) {
-		for (int i = 0; i < getSize() - 1; ++i) {
-			if (get(i) <= x && x <= get(i + 1)) {
-				double h = x - get(i);
+		for (int i = 0; i < m_vecX.getSize() - 1; ++i) {
+			if (m_vecX.get(i) <= x && x <= m_vecX.get(i + 1)) {
+				double h = x - m_vecX.get(i);
 
 				return m_vecA.get(i) + m_vecB.get(i) * h + m_vecC.get(i) * Math.pow(h, 2.0) + m_vecD.get(i) * Math.pow(h, 3.0);
 			}
@@ -79,10 +77,11 @@ public class PolynomCubic extends Polynom {
 
 	@Override
 	public String toString() {
+		int n = m_vecX.getSize();
 		String res = "";
 
-		for (int i = 0; i < getSize() - 1; ++i) {
-			String strH = "(x-" + get(i) + ")";
+		for (int i = 0; i < n - 1; ++i) {
+			String strH = "(x-" + m_vecX.get(i) + ")";
 
 			res += "S(" + (i + 1) + ")=";
 			res += m_vecA.get(i);
@@ -105,7 +104,7 @@ public class PolynomCubic extends Polynom {
 
 			res += m_vecD.get(i) + strH + "^3";
 
-			if (i + 1 < getSize() - 1) {
+			if (i + 1 < n - 1) {
 				res += "\n";
 			}
 		}
@@ -113,6 +112,7 @@ public class PolynomCubic extends Polynom {
 		return res;
 	}
 
+	private Vector m_vecX;
 	private Vector m_vecA;
 	private Vector m_vecB;
 	private Vector m_vecC;

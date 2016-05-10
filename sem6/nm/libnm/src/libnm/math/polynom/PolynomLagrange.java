@@ -3,51 +3,48 @@ package libnm.math.polynom;
 import libnm.math.Vector;
 import libnm.math.expression.ExpTree;
 
-public class PolynomLagrange extends Polynom {
+public class PolynomLagrange {
 	public PolynomLagrange(Vector vecX, ExpTree expr) {
-		super(vecX);
+		m_vecX = vecX;
+		m_vecY = new Vector(m_vecX.getSize());
 
-		m_vec = new Vector(vecX.getSize());
+		Vector vecW = new Vector(m_vecX.getSize());
 
-		Vector vecY = new Vector(vecX.getSize());
-		Vector vecW = new Vector(vecX.getSize());
-
-		for (int i = 0; i < vecX.getSize(); ++i) {
-			set(i, vecX.get(i));
-			vecY.set(i, expr.setVar("x", vecX.get(i)).calculate());
+		for (int i = 0; i < m_vecX.getSize(); ++i) {
+			m_vecY.set(i, expr.setVar("x", m_vecX.get(i)).calculate());
 		}
 
-		for (int i = 0; i < vecX.getSize(); ++i) {
+		for (int i = 0; i < m_vecX.getSize(); ++i) {
 			double w = 1.0;
 
-			for (int j = 0; j < vecX.getSize(); ++j) {
+			for (int j = 0; j < m_vecX.getSize(); ++j) {
 				if (i != j) {
-					w *= vecX.get(i) - vecX.get(j);
+					w *= m_vecX.get(i) - m_vecX.get(j);
 				}
 			}
 
 			vecW.set(i, w);
 		}
 
-		for (int i = 0; i < vecX.getSize(); ++i) {
-			m_vec.set(i, vecY.get(i) / vecW.get(i));
+		for (int i = 0; i < m_vecX.getSize(); ++i) {
+			m_vecY.set(i, m_vecY.get(i) / vecW.get(i));
 		}
 	}
 
-	@Override
 	public double getValue(double x) {
+		int n = m_vecX.getSize();
 		double res = 0.0;
 
-		for (int i = 0; i < getSize(); ++i) {
+		for (int i = 0; i < n; ++i) {
 			double w = 1.0;
 
-			for (int j = 0; j < getSize(); ++j) {
+			for (int j = 0; j < n; ++j) {
 				if (i != j) {
-					w *= x - get(j);
+					w *= x - m_vecX.get(j);
 				}
 			}
 
-			res += m_vec.get(i) * w;
+			res += m_vecY.get(i) * w;
 		}
 
 		return res;
@@ -55,22 +52,23 @@ public class PolynomLagrange extends Polynom {
 
 	@Override
 	public String toString() {
-		String res = String.valueOf(m_vec.get(0));
+		int n = m_vecX.getSize();
+		String res = String.valueOf(m_vecY.get(0));
 
-		for (int i = 1; i < getSize(); ++i) {
-			res += "(x-" + get(i) + ")";
+		for (int i = 1; i < n; ++i) {
+			res += "(x-" + m_vecX.get(i) + ")";
 		}
 
-		for (int i = 1; i < getSize(); ++i) {
-			if (m_vec.get(i) >= 0.0) {
+		for (int i = 1; i < n; ++i) {
+			if (m_vecY.get(i) >= 0.0) {
 				res += "+";
 			}
 
-			res += m_vec.get(i);
+			res += m_vecY.get(i);
 
-			for (int j = 0; j < getSize(); ++j) {
+			for (int j = 0; j < n; ++j) {
 				if (i != j) {
-					res += "(x-" + get(j) + ")";
+					res += "(x-" + m_vecX.get(j) + ")";
 				}
 			}
 		}
@@ -78,5 +76,6 @@ public class PolynomLagrange extends Polynom {
 		return res;
 	}
 
-	private Vector m_vec;
+	private Vector m_vecX;
+	private Vector m_vecY;
 }

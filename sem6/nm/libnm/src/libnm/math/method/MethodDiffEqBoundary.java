@@ -61,8 +61,11 @@ public class MethodDiffEqBoundary {
 			vecX.set(i, vecX.get(i - 1) + m_h);
 		}
 
-		mat.set(0, 0, m_alpha + m_beta / m_h);
-		mat.set(0, 1, -m_beta / m_h);
+		//mat.set(0, 0, m_alpha - m_beta / m_h);
+		//mat.set(0, 1, m_beta / m_h);
+		mat.set(0, 0, m_alpha - 3.0 * m_beta / (2.0 * m_h));
+		mat.set(0, 1, 4.0 * m_beta / (2.0 * m_h));
+		mat.set(0, 2, -m_beta / (2.0 * m_h));
 		vec.set(0, m_y0);
 
 		for (int i = 1; i < n - 1; ++i) {
@@ -78,14 +81,18 @@ public class MethodDiffEqBoundary {
 			mat.set(i, i - 1, a);
 			mat.set(i, i, b);
 			mat.set(i, i + 1, c);
-			vec.set(i, fx);
+			vec.set(i, -fx);
 		}
 
-		mat.set(n - 1, n - 2, m_delta + m_gamma / m_h);
-		mat.set(n - 1, n - 1, -m_gamma / m_h);
+		//mat.set(n - 1, n - 2, -m_gamma / m_h);
+		//mat.set(n - 1, n - 1, m_delta + m_gamma / m_h);
+		mat.set(n - 1, n - 3, m_gamma / (2.0 * m_h));
+		mat.set(n - 1, n - 2, -4.0 * m_gamma / (2.0 * m_h));
+		mat.set(n - 1, n - 1, m_delta + 3.0 * m_gamma / (2.0 * m_h));
 		vec.set(n - 1, m_y1);
 
-		method.tma(mat, vec, vecY);
+		//method.tma(mat, vec, vecY);
+		method.lup(mat, vec, vecY);
 	}
 
 	public int getN() {

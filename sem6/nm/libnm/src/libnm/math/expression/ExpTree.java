@@ -110,6 +110,18 @@ public class ExpTree {
 			double val = m_calculate(root.getRight());
 
 			switch (root.getValue()) {
+				case "arcsin":
+					return Math.asin(val);
+
+				case "arccos":
+					return Math.acos(val);
+
+				case "arctg":
+					return Math.atan(val);
+
+				case "arcctg":
+					return Math.atan(-val) + Math.PI * 0.5;
+
 				case "sin":
 					return Math.sin(val);
 

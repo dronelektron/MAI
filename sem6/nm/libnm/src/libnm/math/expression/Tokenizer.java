@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 class Tokenizer {
 	Tokenizer() {
 		m_patterns = new ArrayList<>();
-		m_patterns.add(Pattern.compile("^(sin|cos|tg|ctg|sqrt|abs|ln)"));
+		m_patterns.add(Pattern.compile("^(arcsin|arccos|arctg|arcctg|sin|cos|tg|ctg|sqrt|abs|ln)"));
 		m_patterns.add(Pattern.compile("^[a-z]+[0-9]*"));
 		m_patterns.add(Pattern.compile("^[0-9]+(\\.[0-9]+)?"));
 		m_patterns.add(Pattern.compile("^[\\+\\-]"));

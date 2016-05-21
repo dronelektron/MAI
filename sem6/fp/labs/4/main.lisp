@@ -9,7 +9,7 @@
 		(loop for i from 0 to (- (length str) 1) do
 			(setq cur-ch (char str i))
 			
-			(if (alpha-char-p cur-ch)
+			(if (unicode-alpha-char-p cur-ch)
 				(progn
 					(if (and word? (char= ch cur-ch))
 						(setq res (+ res 1))
@@ -31,3 +31,8 @@
 (print (count-words-starting-with-char #\a "A lot of aaa aaaa aaaaaaaa a"))
 (print (count-words-starting-with-char #\z "Zero?"))
 (print (count-words-starting-with-char #\L "Last"))
+(print (count-words-starting-with-char #\п "Сказать по правде, я не люблю весну."))
+(print (count-words-starting-with-char #\т "Проверка русского текста"))
+(print (count-words-starting-with-char #\а "Много ааа ааааааааааа аааа"))
+(print (count-words-starting-with-char #\ы "Ничего не найдется"))
+(print (count-words-starting-with-char #\р "Разный регистр"))

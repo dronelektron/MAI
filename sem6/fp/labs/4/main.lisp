@@ -1,3 +1,7 @@
+(defun whitespace-char(ch)
+	(member ch '(#\Space #\Tab #\Newline))
+)
+
 (defun count-words-starting-with-char(ch str)
 	(let
 		(
@@ -9,7 +13,7 @@
 		(loop for i from 0 to (- (length str) 1) do
 			(setq cur-ch (char str i))
 			
-			(if (unicode-alpha-char-p cur-ch)
+			(if (not (whitespace-char cur-ch))
 				(progn
 					(if (and word? (char= ch cur-ch))
 						(setq res (+ res 1))
@@ -27,6 +31,9 @@
 )
 
 (print (count-words-starting-with-char #\t "This is test"))
+(print (count-words-starting-with-char #\t "This is test,to"))
+(print (count-words-starting-with-char #\w "Word0??,	word2..   word3!
+word4ooh		word5!!1"))
 (print (count-words-starting-with-char #\f "Another string for testing"))
 (print (count-words-starting-with-char #\a "A lot of aaa aaaa aaaaaaaa a"))
 (print (count-words-starting-with-char #\z "Zero?"))

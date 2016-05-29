@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.MainController">
+   <center>
+      <AnchorPane fx:id="canvasHolder" prefHeight="600.0" prefWidth="544.0" BorderPane.alignment="CENTER" />
+   </center>
+   <right>
+      <VBox prefHeight="200.0" prefWidth="256.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextArea fx:id="textArea" prefHeight="360.0" prefWidth="256.0" />
+            <HBox prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#solveScc" text="Решить" />
+                  <Button mnemonicParsing="false" onAction="#clear" text="Очистить" />
+               </children>
+            </HBox>
+            <Label text="ЛК - левая кнопка, ПК - правая кнопка" />
+            <Label text="Добавить вершину: ЛК" />
+            <Label text="Удалить вершину: ПК" />
+            <Label prefHeight="40.0" prefWidth="256.0" text="Переместить вершину: держать ЛК и переносить" wrapText="true" />
+            <Label prefHeight="40.0" prefWidth="256.0" text="Добавить ребро: соединить вершины с помощью ПК" wrapText="true" />
+            <Label prefHeight="40.0" prefWidth="256.0" text="Удалить ребро(ы): с помощью ПК пересечь ребро(ы)" wrapText="true" />
+         </children>
+      </VBox>
+   </right>
+</BorderPane>

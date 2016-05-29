@@ -23,8 +23,8 @@
             <Label text="Добавить вершину: ЛК" />
             <Label text="Удалить вершину: ПК" />
             <Label prefHeight="40.0" prefWidth="256.0" text="Переместить вершину: держать ЛК и переносить" wrapText="true" />
-            <Label prefHeight="40.0" prefWidth="256.0" text="Добавить ребро: соединить вершины с помощью ПК" wrapText="true" />
-            <Label prefHeight="40.0" prefWidth="256.0" text="Удалить ребро(ы): с помощью ПК пересечь ребро(ы)" wrapText="true" />
+            <Label prefHeight="40.0" prefWidth="256.0" text="Добавить дугу: соединить вершины с помощью ПК" wrapText="true" />
+            <Label prefHeight="40.0" prefWidth="256.0" text="Удалить дугу: с помощью ПК пересечь дугу" wrapText="true" />
          </children>
       </VBox>
    </right>

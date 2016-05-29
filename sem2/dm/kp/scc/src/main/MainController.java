@@ -121,12 +121,19 @@ public class MainController implements Initializable, EventHandler<MouseEvent> {
 		double radius = GraphVertex.RADIUS;
 		double diam = radius * 2.0;
 		double smallRadius = radius / 3.0;
-		double smallDiam = smallRadius * 2;
 
 		gc.setFill(Color.WHITE);
 		gc.setStroke(Color.RED);
 		gc.fillRect(0.0, 0.0, canvas.getWidth(), canvas.getHeight());
-		gc.setFill(Color.GRAY);
+		gc.setFill(Color.RED);
+		gc.setLineWidth(2.0);
+
+		for (GraphEdge ge : graph.getEdges()) {
+			GraphVertex start = ge.getStart();
+			GraphVertex end = ge.getEnd();
+
+			gc.strokeLine(start.getX(), start.getY(), end.getX(), end.getY());
+		}
 
 		for (GraphEdge ge : graph.getEdges()) {
 			GraphVertex start = ge.getStart();
@@ -134,11 +141,22 @@ public class MainController implements Initializable, EventHandler<MouseEvent> {
 			double a = end.getX() - start.getX();
 			double b = end.getY() - start.getY();
 			double c = Math.sqrt(a * a + b * b);
-			double x = end.getX() - radius * (a / c);
-			double y = end.getY() - radius * (b / c);
+			double cos = a / c;
+			double sin = b / c;
+			double px = sin;
+			double py = -cos;
+			double[] xs = {
+					end.getX() - diam * cos + px * smallRadius,
+					end.getX() - diam * cos - px * smallRadius,
+					end.getX() - radius * cos
+			};
+			double[] ys = {
+					end.getY() - diam * sin + py * smallRadius,
+					end.getY() - diam * sin - py * smallRadius,
+					end.getY() - radius * sin
+			};
 
-			gc.strokeLine(start.getX(), start.getY(), end.getX(), end.getY());
-			gc.fillOval(x - smallRadius, y - smallRadius, smallDiam, smallDiam);
+			gc.fillPolygon(xs, ys, 3);
 		}
 
 		for (int i = 0; i < vertices.size(); ++i) {

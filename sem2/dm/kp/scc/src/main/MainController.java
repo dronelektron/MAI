@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -39,6 +40,7 @@ public class MainController implements Initializable, EventHandler<MouseEvent> {
 		endX = -1.0;
 		endY = 0.0;
 		isLeftDragging = false;
+		font = new Font("Arial", 16);
 
 		draw();
 	}
@@ -127,6 +129,7 @@ public class MainController implements Initializable, EventHandler<MouseEvent> {
 		gc.fillRect(0.0, 0.0, canvas.getWidth(), canvas.getHeight());
 		gc.setFill(Color.RED);
 		gc.setLineWidth(2.0);
+		gc.setFont(font);
 
 		for (GraphEdge ge : graph.getEdges()) {
 			GraphVertex start = ge.getStart();
@@ -165,7 +168,7 @@ public class MainController implements Initializable, EventHandler<MouseEvent> {
 			gc.setFill(Color.BLUE);
 			gc.fillOval(gv.getX() - radius, gv.getY() - radius, diam, diam);
 			gc.setFill(Color.WHITE);
-			gc.fillText(String.valueOf(i + 1), gv.getX() - 6, gv.getY() + 4);
+			gc.fillText(String.valueOf(i + 1), gv.getX() - 8, gv.getY() + 4);
 		}
 
 		if (!isLeftDragging && curX != -1.0 && endX != -1.0) {
@@ -181,6 +184,7 @@ public class MainController implements Initializable, EventHandler<MouseEvent> {
 	@FXML
 	private TextArea textArea;
 
+	private Font font;
 	private Graph graph;
 	private Solver solver;
 	private GraphVertex curVertex;

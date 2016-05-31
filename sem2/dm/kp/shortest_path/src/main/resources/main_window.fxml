@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.MainController">
+   <center>
+      <AnchorPane fx:id="canvasHolder" prefHeight="600.0" prefWidth="544.0" BorderPane.alignment="CENTER" />
+   </center>
+   <right>
+      <VBox prefHeight="200.0" prefWidth="256.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextArea fx:id="textArea" prefHeight="340.0" prefWidth="256.0" />
+            <HBox prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#solveShortestPath" text="Решить" />
+                  <Button mnemonicParsing="false" onAction="#clear" text="Очистить" />
+                  <Separator prefWidth="48.0" />
+                  <Label prefHeight="20.0" prefWidth="32.0" text="Вес:" />
+                  <TextField fx:id="costTextField" onAction="#confirmCost" prefHeight="25.0" prefWidth="48.0" />
+               </children>
+            </HBox>
+            <Label text="ЛК - левая кнопка, ПК - правая кнопка" />
+            <Label text="Добавить вершину: ЛК" />
+            <Label text="Удалить вершину: ПК" />
+            <Label text="Переместить вершину: держать ЛК и переносить" wrapText="true" />
+            <Label text="Добавить дугу: соединить вершины с помощью ПК" wrapText="true" />
+            <Label text="Удалить дугу: с помощью ПК пересечь дугу" wrapText="true" />
+            <Label text="Изменение веса дуги: ЛК на дуге (рядом с числом), затем ввести нужный вес и нажать enter" wrapText="true" />
+         </children>
+      </VBox>
+   </right>
+</BorderPane>

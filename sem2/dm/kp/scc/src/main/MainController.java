@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -40,7 +41,7 @@ public class MainController implements Initializable, EventHandler<MouseEvent> {
 		endX = -1.0;
 		endY = 0.0;
 		isLeftDragging = false;
-		font = new Font("Arial", 16);
+		font = Font.font("Arial", FontWeight.BOLD, 16);
 
 		draw();
 	}

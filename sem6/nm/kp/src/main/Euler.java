@@ -1,6 +1,7 @@
 package main;
 
 import libnm.math.Vector;
+import libnm.util.Logger;
 
 public class Euler {
 	public Euler(double a1, double a2, double a3, double y0, double a, double b, double h) {
@@ -11,10 +12,19 @@ public class Euler {
 		m_a = a;
 		m_b = b;
 		m_h = h;
+		m_logger = null;
+	}
+
+	public void setLogger(Logger logger) {
+		m_logger = logger;
 	}
 
 	public void solve(Vector vecX, Vector vecY) {
 		int n = (int)((m_b - m_a) / m_h) + 1;
+		int maxInd = 0;
+		int minInd = 0;
+		double maxValue = m_y0;
+		double minValue = m_y0;
 
 		vecX.set(0, m_a);
 		vecY.set(0, m_y0);
@@ -28,6 +38,22 @@ public class Euler {
 
 			vecX.set(i, x + m_h);
 			vecY.set(i, yk);
+
+			if (vecY.get(i) > maxValue) {
+				maxValue = vecY.get(i);
+				maxInd = i;
+			}
+
+			if (vecY.get(i) < minValue) {
+				minValue = vecY.get(i);
+				minInd = i;
+			}
+		}
+
+		if (m_logger != null) {
+			m_logger.writeln("Минимум функции в точке x = " + vecX.get(minInd) + ", y = " + minValue);
+			m_logger.writeln("Максимум функции в точке x = " + vecX.get(maxInd) + ", y = " + maxValue);
+			m_logger.writeln("Расстояние между экстремумами: " + Math.abs(vecX.get(maxInd) - vecX.get(minInd)));
 		}
 	}
 
@@ -68,4 +94,5 @@ public class Euler {
 	private double m_a;
 	private double m_b;
 	private double m_h;
+	private Logger m_logger;
 }

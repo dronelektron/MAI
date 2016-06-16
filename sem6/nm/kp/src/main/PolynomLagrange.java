@@ -46,32 +46,6 @@ public class PolynomLagrange {
 		return res;
 	}
 
-	@Override
-	public String toString() {
-		int n = m_vecX.getSize();
-		String res = String.valueOf(m_vecY.get(0));
-
-		for (int i = 1; i < n; ++i) {
-			res += "(x-" + m_vecX.get(i) + ")";
-		}
-
-		for (int i = 1; i < n; ++i) {
-			if (m_vecY.get(i) >= 0.0) {
-				res += "+";
-			}
-
-			res += m_vecY.get(i);
-
-			for (int j = 0; j < n; ++j) {
-				if (i != j) {
-					res += "(x-" + m_vecX.get(j) + ")";
-				}
-			}
-		}
-
-		return res;
-	}
-
 	private Vector m_vecX;
 	private Vector m_vecY;
 }

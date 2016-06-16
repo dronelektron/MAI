@@ -1,10 +1,10 @@
 package main;
 
-		import java.awt.*;
+import java.awt.*;
 
-		import libnm.math.Vector;
-		import libnm.util.Logger;
-		import util.Plotter;
+import libnm.math.Vector;
+import libnm.util.Logger;
+import util.Plotter;
 
 public class Main {
 	public static void main(String[] args) {

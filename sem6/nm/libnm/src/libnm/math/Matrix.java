@@ -3,8 +3,16 @@ package libnm.math;
 import java.util.Arrays;
 
 public class Matrix {
+	public Matrix() {
+		this(1);
+	}
+
 	public Matrix(int size) {
 		m_mat = new double[size][size];
+	}
+
+	public void resize(int rows, int cols) {
+		m_mat = new double[rows][cols];
 	}
 
 	public double get(int row, int col) {
@@ -17,6 +25,14 @@ public class Matrix {
 
 	public int getSize() {
 		return m_mat.length;
+	}
+
+	public int getM() {
+		return getSize();
+	}
+
+	public int getN() {
+		return m_mat[0].length;
 	}
 
 	public Matrix sub(Matrix other) {

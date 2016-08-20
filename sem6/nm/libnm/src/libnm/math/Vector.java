@@ -3,12 +3,20 @@ package libnm.math;
 import java.util.Arrays;
 
 public class Vector {
+	public Vector() {
+		this(1);
+	}
+
 	public Vector(int size) {
 		m_vec = new double[size];
 	}
 
 	public Vector(double[] array) {
 		m_vec = array.clone();
+	}
+
+	public void resize(int size) {
+		m_vec = new double[size];
 	}
 
 	public double get(int index) {

@@ -9,7 +9,7 @@ public class Main {
 		//lab5.method13();
 		lab5.method21();
 		lab5.method22();
-		//lab5.method23();
+		lab5.method23();
 		lab5.method31();
 		lab5.method32();
 		//lab5.method33();

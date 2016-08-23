@@ -58,10 +58,6 @@ public class Parabolic {
 		m_k = k;
 	}
 
-	public double getTau() {
-		return m_tau;
-	}
-
 	public void setTau(double tau) {
 		m_tau = tau;
 	}
@@ -74,15 +70,20 @@ public class Parabolic {
 		m_exprU = exprU;
 	}
 
-	public void solve(int schemeType, int boundCondType, Matrix matU, Vector vecX) {
+	public void solve(int schemeType, int boundCondType, Matrix matU, Vector vecX, Vector vecT) {
 		double h = m_l / m_n;
 
 		matU.resize(m_k + 1, m_n + 1);
 		vecX.resize(m_n + 1);
+		vecT.resize(m_k + 1);
 
 		for (int j = 0; j <= m_n; ++j) {
 			vecX.set(j, j * h);
 			matU.set(0, j, m_psi(vecX.get(j)));
+		}
+
+		for (int i = 0; i <= m_k; ++i) {
+			vecT.set(i, i * m_tau);
 		}
 
 		for (int i = 0; i < m_k; ++i) {
@@ -90,7 +91,7 @@ public class Parabolic {
 				case SCHEME_EXPLICIT: {
 					Vector vecRes = new Vector(m_n + 1);
 
-					m_explicit(matU, vecX, i, h, boundCondType, vecRes);
+					m_explicit(matU, vecX, vecT, i, h, boundCondType, vecRes);
 					m_copyVectorToMatrix(vecRes, matU, i + 1);
 
 					break;
@@ -99,7 +100,7 @@ public class Parabolic {
 				case SCHEME_IMPLICIT: {
 					Vector vecRes = new Vector(m_n + 1);
 
-					m_implicit(matU, vecX, i, h, boundCondType, vecRes);
+					m_implicit(matU, vecX, vecT, i, h, boundCondType, vecRes);
 					m_copyVectorToMatrix(vecRes, matU, i + 1);
 
 					break;
@@ -110,8 +111,8 @@ public class Parabolic {
 					Vector vecResExp = new Vector(m_n + 1);
 					Vector vecResImp = new Vector(m_n + 1);
 
-					m_explicit(matU, vecX, i, h, boundCondType, vecResExp);
-					m_implicit(matU, vecX, i, h, boundCondType, vecResImp);
+					m_explicit(matU, vecX, vecT, i, h, boundCondType, vecResExp);
+					m_implicit(matU, vecX, vecT, i, h, boundCondType, vecResImp);
 
 					for (int j = 0; j <= m_n; ++j) {
 						matU.set(i + 1, j, theta * vecResImp.get(j) + (1.0 - theta) * vecResExp.get(j));
@@ -170,14 +171,14 @@ public class Parabolic {
 		return m_exprFi1.calculate();
 	}
 
-	private void m_explicit(Matrix matU, Vector vecX, int i, double h, int boundCondType, Vector vecRes) {
+	private void m_explicit(Matrix matU, Vector vecX, Vector vecT, int i, double h, int boundCondType, Vector vecRes) {
 		for (int j = 1; j < m_n; ++j) {
 			double res = 0.0;
 
 			res += m_a * (matU.get(i, j + 1) - 2.0 * matU.get(i, j) + matU.get(i, j - 1)) / (h * h);
 			res += m_b * (matU.get(i, j + 1) - matU.get(i, j - 1)) / (2.0 * h);
 			res += m_c * matU.get(i, j);
-			res += m_f(vecX.get(j), i * m_tau);
+			res += m_f(vecX.get(j), vecT.get(i));
 			res *= m_tau;
 			res += matU.get(i, j);
 
@@ -186,7 +187,7 @@ public class Parabolic {
 
 		double bound1 = 0.0;
 		double bound2 = 0.0;
-		double tNext = (i + 1) * m_tau;
+		double tNext = vecT.get(i + 1);
 		double fi0 = m_fi0(tNext);
 		double fi1 = m_fi1(tNext);
 
@@ -223,7 +224,7 @@ public class Parabolic {
 		vecRes.set(m_n, bound2);
 	}
 
-	private void m_implicit(Matrix matU, Vector vecX, int i, double h, int boundCondType, Vector vecRes) {
+	private void m_implicit(Matrix matU, Vector vecX, Vector vecT, int i, double h, int boundCondType, Vector vecRes) {
 		MethodSle sleSolver = new MethodSle();
 		Matrix mat = new Matrix(m_n + 1);
 		Vector vec = new Vector(m_n + 1);
@@ -233,7 +234,7 @@ public class Parabolic {
 		double coefA = sigma1 - sigma3;
 		double coefB = sigma2 - 2.0 * sigma1 - 1.0;
 		double coefC = sigma1 + sigma3;
-		double tNext = (i + 1) * m_tau;
+		double tNext = vecT.get(i + 1);
 
 		switch (boundCondType) {
 			case BOUNDARY_CONDITION_2_1:
@@ -294,7 +295,7 @@ public class Parabolic {
 			mat.set(row, row - 1, coefA);
 			mat.set(row, row, coefB);
 			mat.set(row, row + 1, coefC);
-			vec.set(row, -matU.get(i, row) - m_f(vecX.get(row), i * m_tau) * m_tau);
+			vec.set(row, -matU.get(i, row) - m_f(vecX.get(row), vecT.get(i)) * m_tau);
 		}
 
 		sleSolver.lup(mat, vec, vecRes);

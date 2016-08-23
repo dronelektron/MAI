@@ -10,7 +10,7 @@ import libnm.util.*;
 
 public class Lab5 {
 	public Lab5() {
-		Reader reader = new Reader("src/data/input/in10.txt");
+		Reader reader = new Reader("src/data/input/in1.txt");
 
 		m_method = new Parabolic();
 		m_method.setA(reader.readDouble());

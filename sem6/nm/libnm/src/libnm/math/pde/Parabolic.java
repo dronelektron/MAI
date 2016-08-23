@@ -209,10 +209,10 @@ public class Parabolic {
 			case BOUNDARY_CONDITION_2_2:
 				double b0 = 2.0 * m_a / h + h / m_tau - m_c * h - (m_beta / m_alpha) * (2.0 * m_a - m_b * h);
 				double c0 = -2.0 * m_a / h;
-				double d0 = (h / m_tau) * matU.get(i, 0) - m_fi0(tNext) * (2.0 * m_a - m_b * h) / m_alpha;
+				double d0 = (h / m_tau) * matU.get(i, 0) - fi0 * (2.0 * m_a - m_b * h) / m_alpha;
 				double an = -2.0 * m_a / h;
 				double bn = 2.0 * m_a / h + h / m_tau - m_c * h + (m_delta / m_gamma) * (2.0 * m_a + m_b * h);
-				double dn = (h / m_tau) * matU.get(i, m_n) + m_fi1(tNext) * (2.0 * m_a + m_b * h) / m_gamma;
+				double dn = (h / m_tau) * matU.get(i, m_n) + fi1 * (2.0 * m_a + m_b * h) / m_gamma;
 
 				bound1 = (d0 - c0 * vecRes.get(1)) / b0;
 				bound2 = (dn - an * vecRes.get(m_n - 1)) / bn;

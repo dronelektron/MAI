@@ -1,0 +1,38 @@
+10
+0
+0
+0
+0
+sin(x)
+-a*cos(x)
+0
+1
+0
+1
+-sin(a*t)
+sin(a*t)
+3.14
+1000
+0.001
+10
+sin(x-a*t)
+// a
+// b
+// c
+// e
+// f(x, t)
+// psi_1(x)
+// psi_2(x)
+// alpha
+// beta
+// gamma
+// delta
+// fi_0(t)
+// fi_1(t)
+// l
+// k
+// tau
+// n
+// u(x, t)
+
+Параметр "e" вводить как "e1" в f(x, t), psi_1(x), psi_2(x), fi_0(t), fi_1(t)

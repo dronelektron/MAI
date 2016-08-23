@@ -71,29 +71,46 @@ public class Lab5 {
 
 	private void m_methodTemplate(String postFixName, int schemeType, int boundCondType) {
 		Plotter plotter = new Plotter(512.0, 512.0);
+		Plotter plotterErr = new Plotter(512.0, 512.0);
 		Logger output = new Logger("src/data/output/out" + postFixName + ".txt");
 		Matrix matRes = new Matrix();
 		Vector vecX = new Vector();
+		Vector vecT = new Vector();
 		Vector vecY1 = new Vector();
 		Vector vecY2 = new Vector();
+		Vector vecErr = new Vector();
 		int k = 100;
 
-		m_method.solve(schemeType, boundCondType, matRes, vecX);
+		m_method.solve(schemeType, boundCondType, matRes, vecX, vecT);
 
 		output.writeln(matRes.toString());
 		output.close();
 
 		vecY1.resize(vecX.getSize());
 		vecY2.resize(vecX.getSize());
+		vecErr.resize(matRes.getM());
 
 		for (int j = 0; j < vecX.getSize(); ++j) {
-			vecY1.set(j, m_method.u(vecX.get(j), m_method.getTau() * k));
+			vecY1.set(j, m_method.u(vecX.get(j), vecT.get(k)));
 			vecY2.set(j, matRes.get(k, j));
 		}
 
 		plotter.addData(vecX, vecY1, Color.RED, "U(x, t) (анал.)");
 		plotter.addData(vecX, vecY2, Color.BLUE, "U(x, t) (числ.)");
 		plotter.savePng("src/data/plot/plot" + postFixName + ".png");
+
+		for (int i = 0; i < matRes.getM(); ++i) {
+			double error = 0.0;
+
+			for (int j = 0; j < matRes.getN(); ++j) {
+				error += Math.abs(matRes.get(i, j) - m_method.u(vecX.get(j), vecT.get(i)));
+			}
+
+			vecErr.set(i, error);
+		}
+
+		plotterErr.addData(vecT, vecErr, Color.RED, "e(x)");
+		plotterErr.savePng("src/data/plot/plot" + postFixName + "_error.png");
 	}
 
 	private Parabolic m_method;

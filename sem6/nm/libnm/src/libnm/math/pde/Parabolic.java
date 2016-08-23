@@ -207,15 +207,25 @@ public class Parabolic {
 				break;
 
 			case BOUNDARY_CONDITION_2_2:
-				double b0 = 2.0 * m_a / h + h / m_tau - m_c * h - (m_beta / m_alpha) * (2.0 * m_a - m_b * h);
-				double c0 = -2.0 * m_a / h;
-				double d0 = (h / m_tau) * matU.get(i, 0) - fi0 * (2.0 * m_a - m_b * h) / m_alpha;
-				double an = -2.0 * m_a / h;
-				double bn = 2.0 * m_a / h + h / m_tau - m_c * h + (m_delta / m_gamma) * (2.0 * m_a + m_b * h);
-				double dn = (h / m_tau) * matU.get(i, m_n) + fi1 * (2.0 * m_a + m_b * h) / m_gamma;
+				if (m_alpha == 0.0) {
+					bound1 = fi0 / m_beta;
+				} else {
+					double b0 = 2.0 * m_a / h + h / m_tau - m_c * h - (m_beta / m_alpha) * (2.0 * m_a - m_b * h);
+					double c0 = -2.0 * m_a / h;
+					double d0 = (h / m_tau) * matU.get(i, 0) - fi0 * (2.0 * m_a - m_b * h) / m_alpha;
 
-				bound1 = (d0 - c0 * vecRes.get(1)) / b0;
-				bound2 = (dn - an * vecRes.get(m_n - 1)) / bn;
+					bound1 = (d0 - c0 * vecRes.get(1)) / b0;
+				}
+
+				if (m_gamma == 0.0) {
+					bound2 = fi1 / m_delta;
+				} else {
+					double an = -2.0 * m_a / h;
+					double bn = 2.0 * m_a / h + h / m_tau - m_c * h + (m_delta / m_gamma) * (2.0 * m_a + m_b * h);
+					double dn = (h / m_tau) * matU.get(i, m_n) + fi1 * (2.0 * m_a + m_b * h) / m_gamma;
+
+					bound2 = (dn - an * vecRes.get(m_n - 1)) / bn;
+				}
 
 				break;
 		}
@@ -235,6 +245,8 @@ public class Parabolic {
 		double coefB = sigma2 - 2.0 * sigma1 - 1.0;
 		double coefC = sigma1 + sigma3;
 		double tNext = vecT.get(i + 1);
+		double fi0 = m_fi0(tNext);
+		double fi1 = m_fi1(tNext);
 
 		switch (boundCondType) {
 			case BOUNDARY_CONDITION_2_1:
@@ -242,8 +254,8 @@ public class Parabolic {
 				mat.set(0, 1, m_alpha / h);
 				mat.set(m_n, m_n - 1, -m_gamma / h);
 				mat.set(m_n, m_n, m_delta + m_gamma / h);
-				vec.set(0, m_fi0(tNext));
-				vec.set(m_n, m_fi1(tNext));
+				vec.set(0, fi0);
+				vec.set(m_n, fi1);
 
 				break;
 
@@ -256,19 +268,19 @@ public class Parabolic {
 				mat.set(m_n, m_n - 2, m_gamma / h2);
 				mat.set(m_n, m_n - 1, -4.0 * m_gamma / h2);
 				mat.set(m_n, m_n, m_delta + 3.0 * m_gamma / h2);
-				vec.set(0, m_fi0(tNext));
-				vec.set(m_n, m_fi1(tNext));
+				vec.set(0, fi0);
+				vec.set(m_n, fi1);
 
 				break;
 
 			case BOUNDARY_CONDITION_2_2:
 				if (m_alpha == 0.0) {
 					mat.set(0, 0, m_beta);
-					vec.set(0, m_fi0(tNext));
+					vec.set(0, fi0);
 				} else {
 					double b0 = 2.0 * m_a / h + h / m_tau - m_c * h - (m_beta / m_alpha) * (2.0 * m_a - m_b * h);
 					double c0 = -2.0 * m_a / h;
-					double d0 = (h / m_tau) * matU.get(i, 0) - m_fi0(tNext) * (2.0 * m_a - m_b * h) / m_alpha;
+					double d0 = (h / m_tau) * matU.get(i, 0) - fi0 * (2.0 * m_a - m_b * h) / m_alpha;
 
 					mat.set(0, 0, b0);
 					mat.set(0, 1, c0);
@@ -277,11 +289,11 @@ public class Parabolic {
 
 				if (m_gamma == 0.0) {
 					mat.set(m_n, m_n, m_delta);
-					vec.set(m_n, m_fi1(tNext));
+					vec.set(m_n, fi1);
 				} else {
 					double an = -2.0 * m_a / h;
 					double bn = 2.0 * m_a / h + h / m_tau - m_c * h + (m_delta / m_gamma) * (2.0 * m_a + m_b * h);
-					double dn = (h / m_tau) * matU.get(i, m_n) + m_fi1(tNext) * (2.0 * m_a + m_b * h) / m_gamma;
+					double dn = (h / m_tau) * matU.get(i, m_n) + fi1 * (2.0 * m_a + m_b * h) / m_gamma;
 
 					mat.set(m_n, m_n - 1, an);
 					mat.set(m_n, m_n, bn);

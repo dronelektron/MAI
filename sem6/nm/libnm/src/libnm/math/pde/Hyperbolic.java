@@ -357,7 +357,7 @@ public class Hyperbolic {
 		m_exprFi1.setVar("a", m_a);
 		m_exprFi1.setVar("b", m_b);
 		m_exprFi1.setVar("c", m_c);
-		m_exprFi0.setVar("e1", m_e);
+		m_exprFi1.setVar("e1", m_e);
 		m_exprFi1.setVar("t", t);
 
 		return m_exprFi1.calculate();

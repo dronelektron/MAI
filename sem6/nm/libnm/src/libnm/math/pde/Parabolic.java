@@ -307,7 +307,7 @@ public class Parabolic {
 			mat.set(row, row - 1, coefA);
 			mat.set(row, row, coefB);
 			mat.set(row, row + 1, coefC);
-			vec.set(row, -matU.get(i, row) - m_f(vecX.get(row), vecT.get(i)) * m_tau);
+			vec.set(row, -matU.get(i, row) - m_f(vecX.get(row), tNext) * m_tau);
 		}
 
 		sleSolver.lup(mat, vec, vecRes);

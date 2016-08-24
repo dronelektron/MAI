@@ -108,7 +108,7 @@ public class Hyperbolic {
 					double x = vecX.get(j);
 					double res = 0.0;
 
-					res += m_a * m_a * m_psi1Deriv2(x) + m_b * m_psi1Deriv1(x) + m_c * m_psi1(x) + m_f(x, vecT.get(1));
+					res += m_a * m_a * m_psi1Deriv2(x) + m_b * m_psi1Deriv1(x) + m_c * matU.get(0, j) + m_f(x, vecT.get(1));
 					res *= m_tau * m_tau / 2.0;
 					res += m_psi2(x) * m_tau;
 					res += m_psi1(x);

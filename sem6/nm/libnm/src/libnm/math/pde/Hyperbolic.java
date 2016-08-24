@@ -3,6 +3,7 @@ package libnm.math.pde;
 import libnm.math.Matrix;
 import libnm.math.Vector;
 import libnm.math.expression.ExpTree;
+import libnm.math.method.MethodSle;
 
 public class Hyperbolic {
 	public void setA(double a) {
@@ -108,10 +109,11 @@ public class Hyperbolic {
 					double x = vecX.get(j);
 					double res = 0.0;
 
-					res += m_a * m_a * m_psi1Deriv2(x) + m_b * m_psi1Deriv1(x) + m_c * matU.get(0, j) + m_f(x, vecT.get(1));
+					// TODO: Уточнить: vecT.get(0) или vecT.get(1)?
+					res += m_a * m_a * m_psi1Deriv2(x) + m_b * m_psi1Deriv1(x) + m_c * matU.get(0, j) + m_f(x, vecT.get(0));
 					res *= m_tau * m_tau / 2.0;
 					res += m_psi2(x) * m_tau;
-					res += m_psi1(x);
+					res += matU.get(0, j);
 
 					matU.set(1, j, res);
 				}
@@ -120,6 +122,10 @@ public class Hyperbolic {
 		}
 
 		for (int i = 1; i < m_k; ++i) {
+			double tNext = vecT.get(i + 1);
+			double fi0 = m_fi0(tNext);
+			double fi1 = m_fi1(tNext);
+
 			switch (schemeType) {
 				case SCHEME_EXPLICIT:
 					for (int j = 1; j < m_n; ++j) {
@@ -138,9 +144,6 @@ public class Hyperbolic {
 
 					double bound1 = 0.0;
 					double bound2 = 0.0;
-					double tNext = vecT.get(i + 1);
-					double fi0 = m_fi0(tNext);
-					double fi1 = m_fi1(tNext);
 
 					switch (boundCondType) {
 						case BOUNDARY_CONDITION_2_1:
@@ -187,6 +190,92 @@ public class Hyperbolic {
 					break;
 
 				case SCHEME_IMPLICIT:
+					MethodSle sleSolver = new MethodSle();
+					Matrix mat = new Matrix(m_n + 1);
+					Vector vec = new Vector(m_n + 1);
+					Vector vecRes = new Vector(m_n + 1);
+					double sigma1 = m_a * m_a / (h * h);
+					double sigma2 = m_c - 1.0 / (m_tau * m_tau) - m_e / m_tau;
+					double sigma3 = m_b / (2.0 * h);
+					double coefA = sigma1 - sigma3;
+					double coefB = sigma2 - 2.0 * sigma1;
+					double coefC = sigma1 + sigma3;
+
+					switch (boundCondType) {
+						case BOUNDARY_CONDITION_2_1:
+							mat.set(0, 0, m_beta - m_alpha / h);
+							mat.set(0, 1, m_alpha / h);
+							mat.set(m_n, m_n - 1, -m_gamma / h);
+							mat.set(m_n, m_n, m_delta + m_gamma / h);
+							vec.set(0, fi0);
+							vec.set(m_n, fi1);
+
+							break;
+
+						case BOUNDARY_CONDITION_3_2:
+							double h2 = 2.0 * h;
+
+							mat.set(0, 0, m_beta - 3.0 * m_alpha / h2);
+							mat.set(0, 1, 4.0 * m_alpha / h2);
+							mat.set(0, 2, -m_alpha / h2);
+							mat.set(m_n, m_n - 2, m_gamma / h2);
+							mat.set(m_n, m_n - 1, -4.0 * m_gamma / h2);
+							mat.set(m_n, m_n, m_delta + 3.0 * m_gamma / h2);
+							vec.set(0, fi0);
+							vec.set(m_n, fi1);
+
+							break;
+
+						case BOUNDARY_CONDITION_2_2:
+							if (m_alpha == 0.0) {
+								mat.set(0, 0, m_beta);
+								vec.set(0, fi0);
+							} else {
+								double b0 = 2.0 * m_a * m_a / h + h / m_tau - m_c * h - (m_beta / m_alpha) * (2.0 * m_a * m_a - m_b * h);
+								double c0 = -2.0 * m_a * m_a / h;
+								double d0 = (h / m_tau) * matU.get(i, 0) - fi0 * (2.0 * m_a * m_a - m_b * h) / m_alpha;
+
+								mat.set(0, 0, b0);
+								mat.set(0, 1, c0);
+								vec.set(0, d0);
+							}
+
+							if (m_gamma == 0.0) {
+								mat.set(m_n, m_n, m_delta);
+								vec.set(m_n, fi1);
+							} else {
+								double an = -2.0 * m_a * m_a / h;
+								double bn = 2.0 * m_a * m_a / h + h / m_tau - m_c * h + (m_delta / m_gamma) * (2.0 * m_a * m_a + m_b * h);
+								double dn = (h / m_tau) * matU.get(i, m_n) + fi1 * (2.0 * m_a * m_a + m_b * h) / m_gamma;
+
+								mat.set(m_n, m_n - 1, an);
+								mat.set(m_n, m_n, bn);
+								vec.set(m_n, dn);
+							}
+
+							break;
+					}
+
+					for (int row = 1; row < m_n; ++row) {
+						double res = 0.0;
+
+						res += matU.get(i - 1, row) - 2.0 * matU.get(i, row);
+						res /= m_tau * m_tau;
+						res -= (m_e / m_tau) * matU.get(i - 1, row);
+						res -= m_f(vecX.get(row), tNext);
+
+						mat.set(row, row - 1, coefA);
+						mat.set(row, row, coefB);
+						mat.set(row, row + 1, coefC);
+						vec.set(row, res);
+					}
+
+					sleSolver.lup(mat, vec, vecRes);
+
+					for (int j = 0; j <= m_n; ++j) {
+						matU.set(i + 1, j, vecRes.get(j));
+					}
+
 					break;
 			}
 		}

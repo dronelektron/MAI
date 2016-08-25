@@ -194,9 +194,9 @@ public class Hyperbolic {
 					Matrix mat = new Matrix(m_n + 1);
 					Vector vec = new Vector(m_n + 1);
 					Vector vecRes = new Vector(m_n + 1);
-					double sigma1 = m_a * m_a / (h * h);
-					double sigma2 = m_c - 1.0 / (m_tau * m_tau) - m_e / m_tau;
-					double sigma3 = m_b / (2.0 * h);
+					double sigma1 = m_tau * m_tau * m_a * m_a / (h * h);
+					double sigma2 = m_tau * m_tau * m_c - 1.0 - m_e * m_tau / 2.0;
+					double sigma3 = m_tau * m_tau * m_b / (2.0 * h);
 					double coefA = sigma1 - sigma3;
 					double coefB = sigma2 - 2.0 * sigma1;
 					double coefC = sigma1 + sigma3;
@@ -259,10 +259,9 @@ public class Hyperbolic {
 					for (int row = 1; row < m_n; ++row) {
 						double res = 0.0;
 
-						res += matU.get(i - 1, row) - 2.0 * matU.get(i, row);
-						res /= m_tau * m_tau;
-						res -= (m_e / m_tau) * matU.get(i - 1, row);
-						res -= m_f(vecX.get(row), tNext);
+						res += (1.0 - m_e * m_tau / 2.0) * matU.get(i - 1, row);
+						res -= 2.0 * matU.get(i, row);
+						res -= m_tau * m_tau * m_f(vecX.get(row), tNext);
 
 						mat.set(row, row - 1, coefA);
 						mat.set(row, row, coefB);

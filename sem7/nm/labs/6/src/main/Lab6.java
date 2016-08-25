@@ -10,7 +10,7 @@ import libnm.util.*;
 
 public class Lab6 {
 	public Lab6() {
-		Reader reader = new Reader("src/data/input/in10.txt");
+		Reader reader = new Reader("src/data/input/in1.txt");
 
 		m_method = new Hyperbolic();
 		m_method.setA(reader.readDouble());

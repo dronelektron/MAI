@@ -1,0 +1,32 @@
+3
+0
+0
+0
+sin(x)
+1
+0
+1
+0
+e^(-a*t)
+-e^(-a*t)
+3.14
+1000
+0.001
+10
+e^(-a*t)*sin(x)
+// a
+// b
+// c
+// f(x, t)
+// psi(x)
+// alpha
+// beta
+// gamma
+// delta
+// fi_0(t)
+// fi_1(t)
+// l
+// k
+// tau
+// n
+// u(x, t)

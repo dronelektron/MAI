@@ -1,0 +1,32 @@
+3
+2
+0
+0
+cos(x)
+1
+-1
+1
+-1
+-e^(-a*t)*(cos(b*t)+sin(b*t))
+e^(-a*t)*(cos(b*t)+sin(b*t))
+3.14
+1000
+0.001
+10
+e^(-a*t)*cos(x+b*t)
+// a
+// b
+// c
+// f(x, t)
+// psi(x)
+// alpha
+// beta
+// gamma
+// delta
+// fi_0(t)
+// fi_1(t)
+// l
+// k
+// tau
+// n
+// u(x, t)

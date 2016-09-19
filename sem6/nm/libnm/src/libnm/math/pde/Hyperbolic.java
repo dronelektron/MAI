@@ -122,12 +122,14 @@ public class Hyperbolic {
 		}
 
 		for (int i = 1; i < m_k; ++i) {
+			double tCur = vecT.get(i);
 			double tNext = vecT.get(i + 1);
-			double fi0 = m_fi0(tNext);
-			double fi1 = m_fi1(tNext);
 
 			switch (schemeType) {
-				case SCHEME_EXPLICIT:
+				case SCHEME_EXPLICIT: {
+					double fi0 = m_fi0(tCur);
+					double fi1 = m_fi1(tCur);
+
 					for (int j = 1; j < m_n; ++j) {
 						double res = 0.0;
 
@@ -188,8 +190,9 @@ public class Hyperbolic {
 					matU.set(i + 1, m_n, bound2);
 
 					break;
+				}
 
-				case SCHEME_IMPLICIT:
+				case SCHEME_IMPLICIT: {
 					MethodSle sleSolver = new MethodSle();
 					Matrix mat = new Matrix(m_n + 1);
 					Vector vec = new Vector(m_n + 1);
@@ -200,6 +203,8 @@ public class Hyperbolic {
 					double coefA = sigma1 - sigma3;
 					double coefB = sigma2 - 2.0 * sigma1;
 					double coefC = sigma1 + sigma3;
+					double fi0 = m_fi0(tNext);
+					double fi1 = m_fi1(tNext);
 
 					switch (boundCondType) {
 						case BOUNDARY_CONDITION_2_1:
@@ -276,6 +281,7 @@ public class Hyperbolic {
 					}
 
 					break;
+				}
 			}
 		}
 	}

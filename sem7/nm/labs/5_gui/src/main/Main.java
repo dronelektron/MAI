@@ -19,8 +19,7 @@ public class Main extends Application {
 		stage.setTitle("Численные методы - лабораторная работа 5");
 		stage.setScene(scene);
 		stage.show();
-		stage.setMinWidth(scene.getWindow().getWidth());
-		stage.setMinHeight(scene.getWindow().getHeight());
+		stage.setResizable(false);
 	}
 
 	public static void main(String[] args) {

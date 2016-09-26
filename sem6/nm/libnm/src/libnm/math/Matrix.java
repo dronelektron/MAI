@@ -125,10 +125,8 @@ public class Matrix {
 	}
 
 	public void copy(Matrix other) {
-		int n = getSize();
-
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < n; ++j) {
+		for (int i = 0; i < getM(); ++i) {
+			for (int j = 0; j < getN(); ++j) {
 				set(i, j, other.get(i, j));
 			}
 		}
@@ -145,7 +143,7 @@ public class Matrix {
 	public String toString() {
 		String res = Arrays.toString(m_mat[0]);
 
-		for (int i = 1; i < getSize(); ++i) {
+		for (int i = 1; i < getM(); ++i) {
 			res += '\n' + Arrays.toString(m_mat[i]);
 		}
 

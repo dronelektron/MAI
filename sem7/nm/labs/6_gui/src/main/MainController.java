@@ -50,7 +50,7 @@ public class MainController implements Initializable {
 		if (rbScheme == radioButtonExplicit) {
 			scheme = Hyperbolic.SCHEME_EXPLICIT;
 		} else {
-			scheme = Hyperbolic.SCHEME_EXPLICIT;
+			scheme = Hyperbolic.SCHEME_IMPLICIT;
 		}
 
 		if (rbBoundCond == radioButtonBoundCond21) {

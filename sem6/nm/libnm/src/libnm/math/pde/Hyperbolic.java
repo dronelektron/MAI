@@ -205,6 +205,19 @@ public class Hyperbolic {
 					double fi0 = m_fi0(tNext);
 					double fi1 = m_fi1(tNext);
 
+					for (int row = 1; row < m_n; ++row) {
+						double res = 0.0;
+
+						res += (1.0 - m_e * m_tau / 2.0) * matU.get(i - 1, row);
+						res -= 2.0 * matU.get(i, row);
+						res -= m_tau * m_tau * m_f(vecX.get(row), tNext);
+
+						mat.set(row, row - 1, coefA);
+						mat.set(row, row, coefB);
+						mat.set(row, row + 1, coefC);
+						vec.set(row, res);
+					}
+
 					switch (boundCondType) {
 						case BOUNDARY_CONDITION_2_1:
 							mat.set(0, 0, m_beta - m_alpha / h);
@@ -213,6 +226,8 @@ public class Hyperbolic {
 							mat.set(m_n, m_n, m_delta + m_gamma / h);
 							vec.set(0, fi0);
 							vec.set(m_n, fi1);
+
+							sleSolver.tma(mat, vec, vecRes, false);
 
 							break;
 
@@ -227,6 +242,8 @@ public class Hyperbolic {
 							mat.set(m_n, m_n, m_delta + 3.0 * m_gamma / h2);
 							vec.set(0, fi0);
 							vec.set(m_n, fi1);
+
+							sleSolver.lup(mat, vec, vecRes);
 
 							break;
 
@@ -257,23 +274,10 @@ public class Hyperbolic {
 								vec.set(m_n, dn);
 							}
 
+							sleSolver.tma(mat, vec, vecRes, false);
+
 							break;
 					}
-
-					for (int row = 1; row < m_n; ++row) {
-						double res = 0.0;
-
-						res += (1.0 - m_e * m_tau / 2.0) * matU.get(i - 1, row);
-						res -= 2.0 * matU.get(i, row);
-						res -= m_tau * m_tau * m_f(vecX.get(row), tNext);
-
-						mat.set(row, row - 1, coefA);
-						mat.set(row, row, coefB);
-						mat.set(row, row + 1, coefC);
-						vec.set(row, res);
-					}
-
-					sleSolver.lup(mat, vec, vecRes);
 
 					for (int j = 0; j <= m_n; ++j) {
 						matU.set(i + 1, j, vecRes.get(j));

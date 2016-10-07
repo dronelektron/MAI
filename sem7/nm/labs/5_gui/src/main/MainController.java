@@ -48,7 +48,7 @@ public class MainController implements Initializable {
 		if (rbScheme == radioButtonExplicit) {
 			scheme = Parabolic.SCHEME_EXPLICIT;
 		} else if (rbScheme == radioButtonImplicit) {
-			scheme = Parabolic.SCHEME_EXPLICIT;
+			scheme = Parabolic.SCHEME_IMPLICIT;
 		} else {
 			scheme = Parabolic.SCHEME_CRANK_NICOLSON;
 		}

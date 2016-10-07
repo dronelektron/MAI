@@ -35,8 +35,8 @@ public class MethodSle {
 		return true;
 	}
 
-	public boolean tma(Matrix mat, Vector vec, Vector vecX) {
-		if (!m_tmaCheck(mat)) {
+	public boolean tma(Matrix mat, Vector vec, Vector vecX, boolean checkCond) {
+		if (checkCond && !m_tmaCheck(mat)) {
 			return false;
 		}
 

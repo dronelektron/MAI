@@ -55,7 +55,7 @@ public class Sle {
 
 		m_method.setLogger(logger);
 
-		if (!m_method.tma(mat, vec, vecX)) {
+		if (!m_method.tma(mat, vec, vecX, true)) {
 			logger.writeln("Матрица A не является трехдиагональной или не выполнено условие |b| >= |a| + |b|");
 		} else {
 			output.writeln("Решение:\n" + vecX);

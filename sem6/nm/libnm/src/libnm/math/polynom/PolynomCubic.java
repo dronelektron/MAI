@@ -38,7 +38,7 @@ public class PolynomCubic {
 		mat.set(n - 3, n - 4, vecH.get(n - 3));
 		mat.set(n - 3, n - 3, 2.0 * (vecH.get(n - 4) + vecH.get(n - 3)));
 
-		method.tma(mat, vec, m_vecC);
+		method.tma(mat, vec, m_vecC, false);
 
 		for (int i = n - 2; i > 0; --i) {
 			m_vecC.set(i, m_vecC.get(i - 1));

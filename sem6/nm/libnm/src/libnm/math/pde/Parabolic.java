@@ -248,6 +248,13 @@ public class Parabolic {
 		double fi0 = m_fi0(tNext);
 		double fi1 = m_fi1(tNext);
 
+		for (int row = 1; row < m_n; ++row) {
+			mat.set(row, row - 1, coefA);
+			mat.set(row, row, coefB);
+			mat.set(row, row + 1, coefC);
+			vec.set(row, -matU.get(i, row) - m_f(vecX.get(row), tNext) * m_tau);
+		}
+
 		switch (boundCondType) {
 			case BOUNDARY_CONDITION_2_1:
 				mat.set(0, 0, m_beta - m_alpha / h);
@@ -256,6 +263,8 @@ public class Parabolic {
 				mat.set(m_n, m_n, m_delta + m_gamma / h);
 				vec.set(0, fi0);
 				vec.set(m_n, fi1);
+
+				sleSolver.tma(mat, vec, vecRes, false);
 
 				break;
 
@@ -270,6 +279,8 @@ public class Parabolic {
 				mat.set(m_n, m_n, m_delta + 3.0 * m_gamma / h2);
 				vec.set(0, fi0);
 				vec.set(m_n, fi1);
+
+				sleSolver.lup(mat, vec, vecRes);
 
 				break;
 
@@ -300,17 +311,10 @@ public class Parabolic {
 					vec.set(m_n, dn);
 				}
 
+				sleSolver.tma(mat, vec, vecRes, false);
+
 				break;
 		}
-
-		for (int row = 1; row < m_n; ++row) {
-			mat.set(row, row - 1, coefA);
-			mat.set(row, row, coefB);
-			mat.set(row, row + 1, coefC);
-			vec.set(row, -matU.get(i, row) - m_f(vecX.get(row), tNext) * m_tau);
-		}
-
-		sleSolver.lup(mat, vec, vecRes);
 	}
 
 	private void m_copyVectorToMatrix(Vector vec, Matrix mat, int row) {

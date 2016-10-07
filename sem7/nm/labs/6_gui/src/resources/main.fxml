@@ -274,7 +274,7 @@
                      <content>
                         <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-padding: 0px;">
                            <children>
-                              <RadioButton fx:id="radioButtonExplicit" mnemonicParsing="false" selected="true" text="Явная">
+                              <RadioButton fx:id="radioButtonExplicit" mnemonicParsing="false" selected="true" text="Явная (крест)">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="rbGroupScheme" />
                                  </toggleGroup>
@@ -283,11 +283,6 @@
                                  </VBox.margin>
                               </RadioButton>
                               <RadioButton fx:id="radioButtonImplicit" mnemonicParsing="false" text="Неявная" toggleGroup="$rbGroupScheme">
-                                 <VBox.margin>
-                                    <Insets left="5.0" top="5.0" />
-                                 </VBox.margin>
-                              </RadioButton>
-                              <RadioButton fx:id="radioButtonCranck" mnemonicParsing="false" text="Кранка-Николсона" toggleGroup="$rbGroupScheme">
                                  <VBox.margin>
                                     <Insets left="5.0" top="5.0" />
                                  </VBox.margin>

@@ -187,9 +187,9 @@ public class Parabolic {
 
 		double bound1 = 0.0;
 		double bound2 = 0.0;
-		double tCur = vecT.get(i);
-		double fi0 = m_fi0(tCur);
-		double fi1 = m_fi1(tCur);
+		double tNext = vecT.get(i + 1);
+		double fi0 = m_fi0(tNext);
+		double fi1 = m_fi1(tNext);
 
 		switch (boundCondType) {
 			case BOUNDARY_CONDITION_2_1:

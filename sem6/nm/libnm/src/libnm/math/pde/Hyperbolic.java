@@ -121,14 +121,12 @@ public class Hyperbolic {
 		}
 
 		for (int i = 1; i < m_k; ++i) {
-			double tCur = vecT.get(i);
 			double tNext = vecT.get(i + 1);
+			double fi0 = m_fi0(tNext);
+			double fi1 = m_fi1(tNext);
 
 			switch (schemeType) {
 				case SCHEME_EXPLICIT: {
-					double fi0 = m_fi0(tCur);
-					double fi1 = m_fi1(tCur);
-
 					for (int j = 1; j < m_n; ++j) {
 						double res = 0.0;
 
@@ -202,8 +200,6 @@ public class Hyperbolic {
 					double coefA = sigma1 - sigma3;
 					double coefB = sigma2 - 2.0 * sigma1;
 					double coefC = sigma1 + sigma3;
-					double fi0 = m_fi0(tNext);
-					double fi1 = m_fi1(tNext);
 
 					for (int row = 1; row < m_n; ++row) {
 						double res = 0.0;

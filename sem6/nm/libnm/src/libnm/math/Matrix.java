@@ -11,6 +11,10 @@ public class Matrix {
 		m_mat = new double[size][size];
 	}
 
+	public Matrix(int rows, int cols) {
+		resize(rows, cols);
+	}
+
 	public void resize(int rows, int cols) {
 		m_mat = new double[rows][cols];
 	}

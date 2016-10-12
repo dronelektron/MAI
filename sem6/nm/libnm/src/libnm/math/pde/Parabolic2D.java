@@ -56,19 +56,19 @@ public class Parabolic2D {
 		m_beta4 = beta4;
 	}
 
-	public void setExpFi1(ExpTree exprFi1) {
+	public void setExprFi1(ExpTree exprFi1) {
 		m_exprFi1 = exprFi1;
 	}
 
-	public void setExpFi2(ExpTree exprFi2) {
+	public void setExprFi2(ExpTree exprFi2) {
 		m_exprFi2 = exprFi2;
 	}
 
-	public void setExpFi3(ExpTree exprFi3) {
+	public void setExprFi3(ExpTree exprFi3) {
 		m_exprFi3 = exprFi3;
 	}
 
-	public void setExpFi4(ExpTree exprFi4) {
+	public void setExprFi4(ExpTree exprFi4) {
 		m_exprFi4 = exprFi4;
 	}
 

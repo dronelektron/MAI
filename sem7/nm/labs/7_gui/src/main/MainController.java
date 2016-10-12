@@ -19,7 +19,7 @@ import libnm.math.expression.ExpTree;
 import libnm.math.pde.Elliptic;
 import libnm.util.Logger;
 
-public class MainController implements Initializable {
+public class MainController implements Initializable, ChangeListener<Number> {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		isX = true;
@@ -28,16 +28,12 @@ public class MainController implements Initializable {
 		vecX = new Vector();
 		vecY = new Vector();
 
-		scrollBarK.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				int k = newValue.intValue();
+		scrollBarK.valueProperty().addListener(this);
+	}
 
-				labelK.setText("Параметры графика (k = " + k + ")");
-
-				updatePlotters(k);
-			}
-		});
+	@Override
+	public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+		updatePlotters();
 	}
 
 	public void buttonSolve(ActionEvent actionEvent) {
@@ -81,8 +77,7 @@ public class MainController implements Initializable {
 		output.close();
 
 		rbSliceClick(null);
-		initPlotters();
-		updatePlotters(0);
+		updatePlotters();
 	}
 
 	public void rbSliceClick(ActionEvent actionEvent) {
@@ -103,6 +98,8 @@ public class MainController implements Initializable {
 		initPlotters();
 
 		scrollBarK.setValue(0.0);
+
+		updatePlotters();
 	}
 
 	private void initPlotters() {
@@ -150,7 +147,11 @@ public class MainController implements Initializable {
 		plotterError.getData().add(seriesError);
 	}
 
-	private void updatePlotters(int k) {
+	private void updatePlotters() {
+		int k = (int)scrollBarK.getValue();
+
+		labelK.setText("Параметры графика (k = " + k + ")");
+
 		if (isX) {
 			for (int i = 0; i < vecY.getSize(); ++i) {
 				seriesAnalytical.getData().set(i, new XYChart.Data<>(vecY.get(i), method.u(vecX.get(k), vecY.get(i))));

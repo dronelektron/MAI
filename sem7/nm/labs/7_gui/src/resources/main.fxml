@@ -367,7 +367,7 @@
             </Accordion>
             <VBox prefHeight="600.0" prefWidth="600.0">
                <children>
-                  <Label prefHeight="22.0" prefWidth="192.0" text="Аналитическое решение u(x, t)">
+                  <Label prefHeight="22.0" prefWidth="192.0" text="Аналитическое решение u(x, y)">
                      <VBox.margin>
                         <Insets left="5.0" top="5.0" />
                      </VBox.margin>

@@ -214,8 +214,8 @@ public class Parabolic2D {
 					}
 
 					for (int i = 0; i <= m_ny; ++i) {
-						matNext.set(i, 0, m_leftBound(vecY.get(i), tNext, hx, matCur.get(i, 1)));
-						matNext.set(i, m_nx, m_rightBound(vecY.get(i), tNext, hx, matCur.get(i, m_nx - 1)));
+						matNext.set(i, 0, m_leftBound(vecY.get(i), tNext, hx, matNext.get(i, 1)));
+						matNext.set(i, m_nx, m_rightBound(vecY.get(i), tNext, hx, matNext.get(i, m_nx - 1)));
 					}
 				}
 

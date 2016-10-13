@@ -45,7 +45,7 @@
                                           <Insets left="5.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label text="f(x, t)" GridPane.rowIndex="3">
+                                    <Label text="f(x, y)" GridPane.rowIndex="3">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>

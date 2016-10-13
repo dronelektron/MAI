@@ -39,7 +39,7 @@
                                           <Insets left="5.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label text="f(x, t)" GridPane.rowIndex="2">
+                                    <Label text="f(x, y, t)" GridPane.rowIndex="2">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>
@@ -171,22 +171,22 @@
                                           <Insets right="5.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Label text="fi_1(y)" GridPane.rowIndex="8">
+                                    <Label text="fi_1(y, t)" GridPane.rowIndex="8">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label text="fi_2(y)" GridPane.rowIndex="9">
+                                    <Label text="fi_2(y, t)" GridPane.rowIndex="9">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label text="fi_3(x)" GridPane.rowIndex="10">
+                                    <Label text="fi_3(x, t)" GridPane.rowIndex="10">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label text="fi_4(x)" GridPane.rowIndex="11">
+                                    <Label text="fi_4(x, t)" GridPane.rowIndex="11">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>
@@ -270,7 +270,7 @@
                            <children>
                               <GridPane>
                                  <children>
-                                    <Label text="nx">
+                                    <Label text="n_x">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>
@@ -280,7 +280,7 @@
                                           <Insets right="5.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Label text="ny" GridPane.rowIndex="1">
+                                    <Label text="n_y" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>
@@ -290,7 +290,7 @@
                                           <Insets right="5.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Label text="nt" GridPane.rowIndex="2">
+                                    <Label text="n_t" GridPane.rowIndex="2">
                                        <GridPane.margin>
                                           <Insets left="5.0" />
                                        </GridPane.margin>

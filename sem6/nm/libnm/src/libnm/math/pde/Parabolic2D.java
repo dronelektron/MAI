@@ -156,7 +156,7 @@ public class Parabolic2D {
 							double res = 0.0;
 
 							res -= matCur.get(i, j);
-							res -= (tau2 * m_b / (hy * hy)) * (matCur.get(i + 1, j) - 2.0 * matCur.get(i, j) + matCur.get(i + 1, j));
+							res -= (tau2 * m_b / (hy * hy)) * (matCur.get(i + 1, j) - 2.0 * matCur.get(i, j) + matCur.get(i - 1, j));
 							res -= tau2 * m_f(vecX.get(j), vecY.get(i), tHalf);
 
 							mat.set(j, j - 1, coefAx);
@@ -169,7 +169,6 @@ public class Parabolic2D {
 						mat.set(0, 1, m_alpha1 / hx);
 						mat.set(m_nx, m_nx - 1, -m_alpha2 / hx);
 						mat.set(m_nx, m_nx, m_beta2 + m_alpha2 / hx);
-
 						vec.set(0, m_fi1(vecY.get(i), tHalf));
 						vec.set(m_nx, m_fi2(vecY.get(i), tHalf));
 
@@ -194,17 +193,16 @@ public class Parabolic2D {
 							res -= (tau2 * m_a / (hx * hx)) * (matCur.get(i, j + 1) - 2.0 * matCur.get(i, j) + matCur.get(i, j - 1));
 							res -= tau2 * m_f(vecX.get(j), vecY.get(i), tHalf);
 
-							mat.set(i, i - 1, coefAx);
-							mat.set(i, i, coefBx);
-							mat.set(i, i + 1, coefCx);
+							mat.set(i, i - 1, coefAy);
+							mat.set(i, i, coefBy);
+							mat.set(i, i + 1, coefCy);
 							vec.set(i, res);
 						}
 
 						mat.set(0, 0, m_beta3 - m_alpha3 / hy);
 						mat.set(0, 1, m_alpha3 / hy);
 						mat.set(m_ny, m_ny - 1, -m_alpha4 / hy);
-						mat.set(m_ny, m_ny, m_beta4 + m_alpha4 / hx);
-
+						mat.set(m_ny, m_ny, m_beta4 + m_alpha4 / hy);
 						vec.set(0, m_fi3(vecX.get(j), tHalf));
 						vec.set(m_ny, m_fi4(vecX.get(j), tHalf));
 

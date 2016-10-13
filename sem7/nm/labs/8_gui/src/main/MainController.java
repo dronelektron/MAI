@@ -32,25 +32,7 @@ public class MainController implements Initializable, ChangeListener<Number> {
 
 		scrollBarK1.valueProperty().addListener(this);
 		scrollBarK2.valueProperty().addListener(this);
-	}
 
-	@Override
-	public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-		updatePlotters();
-	}
-
-	public void buttonSolve(ActionEvent actionEvent) {
-		int methodType;
-		Logger output = new Logger("output.txt");
-		RadioButton rbMethod = (RadioButton)rbGroupMethod.getSelectedToggle();
-
-		if (rbMethod == radioButtonADI) {
-			methodType = Parabolic2D.METHOD_ALTERNATING_DIRECTION;
-		} else {
-			methodType = Parabolic2D.METHOD_FRACTIONAL_STEP;
-		}
-
-		/* TEST
 		fieldA.setText("1");
 		fieldB.setText("1");
 		fieldExprF.setText("0");
@@ -74,7 +56,23 @@ public class MainController implements Initializable, ChangeListener<Number> {
 		fieldNt.setText("1000");
 		fieldTau.setText("0.001");
 		fieldExprU.setText("cos(x)*cos(y)*e^(-2*a*t)");
-		*/
+	}
+
+	@Override
+	public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+		updatePlotters();
+	}
+
+	public void buttonSolve(ActionEvent actionEvent) {
+		int methodType;
+		Logger output = new Logger("output.txt");
+		RadioButton rbMethod = (RadioButton)rbGroupMethod.getSelectedToggle();
+
+		if (rbMethod == radioButtonADI) {
+			methodType = Parabolic2D.METHOD_ALTERNATING_DIRECTION;
+		} else {
+			methodType = Parabolic2D.METHOD_FRACTIONAL_STEP;
+		}
 
 		method.setA(Double.parseDouble(fieldA.getText()));
 		method.setB(Double.parseDouble(fieldB.getText()));
@@ -153,7 +151,7 @@ public class MainController implements Initializable, ChangeListener<Number> {
 		if (sliceType == SLICE_XY) {
 			seriesError.setName("e(t)");
 
-			for (int j = 0; j < vecT.getSize(); ++j) {
+			for (int k = 0; k < vecT.getSize(); ++k) {
 				seriesAnalytical.getData().add(new XYChart.Data<>(0.0, 0.0));
 				seriesNumerical.getData().add(new XYChart.Data<>(0.0, 0.0));
 			}
@@ -172,7 +170,7 @@ public class MainController implements Initializable, ChangeListener<Number> {
 		} else if (sliceType == SLICE_XT) {
 			seriesError.setName("e(y)");
 
-			for (int j = 0; j < vecY.getSize(); ++j) {
+			for (int i = 0; i < vecY.getSize(); ++i) {
 				seriesAnalytical.getData().add(new XYChart.Data<>(0.0, 0.0));
 				seriesNumerical.getData().add(new XYChart.Data<>(0.0, 0.0));
 			}
@@ -226,16 +224,28 @@ public class MainController implements Initializable, ChangeListener<Number> {
 		labelK.setText("Параметры графика (k1 = " + k1 + ", k2 = " + k2 + ")");
 
 		if (sliceType == SLICE_XY) {
+			if (k2 >= vecY.getSize()) {
+				k2 = 0;
+			}
+
 			for (int k = 0; k < vecT.getSize(); ++k) {
 				seriesAnalytical.getData().set(k, new XYChart.Data<>(vecT.get(k), method.u(vecX.get(k1), vecY.get(k2), vecT.get(k))));
 				seriesNumerical.getData().set(k, new XYChart.Data<>(vecT.get(k), matU.get(k).get(k1, k2)));
 			}
 		} else if (sliceType == SLICE_XT) {
+			if (k2 >= vecT.getSize()) {
+				k2 = 0;
+			}
+
 			for (int i = 0; i < vecY.getSize(); ++i) {
 				seriesAnalytical.getData().set(i, new XYChart.Data<>(vecY.get(i), method.u(vecX.get(k1), vecY.get(i), vecT.get(k2))));
 				seriesNumerical.getData().set(i, new XYChart.Data<>(vecY.get(i), matU.get(k2).get(i, k1)));
 			}
 		} else {
+			if (k2 >= vecT.getSize()) {
+				k2 = 0;
+			}
+
 			for (int j = 0; j < vecX.getSize(); ++j) {
 				seriesAnalytical.getData().set(j, new XYChart.Data<>(vecX.get(j), method.u(vecX.get(j), vecY.get(k1), vecT.get(k2))));
 				seriesNumerical.getData().set(j, new XYChart.Data<>(vecX.get(j), matU.get(k2).get(k1, j)));

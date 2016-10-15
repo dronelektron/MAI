@@ -101,9 +101,29 @@ public class Parabolic2D {
 	}
 
 	public void solve(int methodType, ArrayList<Matrix> matU, Vector vecX, Vector vecY, Vector vecT) {
-		double tau2 = m_tau / 2.0;
+		double tau2 = 0.0;
+
+		switch (methodType) {
+			case METHOD_ALTERNATING_DIRECTION:
+				tau2 = m_tau / 2.0;
+
+				break;
+
+			case METHOD_FRACTIONAL_STEP:
+				tau2 = m_tau;
+
+				break;
+		}
+
 		double hx = m_lx / m_nx;
 		double hy = m_ly / m_ny;
+		double coefAx = tau2 * m_a / (hx * hx);
+		double coefBx = -2.0 * coefAx - 1.0;
+		double coefCx = coefAx;
+		double coefAy = tau2 * m_b / (hy * hy);
+		double coefBy = -2.0 * coefAy - 1.0;
+		double coefCy = coefAy;
+		MethodSle sleSolver = new MethodSle();
 
 		vecX.resize(m_nx + 1);
 		vecY.resize(m_ny + 1);
@@ -128,6 +148,109 @@ public class Parabolic2D {
 			}
 		}
 
+		for (int k = 0; k < m_nt; ++k) {
+			matU.add(new Matrix(m_ny + 1, m_nx + 1));
+
+			double tHalf = vecT.get(k) + tau2;
+			double tNext = vecT.get(k + 1);
+			Matrix matTmp = new Matrix(m_ny + 1, m_nx + 1);
+			Matrix matCur = matU.get(k);
+			Matrix matNext = matU.get(k + 1);
+
+			for (int i = 1; i < m_ny; ++i) {
+				Matrix mat = new Matrix(m_nx + 1);
+				Vector vec = new Vector(m_nx + 1);
+				Vector vecRes = new Vector(m_nx + 1);
+
+				for (int j = 1; j < m_nx; ++j) {
+					double res = 0.0;
+
+					res -= matCur.get(i, j);
+
+					switch (methodType) {
+						case METHOD_ALTERNATING_DIRECTION:
+							res -= (tau2 * m_b / (hy * hy)) * (matCur.get(i + 1, j) - 2.0 * matCur.get(i, j) + matCur.get(i - 1, j));
+							res -= tau2 * m_f(vecX.get(j), vecY.get(i), tHalf);
+
+							break;
+
+						case METHOD_FRACTIONAL_STEP:
+							res -= tau2 * m_f(vecX.get(j), vecY.get(i), vecT.get(k)) / 2.0;
+
+							break;
+					}
+
+					mat.set(j, j - 1, coefAx);
+					mat.set(j, j, coefBx);
+					mat.set(j, j + 1, coefCx);
+					vec.set(j, res);
+				}
+
+				mat.set(0, 0, m_beta1 - m_alpha1 / hx);
+				mat.set(0, 1, m_alpha1 / hx);
+				mat.set(m_nx, m_nx - 1, -m_alpha2 / hx);
+				mat.set(m_nx, m_nx, m_beta2 + m_alpha2 / hx);
+				vec.set(0, m_fi1(vecY.get(i), tHalf));
+				vec.set(m_nx, m_fi2(vecY.get(i), tHalf));
+
+				sleSolver.tma(mat, vec, vecRes, false);
+
+				for (int j = 0; j <= m_nx; ++j) {
+					matTmp.set(i, j, vecRes.get(j));
+				}
+			}
+
+			matCur = matTmp;
+
+			for (int j = 1; j < m_nx; ++j) {
+				Matrix mat = new Matrix(m_ny + 1);
+				Vector vec = new Vector(m_ny + 1);
+				Vector vecRes = new Vector(m_ny + 1);
+
+				for (int i = 1; i < m_ny; ++i) {
+					double res = 0.0;
+
+					res -= matCur.get(i, j);
+
+					switch (methodType) {
+						case METHOD_ALTERNATING_DIRECTION:
+							res -= (tau2 * m_a / (hx * hx)) * (matCur.get(i, j + 1) - 2.0 * matCur.get(i, j) + matCur.get(i, j - 1));
+							res -= tau2 * m_f(vecX.get(j), vecY.get(i), tHalf);
+
+							break;
+
+						case METHOD_FRACTIONAL_STEP:
+							res -= tau2 * m_f(vecX.get(j), vecY.get(i), tNext) / 2.0;
+
+							break;
+					}
+
+					mat.set(i, i - 1, coefAy);
+					mat.set(i, i, coefBy);
+					mat.set(i, i + 1, coefCy);
+					vec.set(i, res);
+				}
+
+				mat.set(0, 0, m_beta3 - m_alpha3 / hy);
+				mat.set(0, 1, m_alpha3 / hy);
+				mat.set(m_ny, m_ny - 1, -m_alpha4 / hy);
+				mat.set(m_ny, m_ny, m_beta4 + m_alpha4 / hy);
+				vec.set(0, m_fi3(vecX.get(j), tHalf));
+				vec.set(m_ny, m_fi4(vecX.get(j), tHalf));
+
+				sleSolver.tma(mat, vec, vecRes, false);
+
+				for (int i = 0; i <= m_ny; ++i) {
+					matNext.set(i, j, vecRes.get(i));
+				}
+			}
+
+			for (int i = 0; i <= m_ny; ++i) {
+				matNext.set(i, 0, m_leftBound(vecY.get(i), tNext, hx, matNext.get(i, 1)));
+				matNext.set(i, m_nx, m_rightBound(vecY.get(i), tNext, hx, matNext.get(i, m_nx - 1)));
+			}
+		}
+		/*
 		switch (methodType) {
 			case METHOD_ALTERNATING_DIRECTION: {
 				double coefAx = tau2 * m_a / (hx * hx);
@@ -228,6 +351,7 @@ public class Parabolic2D {
 				break;
 			}
 		}
+		*/
 	}
 
 	public double u(double x, double y, double t) {

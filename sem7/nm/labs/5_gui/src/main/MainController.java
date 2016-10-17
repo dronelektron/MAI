@@ -1,5 +1,6 @@
 package main;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -17,6 +18,7 @@ import libnm.math.Vector;
 import libnm.math.expression.ExpTree;
 import libnm.math.pde.Parabolic;
 import libnm.util.Logger;
+import libnm.util.Reader;
 
 public class MainController implements Initializable {
 	@Override
@@ -36,6 +38,29 @@ public class MainController implements Initializable {
 				updatePlotters(k);
 			}
 		});
+
+		if (new File("input.txt").exists()) {
+			Reader reader = new Reader("input.txt");
+
+			fieldA.setText(reader.readLine());
+			fieldB.setText(reader.readLine());
+			fieldC.setText(reader.readLine());
+			fieldExprF.setText(reader.readLine());
+			fieldExprPsi.setText(reader.readLine());
+			fieldAlpha.setText(reader.readLine());
+			fieldBeta.setText(reader.readLine());
+			fieldGamma.setText(reader.readLine());
+			fieldDelta.setText(reader.readLine());
+			fieldExprFi0.setText(reader.readLine());
+			fieldExprFi1.setText(reader.readLine());
+			fieldL.setText(reader.readLine());
+			fieldK.setText(reader.readLine());
+			fieldTau.setText(reader.readLine());
+			fieldN.setText(reader.readLine());
+			fieldExprU.setText(reader.readLine());
+
+			reader.close();
+		}
 	}
 
 	public void buttonSolve(ActionEvent actionEvent) {

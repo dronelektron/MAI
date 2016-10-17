@@ -1,5 +1,6 @@
 package main;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -18,6 +19,7 @@ import libnm.math.Vector;
 import libnm.math.expression.ExpTree;
 import libnm.math.pde.Elliptic;
 import libnm.util.Logger;
+import libnm.util.Reader;
 
 public class MainController implements Initializable, ChangeListener<Number> {
 	@Override
@@ -29,6 +31,36 @@ public class MainController implements Initializable, ChangeListener<Number> {
 		vecY = new Vector();
 
 		scrollBarK.valueProperty().addListener(this);
+
+		if (new File("input.txt").exists()) {
+			Reader reader = new Reader("input.txt");
+
+			fieldBx.setText(reader.readLine());
+			fieldBy.setText(reader.readLine());
+			fieldC.setText(reader.readLine());
+			fieldExprF.setText(reader.readLine());
+			fieldAlpha1.setText(reader.readLine());
+			fieldBeta1.setText(reader.readLine());
+			fieldAlpha2.setText(reader.readLine());
+			fieldBeta2.setText(reader.readLine());
+			fieldAlpha3.setText(reader.readLine());
+			fieldBeta3.setText(reader.readLine());
+			fieldAlpha4.setText(reader.readLine());
+			fieldBeta4.setText(reader.readLine());
+			fieldExprFi1.setText(reader.readLine());
+			fieldExprFi2.setText(reader.readLine());
+			fieldExprFi3.setText(reader.readLine());
+			fieldExprFi4.setText(reader.readLine());
+			fieldLx.setText(reader.readLine());
+			fieldLy.setText(reader.readLine());
+			fieldNx.setText(reader.readLine());
+			fieldNy.setText(reader.readLine());
+			fieldOmega.setText(reader.readLine());
+			fieldEps.setText(reader.readLine());
+			fieldExprU.setText(reader.readLine());
+
+			reader.close();
+		}
 	}
 
 	@Override

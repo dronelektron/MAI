@@ -1,5 +1,6 @@
 package main;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -19,6 +20,7 @@ import libnm.math.Vector;
 import libnm.math.expression.ExpTree;
 import libnm.math.pde.Parabolic2D;
 import libnm.util.Logger;
+import libnm.util.Reader;
 
 public class MainController implements Initializable, ChangeListener<Number> {
 	@Override
@@ -33,29 +35,35 @@ public class MainController implements Initializable, ChangeListener<Number> {
 		scrollBarK1.valueProperty().addListener(this);
 		scrollBarK2.valueProperty().addListener(this);
 
-		fieldA.setText("1");
-		fieldB.setText("1");
-		fieldExprF.setText("0");
-		fieldExprPsi.setText("cos(x)*cos(y)");
-		fieldAlpha1.setText("0");
-		fieldBeta1.setText("1");
-		fieldAlpha2.setText("0");
-		fieldBeta2.setText("1");
-		fieldAlpha3.setText("0");
-		fieldBeta3.setText("1");
-		fieldAlpha4.setText("0");
-		fieldBeta4.setText("1");
-		fieldExprFi1.setText("cos(y)*e^(-2*a*t)");
-		fieldExprFi2.setText("-cos(y)*e^(-2*a*t)");
-		fieldExprFi3.setText("cos(x)*e^(-2*a*t)");
-		fieldExprFi4.setText("-cos(x)*e^(-2*a*t)");
-		fieldLx.setText("3.14");
-		fieldLy.setText("3.14");
-		fieldNx.setText("10");
-		fieldNy.setText("10");
-		fieldNt.setText("1000");
-		fieldTau.setText("0.001");
-		fieldExprU.setText("cos(x)*cos(y)*e^(-2*a*t)");
+		if (new File("input.txt").exists()) {
+			Reader reader = new Reader("input.txt");
+
+			fieldA.setText(reader.readLine());
+			fieldB.setText(reader.readLine());
+			fieldExprF.setText(reader.readLine());
+			fieldExprPsi.setText(reader.readLine());
+			fieldAlpha1.setText(reader.readLine());
+			fieldBeta1.setText(reader.readLine());
+			fieldAlpha2.setText(reader.readLine());
+			fieldBeta2.setText(reader.readLine());
+			fieldAlpha3.setText(reader.readLine());
+			fieldBeta3.setText(reader.readLine());
+			fieldAlpha4.setText(reader.readLine());
+			fieldBeta4.setText(reader.readLine());
+			fieldExprFi1.setText(reader.readLine());
+			fieldExprFi2.setText(reader.readLine());
+			fieldExprFi3.setText(reader.readLine());
+			fieldExprFi4.setText(reader.readLine());
+			fieldLx.setText(reader.readLine());
+			fieldLy.setText(reader.readLine());
+			fieldNx.setText(reader.readLine());
+			fieldNy.setText(reader.readLine());
+			fieldNt.setText(reader.readLine());
+			fieldTau.setText(reader.readLine());
+			fieldExprU.setText(reader.readLine());
+
+			reader.close();
+		}
 	}
 
 	@Override

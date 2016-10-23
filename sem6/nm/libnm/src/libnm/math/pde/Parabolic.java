@@ -72,6 +72,8 @@ public class Parabolic {
 
 	public void solve(int schemeType, int boundCondType, Matrix matU, Vector vecX, Vector vecT) {
 		double h = m_l / m_n;
+		double theta;
+		MethodSle sleSolver = new MethodSle();
 
 		matU.resize(m_k + 1, m_n + 1);
 		vecX.resize(m_n + 1);
@@ -86,40 +88,110 @@ public class Parabolic {
 			vecT.set(i, i * m_tau);
 		}
 
+		if (schemeType == SCHEME_EXPLICIT) {
+			theta = 0.0;
+		} else if (schemeType == SCHEME_IMPLICIT) {
+			theta = 1.0;
+		} else if (schemeType == SCHEME_CRANK_NICOLSON) {
+			theta = 0.5;
+		} else {
+			return;
+		}
+
+		double sigma1 = theta * m_a / (h * h);
+		double sigma2 = theta * m_c;
+		double sigma3 = theta * m_b / (2.0 * h);
+		double coefA = sigma1 - sigma3;
+		double coefB = sigma2 - 2.0 * sigma1 - 1.0 / m_tau;
+		double coefC = sigma1 + sigma3;
+
 		for (int i = 0; i < m_k; ++i) {
-			switch (schemeType) {
-				case SCHEME_EXPLICIT: {
-					Vector vecRes = new Vector(m_n + 1);
+			Matrix mat = new Matrix(m_n + 1);
+			Vector vec = new Vector(m_n + 1);
+			Vector vecRes = new Vector(m_n + 1);
+			double tNext = vecT.get(i + 1);
+			double fi0 = m_fi0(tNext);
+			double fi1 = m_fi1(tNext);
 
-					m_explicit(matU, vecX, vecT, i, h, boundCondType, vecRes);
-					m_copyVectorToMatrix(vecRes, matU, i + 1);
+			for (int j = 1; j < m_n; ++j) {
+				double res = 0.0;
+
+				res += (m_a / (h * h)) * (matU.get(i, j + 1) - 2.0 * matU.get(i, j) + matU.get(i, j - 1));
+				res += (m_b / (2.0 * h) * (matU.get(i, j + 1) - matU.get(i, j - 1)));
+				res += m_c * matU.get(i, j);
+				res = -(1.0 - theta) * res;
+				res -= matU.get(i, j) / m_tau;
+				res -= m_f(vecX.get(j), tNext);
+
+				mat.set(j, j - 1, coefA);
+				mat.set(j, j, coefB);
+				mat.set(j, j + 1, coefC);
+				vec.set(j, res);
+			}
+
+			switch (boundCondType) {
+				case BOUNDARY_CONDITION_2_1:
+					mat.set(0, 0, m_beta - m_alpha / h);
+					mat.set(0, 1, m_alpha / h);
+					mat.set(m_n, m_n - 1, -m_gamma / h);
+					mat.set(m_n, m_n, m_delta + m_gamma / h);
+					vec.set(0, fi0);
+					vec.set(m_n, fi1);
+
+					sleSolver.tma(mat, vec, vecRes, false);
 
 					break;
-				}
 
-				case SCHEME_IMPLICIT: {
-					Vector vecRes = new Vector(m_n + 1);
+				case BOUNDARY_CONDITION_3_2:
+					double h2 = 2.0 * h;
 
-					m_implicit(matU, vecX, vecT, i, h, boundCondType, vecRes);
-					m_copyVectorToMatrix(vecRes, matU, i + 1);
+					mat.set(0, 0, m_beta - 3.0 * m_alpha / h2);
+					mat.set(0, 1, 4.0 * m_alpha / h2);
+					mat.set(0, 2, -m_alpha / h2);
+					mat.set(m_n, m_n - 2, m_gamma / h2);
+					mat.set(m_n, m_n - 1, -4.0 * m_gamma / h2);
+					mat.set(m_n, m_n, m_delta + 3.0 * m_gamma / h2);
+					vec.set(0, fi0);
+					vec.set(m_n, fi1);
+
+					sleSolver.lup(mat, vec, vecRes);
 
 					break;
-				}
 
-				case SCHEME_CRANK_NICOLSON: {
-					double theta = 0.5;
-					Vector vecResExp = new Vector(m_n + 1);
-					Vector vecResImp = new Vector(m_n + 1);
+				case BOUNDARY_CONDITION_2_2:
+					if (m_alpha == 0.0) {
+						mat.set(0, 0, m_beta);
+						vec.set(0, fi0);
+					} else {
+						double b0 = 2.0 * m_a / h + h / m_tau - m_c * h - (m_beta / m_alpha) * (2.0 * m_a - m_b * h);
+						double c0 = -2.0 * m_a / h;
+						double d0 = (h / m_tau) * matU.get(i, 0) - fi0 * (2.0 * m_a - m_b * h) / m_alpha;
 
-					m_explicit(matU, vecX, vecT, i, h, boundCondType, vecResExp);
-					m_implicit(matU, vecX, vecT, i, h, boundCondType, vecResImp);
-
-					for (int j = 0; j <= m_n; ++j) {
-						matU.set(i + 1, j, theta * vecResImp.get(j) + (1.0 - theta) * vecResExp.get(j));
+						mat.set(0, 0, b0);
+						mat.set(0, 1, c0);
+						vec.set(0, d0);
 					}
 
+					if (m_gamma == 0.0) {
+						mat.set(m_n, m_n, m_delta);
+						vec.set(m_n, fi1);
+					} else {
+						double an = -2.0 * m_a / h;
+						double bn = 2.0 * m_a / h + h / m_tau - m_c * h + (m_delta / m_gamma) * (2.0 * m_a + m_b * h);
+						double dn = (h / m_tau) * matU.get(i, m_n) + fi1 * (2.0 * m_a + m_b * h) / m_gamma;
+
+						mat.set(m_n, m_n - 1, an);
+						mat.set(m_n, m_n, bn);
+						vec.set(m_n, dn);
+					}
+
+					sleSolver.tma(mat, vec, vecRes, false);
+
 					break;
-				}
+			}
+
+			for (int j = 0; j <= m_n; ++j) {
+				matU.set(i + 1, j, vecRes.get(j));
 			}
 		}
 	}
@@ -169,158 +241,6 @@ public class Parabolic {
 		m_exprFi1.setVar("t", t);
 
 		return m_exprFi1.calculate();
-	}
-
-	private void m_explicit(Matrix matU, Vector vecX, Vector vecT, int i, double h, int boundCondType, Vector vecRes) {
-		for (int j = 1; j < m_n; ++j) {
-			double res = 0.0;
-
-			res += m_a * (matU.get(i, j + 1) - 2.0 * matU.get(i, j) + matU.get(i, j - 1)) / (h * h);
-			res += m_b * (matU.get(i, j + 1) - matU.get(i, j - 1)) / (2.0 * h);
-			res += m_c * matU.get(i, j);
-			res += m_f(vecX.get(j), vecT.get(i));
-			res *= m_tau;
-			res += matU.get(i, j);
-
-			vecRes.set(j, res);
-		}
-
-		double bound1 = 0.0;
-		double bound2 = 0.0;
-		double tNext = vecT.get(i + 1);
-		double fi0 = m_fi0(tNext);
-		double fi1 = m_fi1(tNext);
-
-		switch (boundCondType) {
-			case BOUNDARY_CONDITION_2_1:
-				bound1 = (h * fi0 - m_alpha * vecRes.get(1)) / (h * m_beta - m_alpha);
-				bound2 = (h * fi1 + m_gamma * vecRes.get(m_n - 1)) / (h * m_delta + m_gamma);
-
-				break;
-
-			case BOUNDARY_CONDITION_3_2:
-				bound1 = 2.0 * h * fi0 - m_alpha * (4.0 * vecRes.get(1) - vecRes.get(2));
-				bound1 /= 2.0 * h * m_beta - 3.0 * m_alpha;
-				bound2 = 2.0 * h * fi1 - m_gamma * (vecRes.get(m_n - 2) - 4.0 * vecRes.get(m_n - 1));
-				bound2 /= 2.0 * h * m_delta + 3.0 * m_gamma;
-
-				break;
-
-			case BOUNDARY_CONDITION_2_2:
-				if (m_alpha == 0.0) {
-					bound1 = fi0 / m_beta;
-				} else {
-					double b0 = 2.0 * m_a / h + h / m_tau - m_c * h - (m_beta / m_alpha) * (2.0 * m_a - m_b * h);
-					double c0 = -2.0 * m_a / h;
-					double d0 = (h / m_tau) * matU.get(i, 0) - fi0 * (2.0 * m_a - m_b * h) / m_alpha;
-
-					bound1 = (d0 - c0 * vecRes.get(1)) / b0;
-				}
-
-				if (m_gamma == 0.0) {
-					bound2 = fi1 / m_delta;
-				} else {
-					double an = -2.0 * m_a / h;
-					double bn = 2.0 * m_a / h + h / m_tau - m_c * h + (m_delta / m_gamma) * (2.0 * m_a + m_b * h);
-					double dn = (h / m_tau) * matU.get(i, m_n) + fi1 * (2.0 * m_a + m_b * h) / m_gamma;
-
-					bound2 = (dn - an * vecRes.get(m_n - 1)) / bn;
-				}
-
-				break;
-		}
-
-		vecRes.set(0, bound1);
-		vecRes.set(m_n, bound2);
-	}
-
-	private void m_implicit(Matrix matU, Vector vecX, Vector vecT, int i, double h, int boundCondType, Vector vecRes) {
-		MethodSle sleSolver = new MethodSle();
-		Matrix mat = new Matrix(m_n + 1);
-		Vector vec = new Vector(m_n + 1);
-		double sigma1 = m_tau * m_a / (h * h);
-		double sigma2 = m_tau * m_c;
-		double sigma3 = m_tau * m_b / (2.0 * h);
-		double coefA = sigma1 - sigma3;
-		double coefB = sigma2 - 2.0 * sigma1 - 1.0;
-		double coefC = sigma1 + sigma3;
-		double tNext = vecT.get(i + 1);
-		double fi0 = m_fi0(tNext);
-		double fi1 = m_fi1(tNext);
-
-		for (int row = 1; row < m_n; ++row) {
-			mat.set(row, row - 1, coefA);
-			mat.set(row, row, coefB);
-			mat.set(row, row + 1, coefC);
-			vec.set(row, -matU.get(i, row) - m_f(vecX.get(row), tNext) * m_tau);
-		}
-
-		switch (boundCondType) {
-			case BOUNDARY_CONDITION_2_1:
-				mat.set(0, 0, m_beta - m_alpha / h);
-				mat.set(0, 1, m_alpha / h);
-				mat.set(m_n, m_n - 1, -m_gamma / h);
-				mat.set(m_n, m_n, m_delta + m_gamma / h);
-				vec.set(0, fi0);
-				vec.set(m_n, fi1);
-
-				sleSolver.tma(mat, vec, vecRes, false);
-
-				break;
-
-			case BOUNDARY_CONDITION_3_2:
-				double h2 = 2.0 * h;
-
-				mat.set(0, 0, m_beta - 3.0 * m_alpha / h2);
-				mat.set(0, 1, 4.0 * m_alpha / h2);
-				mat.set(0, 2, -m_alpha / h2);
-				mat.set(m_n, m_n - 2, m_gamma / h2);
-				mat.set(m_n, m_n - 1, -4.0 * m_gamma / h2);
-				mat.set(m_n, m_n, m_delta + 3.0 * m_gamma / h2);
-				vec.set(0, fi0);
-				vec.set(m_n, fi1);
-
-				sleSolver.lup(mat, vec, vecRes);
-
-				break;
-
-			case BOUNDARY_CONDITION_2_2:
-				if (m_alpha == 0.0) {
-					mat.set(0, 0, m_beta);
-					vec.set(0, fi0);
-				} else {
-					double b0 = 2.0 * m_a / h + h / m_tau - m_c * h - (m_beta / m_alpha) * (2.0 * m_a - m_b * h);
-					double c0 = -2.0 * m_a / h;
-					double d0 = (h / m_tau) * matU.get(i, 0) - fi0 * (2.0 * m_a - m_b * h) / m_alpha;
-
-					mat.set(0, 0, b0);
-					mat.set(0, 1, c0);
-					vec.set(0, d0);
-				}
-
-				if (m_gamma == 0.0) {
-					mat.set(m_n, m_n, m_delta);
-					vec.set(m_n, fi1);
-				} else {
-					double an = -2.0 * m_a / h;
-					double bn = 2.0 * m_a / h + h / m_tau - m_c * h + (m_delta / m_gamma) * (2.0 * m_a + m_b * h);
-					double dn = (h / m_tau) * matU.get(i, m_n) + fi1 * (2.0 * m_a + m_b * h) / m_gamma;
-
-					mat.set(m_n, m_n - 1, an);
-					mat.set(m_n, m_n, bn);
-					vec.set(m_n, dn);
-				}
-
-				sleSolver.tma(mat, vec, vecRes, false);
-
-				break;
-		}
-	}
-
-	private void m_copyVectorToMatrix(Vector vec, Matrix mat, int row) {
-		for (int j = 0; j < vec.getSize(); ++j) {
-			mat.set(row, j, vec.get(j));
-		}
 	}
 
 	private double m_a;

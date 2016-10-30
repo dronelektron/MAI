@@ -103,8 +103,9 @@ public class MainController implements Initializable, ChangeListener<Number> {
 		method.setEps(Double.parseDouble(fieldEps.getText()));
 		method.setExprU(new ExpTree(fieldExprU.getText()));
 
-		method.solve(methodType, matU, vecX, vecY);
+		int iterations = method.solve(methodType, matU, vecX, vecY);
 
+		output.writeln("Iterations: " + iterations);
 		output.writeln(matU.toString());
 		output.close();
 

@@ -97,7 +97,7 @@ public class Elliptic {
 		m_exprU = exprU;
 	}
 
-	public void solve(int methodType, Matrix matU, Vector vecX, Vector vecY) {
+	public int solve(int methodType, Matrix matU, Vector vecX, Vector vecY) {
 		int iterations = 0;
 		double error = m_eps + 1.0;
 		double hx = m_lx / m_nx;
@@ -176,6 +176,8 @@ public class Elliptic {
 		matU.set(0, m_nx, m_boundRightByY(matU, vecY, hx, 0));
 		matU.set(m_ny, 0, m_boundLeftByY(matU, vecY, hx, m_ny));
 		matU.set(m_ny, m_nx, m_boundRightByY(matU, vecY, hx, m_ny));
+
+		return iterations;
 	}
 
 	public double u(double x, double y) {

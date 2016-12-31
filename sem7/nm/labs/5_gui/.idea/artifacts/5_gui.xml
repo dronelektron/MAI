@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="5_gui">
+    <output-path>$PROJECT_DIR$/out/artifacts/5_gui</output-path>
+    <root id="archive" name="5_gui.jar">
+      <element id="module-output" name="5_gui" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../sem6/nm/libnm/out/artifacts/libnm/libnm.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

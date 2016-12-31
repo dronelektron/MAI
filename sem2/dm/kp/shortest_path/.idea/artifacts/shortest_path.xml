@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="shortest_path">
+    <output-path>$PROJECT_DIR$/out/artifacts/shortest_path</output-path>
+    <root id="archive" name="shortest_path.jar">
+      <element id="module-output" name="shortest_path" />
+    </root>
+  </artifact>
+</component>

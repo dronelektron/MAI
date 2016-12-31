@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="gral-core-0.11">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../gral/gral-core-0.11.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

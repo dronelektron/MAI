@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="libnm">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../sem6/nm/libnm/out/artifacts/libnm/libnm.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

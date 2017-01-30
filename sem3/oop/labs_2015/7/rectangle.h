@@ -1,0 +1,31 @@
+#ifndef RECTANGLE_H
+#define RECTANGLE_H
+
+#include <iostream>
+#include "figure.h"
+
+class Rectangle : public Figure
+{
+public:
+	Rectangle();
+	Rectangle(std::istream& is);
+
+	void print() const override;
+	double area() const override;
+	const char* getName() const override;
+
+	Rectangle& operator = (const Rectangle& other);
+	bool operator == (const Rectangle& other) const;
+
+	void* operator new (unsigned int size);
+	void operator delete (void* p);
+
+	friend std::ostream& operator << (std::ostream& os, const Rectangle& rectangle);
+	friend std::istream& operator >> (std::istream& is, Rectangle& rectangle);
+
+private:
+	double m_sideA;
+	double m_sideB;
+};
+
+#endif

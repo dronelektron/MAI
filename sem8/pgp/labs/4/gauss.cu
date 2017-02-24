@@ -75,17 +75,7 @@ void gaussSolve(Gauss* gauss)
 	ERR(cudaMemcpy(gauss->mat, dMat, matSize, cudaMemcpyDeviceToHost));
 	ERR(cudaFree(dMat));
 	ERR(cudaFree(dRatio));
-/*
-	printf("Matrix:\n");
 
-	for (int i = 0; i < m; ++i)
-	{
-		for (int j = 0; j <= n; ++j)
-			printf("%f ", gauss->mat[gaussOffset(i, j, m)]);
-
-		printf("\n");
-	}
-*/
 	gaussBackward(gauss);
 }
 
@@ -161,7 +151,7 @@ __global__ void transformKernel(double* mat, double* ratio, int m, int n, int ro
 	int offsetX = gridDim.x * blockDim.x;
 	int offsetY = gridDim.y * blockDim.y;
 
-	for (int i = tY; i < m; i += offsetY)
-		for (int j = tX; j <= n; j += offsetX)
+	for (int j = tX; j <= n; j += offsetX)
+		for (int i = tY; i < m; i += offsetY)
 			mat[gaussOffset(i, j, m)] -= mat[gaussOffset(row, j, m)] * ratio[i];
 }

@@ -26,12 +26,10 @@ void gaussSolve(Gauss* gauss)
 {
 	int m = gauss->m;
 	int n = gauss->n;
-	double* dRatio;
 	double* dMat;
 
 	int matSize = sizeof(double) * m * (n + 1);
 
-	ERR(cudaMalloc(&dRatio, sizeof(double) * m));
 	ERR(cudaMalloc(&dMat, matSize));
 	ERR(cudaMemcpy(dMat, gauss->mat, matSize, cudaMemcpyHostToDevice));
 
@@ -62,9 +60,8 @@ void gaussSolve(Gauss* gauss)
 		else
 			gauss->res[j] = 1.0;
 
-		swapKernel<<<64, 128>>>(dMat, m, n, gauss->rank, maxInd);
-		ratioKernel<<<64, 128>>>(dMat, dRatio, m, gauss->rank, j);
-		transformKernel<<<dim3(64, 64), dim3(32, 32)>>>(dMat, dRatio, m, n, gauss->rank, j);
+		swapKernel<<<32, 32>>>(dMat, m, n, gauss->rank, maxInd);
+		transformKernel<<<dim3(32, 32), dim3(32, 32)>>>(dMat, m, n, gauss->rank, j);
 
 		++gauss->rank;
 
@@ -74,7 +71,6 @@ void gaussSolve(Gauss* gauss)
 
 	ERR(cudaMemcpy(gauss->mat, dMat, matSize, cudaMemcpyDeviceToHost));
 	ERR(cudaFree(dMat));
-	ERR(cudaFree(dRatio));
 
 	gaussBackward(gauss);
 }
@@ -132,26 +128,20 @@ __global__ void swapKernel(double* mat, int m, int n, int row1, int row2)
 	}
 }
 
-__global__ void ratioKernel(double* mat, double* ratio, int m, int row, int col)
+__global__ void transformKernel(double* mat, int m, int n, int row, int col)
 {
-	int tX = blockDim.x * blockIdx.x + threadIdx.x + row + 1;
-	int offsetX = gridDim.x * blockDim.x;
-
-	while (tX < m)
-	{
-		ratio[tX] = mat[gaussOffset(tX, col, m)] / mat[gaussOffset(row, col, m)];
-		tX += offsetX;
-	}
-}
-
-__global__ void transformKernel(double* mat, double* ratio, int m, int n, int row, int col)
-{
-	int tX = blockDim.x * blockIdx.x + threadIdx.x + col;
+	int tX = blockDim.x * blockIdx.x + threadIdx.x + col + 1;
 	int tY = blockDim.y * blockIdx.y + threadIdx.y + row + 1;
 	int offsetX = gridDim.x * blockDim.x;
 	int offsetY = gridDim.y * blockDim.y;
 
 	for (int j = tX; j <= n; j += offsetX)
+	{
 		for (int i = tY; i < m; i += offsetY)
-			mat[gaussOffset(i, j, m)] -= mat[gaussOffset(row, j, m)] * ratio[i];
+		{
+			double ratio = mat[gaussOffset(i, col, m)] / mat[gaussOffset(row, col, m)];
+
+			mat[gaussOffset(i, j, m)] -= mat[gaussOffset(row, j, m)] * ratio;
+		}
+	}
 }

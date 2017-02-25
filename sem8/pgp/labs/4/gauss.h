@@ -25,7 +25,6 @@ void gaussPrintResult(Gauss* gauss);
 __host__ __device__ int gaussOffset(int row, int col, int m);
 
 __global__ void swapKernel(double* mat, int m, int n, int row1, int row2);
-__global__ void ratioKernel(double* mat, double* ratio, int m, int row, int col);
-__global__ void transformKernel(double* mat, double* ratio, int m, int n, int row, int col);
+__global__ void transformKernel(double* mat, int m, int n, int row, int col);
 
 #endif

@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include "err.h"
 
+#define BLOCK_SIZE 256
+#define LOG2_BANKS 5
+#define CONFLICT_FREE(i) (i + (i >> LOG2_BANKS))
+
 typedef unsigned char Byte;
 
 typedef struct _Array
@@ -16,7 +20,6 @@ typedef struct _Array
 void arrayRead(Array* arr);
 void arrayWrite(Array* arr);
 void arraySort(Array* arr);
-__device__ int arrayConflictFree(int index);
 
 __global__ void histogramKernel(Byte* arr, int* hist, int arrCount);
 __global__ void scanKernel(int* hist, int* prefix);

@@ -25,7 +25,7 @@ void arraySort(Array* arr)
 	int* dHist;
 	int* dPrefix;
 
-	int histSize = sizeof(int) * 256;
+	int histSize = sizeof(int) * BLOCK_SIZE;
 
 	ERR(cudaMalloc(&dArr, arr->size));
 	ERR(cudaMalloc(&dHist, histSize));
@@ -34,7 +34,7 @@ void arraySort(Array* arr)
 	ERR(cudaMemset(dHist, 0, histSize));
 
 	histogramKernel<<<32, 32>>>(dArr, dHist, arr->size);
-	scanKernel<<<1, 256>>>(dHist, dPrefix);
+	scanKernel<<<1, BLOCK_SIZE>>>(dHist, dPrefix);
 	arrangementKernel<<<8, 32>>>(dArr, dHist, dPrefix);
 
 	ERR(cudaMemcpy(arr->data, dArr, arr->size, cudaMemcpyDeviceToHost));
@@ -43,14 +43,9 @@ void arraySort(Array* arr)
 	ERR(cudaFree(dPrefix));
 }
 
-__device__ int arrayConflictFree(int index)
-{
-	return index + (index >> 5);
-}
-
 __global__ void histogramKernel(Byte* arr, int* hist, int arrCount)
 {
-	__shared__ int temp[256];
+	__shared__ int temp[BLOCK_SIZE];
 
 	int tIdLocal = threadIdx.x;
 	int tIdGlobal = blockDim.x * blockIdx.x + tIdLocal;
@@ -61,27 +56,27 @@ __global__ void histogramKernel(Byte* arr, int* hist, int arrCount)
 
 	__syncthreads();
 
-	for (int i = tIdLocal; i < 256; i += blockDim.x)
+	for (int i = tIdLocal; i < BLOCK_SIZE; i += blockDim.x)
 		atomicAdd(&hist[i], temp[i]);
 }
 
 __global__ void scanKernel(int* hist, int* prefix)
 {
-	__shared__ int temp[256 + 6];
+	__shared__ int temp[BLOCK_SIZE + 7];
 
 	int tId = threadIdx.x;
 	int offset = 1;
 
-	temp[arrayConflictFree(tId)] = hist[tId];
+	temp[CONFLICT_FREE(tId)] = hist[tId];
 
-	for (int d = 256 >> 1; d > 0; d >>= 1)
+	for (int d = BLOCK_SIZE >> 1; d > 0; d >>= 1)
 	{
 		__syncthreads();
 
 		if (tId < d)
 		{
-			int index1 = arrayConflictFree(offset * (tId * 2 + 1) - 1);
-			int index2 = arrayConflictFree(offset * (tId * 2 + 2) - 1);
+			int index1 = CONFLICT_FREE(offset * (tId * 2 + 1) - 1);
+			int index2 = CONFLICT_FREE(offset * (tId * 2 + 2) - 1);
 
 			temp[index2] += temp[index1];
 		}
@@ -89,10 +84,10 @@ __global__ void scanKernel(int* hist, int* prefix)
 		offset <<= 1;
 	}
 
-	if (tId == 255)
-		temp[arrayConflictFree(255)] = 0;
+	if (tId == BLOCK_SIZE - 1)
+		temp[CONFLICT_FREE(BLOCK_SIZE - 1)] = 0;
 
-	for (int d = 1; d < 256; d <<= 1)
+	for (int d = 1; d < BLOCK_SIZE; d <<= 1)
 	{
 		offset >>= 1;
 
@@ -100,8 +95,8 @@ __global__ void scanKernel(int* hist, int* prefix)
 
 		if (tId < d)
 		{
-			int index1 = arrayConflictFree(offset * (tId * 2 + 1) - 1);
-			int index2 = arrayConflictFree(offset * (tId * 2 + 2) - 1);
+			int index1 = CONFLICT_FREE(offset * (tId * 2 + 1) - 1);
+			int index2 = CONFLICT_FREE(offset * (tId * 2 + 2) - 1);
 			int t = temp[index1];
 
 			temp[index1] = temp[index2];
@@ -111,25 +106,25 @@ __global__ void scanKernel(int* hist, int* prefix)
 
 	__syncthreads(); 
 	
-	if (tId < 255)
-		prefix[tId] = temp[arrayConflictFree(tId + 1)];
+	if (tId < BLOCK_SIZE - 1)
+		prefix[tId] = temp[CONFLICT_FREE(tId + 1)];
 	else
-		prefix[tId] = temp[arrayConflictFree(tId)] + hist[255];
+		prefix[tId] = temp[CONFLICT_FREE(tId)] + hist[BLOCK_SIZE - 1];
 }
 
 __global__ void arrangementKernel(Byte* arr, int* hist, int* prefix)
 {
-	__shared__ int temp[256 * 2];
+	__shared__ int temp[BLOCK_SIZE * 2];
 
 	int tId = blockDim.x * blockIdx.x + threadIdx.x;
 
 	temp[tId] = hist[tId];
-	temp[tId + 256] = prefix[tId];	
+	temp[tId + BLOCK_SIZE] = prefix[tId];	
 
 	while (temp[tId] > 0)
 	{
-		arr[temp[tId + 256] - 1] = (Byte)tId;
-		--temp[tId + 256];
+		arr[temp[tId + BLOCK_SIZE] - 1] = (Byte)tId;
+		--temp[tId + BLOCK_SIZE];
 		--temp[tId];
 	}
 }

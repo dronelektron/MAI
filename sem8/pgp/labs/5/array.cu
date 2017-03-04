@@ -56,7 +56,7 @@ __global__ void histogramKernel(Byte* arr, int* hist, int arrCount)
 	int offsetX = gridDim.x * blockDim.x;
 
 	for (int i = tIdGlobal; i < arrCount; i += offsetX)
-		atomicAdd(&temp[arr[i]], 1);
+		atomicAdd(temp + arr[i], 1);
 
 	__syncthreads();
 

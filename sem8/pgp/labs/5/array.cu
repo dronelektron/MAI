@@ -21,24 +21,28 @@ void arrayWrite(Array* arr)
 
 void arraySort(Array* arr)
 {
-	Byte* dArr;
+	Byte* dArrSrc;
+	Byte* dArrRes;
 	int* dHist;
 	int* dPrefix;
 
 	int histSize = sizeof(int) * BLOCK_SIZE;
 
-	ERR(cudaMalloc(&dArr, arr->size));
+	ERR(cudaMalloc(&dArrSrc, arr->size));
+	ERR(cudaMalloc(&dArrRes, arr->size));
 	ERR(cudaMalloc(&dHist, histSize));
 	ERR(cudaMalloc(&dPrefix, histSize));
-	ERR(cudaMemcpy(dArr, arr->data, arr->size, cudaMemcpyHostToDevice));
+	ERR(cudaMemcpy(dArrSrc, arr->data, arr->size, cudaMemcpyHostToDevice));
 	ERR(cudaMemset(dHist, 0, histSize));
 
-	histogramKernel<<<32, 32>>>(dArr, dHist, arr->size);
+	histogramKernel<<<32, 32>>>(dArrSrc, dHist, arr->size);
 	scanKernel<<<1, BLOCK_SIZE>>>(dHist, dPrefix);
-	arrangementKernel<<<8, 32>>>(dArr, dHist, dPrefix);
+	arrangementKernel<<<32, 32>>>(dArrSrc, dArrRes, dPrefix, arr->size);
 
-	ERR(cudaMemcpy(arr->data, dArr, arr->size, cudaMemcpyDeviceToHost));
-	ERR(cudaFree(dArr));
+	ERR(cudaGetLastError());
+	ERR(cudaMemcpy(arr->data, dArrRes, arr->size, cudaMemcpyDeviceToHost));
+	ERR(cudaFree(dArrSrc));
+	ERR(cudaFree(dArrRes));
 	ERR(cudaFree(dHist));
 	ERR(cudaFree(dPrefix));
 }
@@ -57,7 +61,7 @@ __global__ void histogramKernel(Byte* arr, int* hist, int arrCount)
 	__syncthreads();
 
 	for (int i = tIdLocal; i < BLOCK_SIZE; i += blockDim.x)
-		atomicAdd(&hist[i], temp[i]);
+		atomicAdd(hist + i, temp[i]);
 }
 
 __global__ void scanKernel(int* hist, int* prefix)
@@ -112,19 +116,15 @@ __global__ void scanKernel(int* hist, int* prefix)
 		prefix[tId] = temp[CONFLICT_FREE(tId)] + hist[BLOCK_SIZE - 1];
 }
 
-__global__ void arrangementKernel(Byte* arr, int* hist, int* prefix)
+__global__ void arrangementKernel(Byte* arrSrc, Byte* arrRes, int* prefix, int arrCount)
 {
-	__shared__ int temp[BLOCK_SIZE * 2];
-
 	int tId = blockDim.x * blockIdx.x + threadIdx.x;
+	int offsetX = gridDim.x * blockDim.x;
 
-	temp[tId] = hist[tId];
-	temp[tId + BLOCK_SIZE] = prefix[tId];	
-
-	while (temp[tId] > 0)
+	for (int i = tId; i < arrCount; i += offsetX)
 	{
-		arr[temp[tId + BLOCK_SIZE] - 1] = (Byte)tId;
-		--temp[tId + BLOCK_SIZE];
-		--temp[tId];
+		int pos = atomicSub(prefix + arrSrc[i], 1) - 1;
+
+		arrRes[pos] = arrSrc[i];
 	}
 }

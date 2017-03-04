@@ -23,6 +23,6 @@ void arraySort(Array* arr);
 
 __global__ void histogramKernel(Byte* arr, int* hist, int arrCount);
 __global__ void scanKernel(int* hist, int* prefix);
-__global__ void arrangementKernel(Byte* arr, int* hist, int* prefix);
+__global__ void arrangementKernel(Byte* arrSrc, Byte* arrRes, int* prefix, int arrCount);
 
 #endif

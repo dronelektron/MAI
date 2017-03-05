@@ -47,6 +47,11 @@ void arraySort(Array* arr)
 	ERR(cudaFree(dPrefix));
 }
 
+__device__ int conflictFree(int index)
+{
+	return index + (index >> LOG2_BANKS);
+}
+
 __global__ void histogramKernel(Byte* arr, int* hist, int arrCount)
 {
 	__shared__ int temp[BLOCK_SIZE];
@@ -66,12 +71,12 @@ __global__ void histogramKernel(Byte* arr, int* hist, int arrCount)
 
 __global__ void scanKernel(int* hist, int* prefix)
 {
-	__shared__ int temp[BLOCK_SIZE + 7];
+	__shared__ int temp[BLOCK_SIZE + BLOCK_SIZE / 32];
 
 	int tId = threadIdx.x;
 	int offset = 1;
 
-	temp[CONFLICT_FREE(tId)] = hist[tId];
+	temp[conflictFree(tId)] = hist[tId];
 
 	for (int d = BLOCK_SIZE >> 1; d > 0; d >>= 1)
 	{
@@ -79,8 +84,8 @@ __global__ void scanKernel(int* hist, int* prefix)
 
 		if (tId < d)
 		{
-			int index1 = CONFLICT_FREE(offset * (tId * 2 + 1) - 1);
-			int index2 = CONFLICT_FREE(offset * (tId * 2 + 2) - 1);
+			int index1 = conflictFree(offset * (tId * 2 + 1) - 1);
+			int index2 = conflictFree(offset * (tId * 2 + 2) - 1);
 
 			temp[index2] += temp[index1];
 		}
@@ -89,7 +94,7 @@ __global__ void scanKernel(int* hist, int* prefix)
 	}
 
 	if (tId == BLOCK_SIZE - 1)
-		temp[CONFLICT_FREE(BLOCK_SIZE - 1)] = 0;
+		temp[conflictFree(BLOCK_SIZE - 1)] = 0;
 
 	for (int d = 1; d < BLOCK_SIZE; d <<= 1)
 	{
@@ -99,8 +104,8 @@ __global__ void scanKernel(int* hist, int* prefix)
 
 		if (tId < d)
 		{
-			int index1 = CONFLICT_FREE(offset * (tId * 2 + 1) - 1);
-			int index2 = CONFLICT_FREE(offset * (tId * 2 + 2) - 1);
+			int index1 = conflictFree(offset * (tId * 2 + 1) - 1);
+			int index2 = conflictFree(offset * (tId * 2 + 2) - 1);
 			int t = temp[index1];
 
 			temp[index1] = temp[index2];
@@ -111,9 +116,9 @@ __global__ void scanKernel(int* hist, int* prefix)
 	__syncthreads(); 
 	
 	if (tId < BLOCK_SIZE - 1)
-		prefix[tId] = temp[CONFLICT_FREE(tId + 1)];
+		prefix[tId] = temp[conflictFree(tId + 1)];
 	else
-		prefix[tId] = temp[CONFLICT_FREE(tId)] + hist[BLOCK_SIZE - 1];
+		prefix[tId] = temp[conflictFree(tId)] + hist[BLOCK_SIZE - 1];
 }
 
 __global__ void arrangementKernel(Byte* arrSrc, Byte* arrRes, int* prefix, int arrCount)

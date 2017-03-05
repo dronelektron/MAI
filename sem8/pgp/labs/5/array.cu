@@ -26,22 +26,21 @@ void arraySort(Array* arr)
 	int* dHist;
 	int* dPrefix;
 
-	int arrSize = sizeof(Byte) * arr->size;
 	int histSize = sizeof(int) * BLOCK_SIZE;
 
-	ERR(cudaMalloc(&dArrSrc, arrSize));
-	ERR(cudaMalloc(&dArrRes, arrSize));
+	ERR(cudaMalloc(&dArrSrc, arr->size));
+	ERR(cudaMalloc(&dArrRes, arr->size));
 	ERR(cudaMalloc(&dHist, histSize));
 	ERR(cudaMalloc(&dPrefix, histSize));
-	ERR(cudaMemcpy(dArrSrc, arr->data, arrSize, cudaMemcpyHostToDevice));
+	ERR(cudaMemcpy(dArrSrc, arr->data, arr->size, cudaMemcpyHostToDevice));
 	ERR(cudaMemset(dHist, 0, histSize));
 
-	histogramKernel<<<32, 32>>>(dArrSrc, dHist, arrSize);
+	histogramKernel<<<32, 32>>>(dArrSrc, dHist, arr->size);
 	scanKernel<<<1, BLOCK_SIZE>>>(dHist, dPrefix);
-	arrangementKernel<<<32, 32>>>(dArrSrc, dArrRes, dPrefix, arrSize);
+	arrangementKernel<<<32, 32>>>(dArrSrc, dArrRes, dPrefix, arr->size);
 
 	ERR(cudaGetLastError());
-	ERR(cudaMemcpy(arr->data, dArrRes, arrSize, cudaMemcpyDeviceToHost));
+	ERR(cudaMemcpy(arr->data, dArrRes, arr->size, cudaMemcpyDeviceToHost));
 	ERR(cudaFree(dArrSrc));
 	ERR(cudaFree(dArrRes));
 	ERR(cudaFree(dHist));

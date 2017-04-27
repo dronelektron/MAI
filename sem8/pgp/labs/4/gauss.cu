@@ -130,14 +130,14 @@ __global__ void swapKernel(double* mat, int m, int n, int row1, int row2)
 
 __global__ void transformKernel(double* mat, int m, int n, int row, int col)
 {
-	int tX = blockDim.x * blockIdx.x + threadIdx.x + col + 1;
-	int tY = blockDim.y * blockIdx.y + threadIdx.y + row + 1;
+	int tX = blockDim.x * blockIdx.x + threadIdx.x + row + 1;
+	int tY = blockDim.y * blockIdx.y + threadIdx.y + col + 1;
 	int offsetX = gridDim.x * blockDim.x;
 	int offsetY = gridDim.y * blockDim.y;
 
-	for (int j = tX; j <= n; j += offsetX)
+	for (int j = tY; j <= n; j += offsetY)
 	{
-		for (int i = tY; i < m; i += offsetY)
+		for (int i = tX; i < m; i += offsetX)
 		{
 			double ratio = mat[gaussOffset(i, col, m)] / mat[gaussOffset(row, col, m)];
 
